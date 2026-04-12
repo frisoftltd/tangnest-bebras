@@ -176,7 +176,7 @@ class Tangnest_Bebras_Updater {
 	/**
 	 * Runs a manual update check for this plugin.
 	 *
-	 * @return void
+	 * @return array<string, string|bool>
 	 */
 	public function run_manual_check() {
 		delete_transient( 'tangnest_bebras_github_release' );
@@ -186,7 +186,34 @@ class Tangnest_Bebras_Updater {
 			require_once ABSPATH . 'wp-admin/includes/update.php';
 		}
 
+		if ( function_exists( 'wp_clean_plugins_cache' ) ) {
+			wp_clean_plugins_cache( true );
+		}
+
 		wp_update_plugins();
+
+		$transient = get_site_transient( 'update_plugins' );
+
+		if ( ! is_object( $transient ) ) {
+			return array(
+				'status'     => 'check-failed',
+				'has_update' => false,
+			);
+		}
+
+		$has_update = ! empty( $transient->response[ TANGNEST_BEBRAS_BASENAME ] );
+
+		if ( $has_update ) {
+			return array(
+				'status'     => 'update-available',
+				'has_update' => true,
+			);
+		}
+
+		return array(
+			'status'     => 'no-update',
+			'has_update' => false,
+		);
 	}
 
 	/**

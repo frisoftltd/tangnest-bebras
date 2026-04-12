@@ -191,12 +191,18 @@ class Tangnest_Bebras_Admin {
 
 		check_admin_referer( 'tangnest_bebras_check_updates' );
 		delete_site_transient( 'update_plugins' );
-		$this->updater->run_manual_check();
+		$result = $this->updater->run_manual_check();
+
+		$notice = 'update-check-completed';
+
+		if ( ! empty( $result['status'] ) && is_string( $result['status'] ) ) {
+			$notice = $result['status'];
+		}
 
 		wp_safe_redirect(
 			add_query_arg(
 				'tangnest_bebras_notice',
-				'update-check-completed',
+				$notice,
 				admin_url( 'plugins.php' )
 			)
 		);
@@ -217,13 +223,43 @@ class Tangnest_Bebras_Admin {
 
 		$notice = isset( $_GET['tangnest_bebras_notice'] ) ? sanitize_key( wp_unslash( $_GET['tangnest_bebras_notice'] ) ) : '';
 
-		if ( 'update-check-completed' !== $notice ) {
+		if ( empty( $notice ) ) {
 			return;
 		}
-		?>
-		<div class="notice notice-success is-dismissible">
-			<p><?php esc_html_e( 'Update check completed.', 'tangnest-bebras' ); ?></p>
-		</div>
-		<?php
+
+		if ( 'update-available' === $notice ) {
+			?>
+			<div class="notice notice-success is-dismissible">
+				<p><?php esc_html_e( 'Update available. The Plugins page has been refreshed with the latest update data.', 'tangnest-bebras' ); ?></p>
+			</div>
+			<?php
+			return;
+		}
+
+		if ( 'no-update' === $notice ) {
+			?>
+			<div class="notice notice-info is-dismissible">
+				<p><?php esc_html_e( 'No update available.', 'tangnest-bebras' ); ?></p>
+			</div>
+			<?php
+			return;
+		}
+
+		if ( 'check-failed' === $notice ) {
+			?>
+			<div class="notice notice-warning is-dismissible">
+				<p><?php esc_html_e( 'Update check could not be completed. Please try again.', 'tangnest-bebras' ); ?></p>
+			</div>
+			<?php
+			return;
+		}
+
+		if ( 'update-check-completed' === $notice ) {
+			?>
+			<div class="notice notice-success is-dismissible">
+				<p><?php esc_html_e( 'Update check completed.', 'tangnest-bebras' ); ?></p>
+			</div>
+			<?php
+		}
 	}
 }
