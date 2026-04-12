@@ -1,0 +1,48 @@
+name: Release Plugin
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+      - "*.*.*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.1"
+
+      - name: Install Composer dependencies when present
+        if: ${{ hashFiles('composer.json') != '' }}
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Verify tag and plugin version
+        id: version
+        run: |
+          VERSION="$(bash scripts/check-version-consistency.sh "${GITHUB_REF}")"
+          echo "version=${VERSION}" >> "${GITHUB_OUTPUT}"
+
+      - name: Lint PHP files
+        run: find . -name '*.php' -print0 | xargs -0 -n1 php -l
+
+      - name: Build plugin zip
+        run: bash scripts/build-plugin-zip.sh "${{ steps.version.outputs.version }}"
+
+      - name: Create or update GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Tangnest Bebras ${{ steps.version.outputs.version }}
+          files: dist/tangnest-bebras-${{ steps.version.outputs.version }}.zip
+          generate_release_notes: true
+          overwrite_files: true

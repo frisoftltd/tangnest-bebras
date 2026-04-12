@@ -1,0 +1,40 @@
+name: Build Plugin
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.1"
+
+      - name: Install Composer dependencies when present
+        if: ${{ hashFiles('composer.json') != '' }}
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Verify plugin version metadata
+        run: bash scripts/check-version-consistency.sh
+
+      - name: Lint PHP files
+        run: find . -name '*.php' -print0 | xargs -0 -n1 php -l
+
+      - name: Build plugin zip
+        run: bash scripts/build-plugin-zip.sh
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tangnest-bebras-plugin-zip
+          path: dist/tangnest-bebras-*.zip
+          if-no-files-found: error
