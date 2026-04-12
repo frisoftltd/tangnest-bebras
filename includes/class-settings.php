@@ -41,7 +41,6 @@ class Tangnest_Bebras_Settings {
 	 * @return void
 	 */
 	public function register_hooks() {
-		add_action( 'admin_init', array( $this, 'register_settings' ) );
 		add_action( 'update_option_' . self::OPTION_NAME, array( $this, 'clear_update_caches' ), 10, 2 );
 	}
 
@@ -64,13 +63,24 @@ class Tangnest_Bebras_Settings {
 	 * @return array<string, mixed>
 	 */
 	public function get_settings() {
+		$stored = $this->get_raw_settings();
+
+		return wp_parse_args( $stored, self::defaults() );
+	}
+
+	/**
+	 * Gets the raw stored option value as an array.
+	 *
+	 * @return array<string, mixed>
+	 */
+	public function get_raw_settings() {
 		$stored = get_option( self::OPTION_NAME, array() );
 
 		if ( ! is_array( $stored ) ) {
-			$stored = array();
+			return array();
 		}
 
-		return wp_parse_args( $stored, self::defaults() );
+		return $stored;
 	}
 
 	/**
@@ -84,54 +94,6 @@ class Tangnest_Bebras_Settings {
 		$settings = $this->get_settings();
 
 		return isset( $settings[ $key ] ) ? $settings[ $key ] : $default;
-	}
-
-	/**
-	 * Registers the settings fields.
-	 *
-	 * @return void
-	 */
-	public function register_settings() {
-		register_setting(
-			self::OPTION_GROUP,
-			self::OPTION_NAME,
-			array(
-				'type'              => 'array',
-				'sanitize_callback' => array( $this, 'sanitize_settings' ),
-				'default'           => self::defaults(),
-			)
-		);
-
-		add_settings_section(
-			'tangnest_bebras_update_settings',
-			__( 'Update Settings', 'tangnest-bebras' ),
-			array( $this, 'render_update_section' ),
-			self::SETTINGS_PAGE
-		);
-
-		add_settings_field(
-			'github_repo_url',
-			__( 'GitHub Repository URL', 'tangnest-bebras' ),
-			array( $this, 'render_repo_url_field' ),
-			self::SETTINGS_PAGE,
-			'tangnest_bebras_update_settings'
-		);
-
-		add_settings_field(
-			'github_branch',
-			__( 'GitHub Branch', 'tangnest-bebras' ),
-			array( $this, 'render_branch_field' ),
-			self::SETTINGS_PAGE,
-			'tangnest_bebras_update_settings'
-		);
-
-		add_settings_field(
-			'enable_updates',
-			__( 'Enable Update Checks', 'tangnest-bebras' ),
-			array( $this, 'render_enable_updates_field' ),
-			self::SETTINGS_PAGE,
-			'tangnest_bebras_update_settings'
-		);
 	}
 
 	/**
@@ -159,74 +121,6 @@ class Tangnest_Bebras_Settings {
 
 		return wp_parse_args( $output, $defaults );
 	}
-
-	/**
-	 * Renders section copy.
-	 *
-	 * @return void
-	 */
-	public function render_update_section() {
-		echo '<p>' . esc_html__( 'Configure GitHub release-based updates for this plugin. For automatic updates, attach a release asset zip that contains this plugin folder.', 'tangnest-bebras' ) . '</p>';
-	}
-
-	/**
-	 * Renders GitHub repository field.
-	 *
-	 * @return void
-	 */
-	public function render_repo_url_field() {
-		$settings = $this->get_settings();
-		?>
-		<input
-			type="url"
-			class="regular-text"
-			name="<?php echo esc_attr( self::OPTION_NAME ); ?>[github_repo_url]"
-			value="<?php echo esc_attr( $settings['github_repo_url'] ); ?>"
-			placeholder="https://github.com/your-org/tangnest-bebras"
-		/>
-		<p class="description"><?php esc_html_e( 'Enter the public GitHub repository URL used for plugin releases.', 'tangnest-bebras' ); ?></p>
-		<?php
-	}
-
-	/**
-	 * Renders branch field.
-	 *
-	 * @return void
-	 */
-	public function render_branch_field() {
-		$settings = $this->get_settings();
-		?>
-		<input
-			type="text"
-			class="regular-text"
-			name="<?php echo esc_attr( self::OPTION_NAME ); ?>[github_branch]"
-			value="<?php echo esc_attr( $settings['github_branch'] ); ?>"
-			placeholder="main"
-		/>
-		<p class="description"><?php esc_html_e( 'Branch used for repository metadata and future fallback workflows.', 'tangnest-bebras' ); ?></p>
-		<?php
-	}
-
-	/**
-	 * Renders enable-updates field.
-	 *
-	 * @return void
-	 */
-	public function render_enable_updates_field() {
-		$settings = $this->get_settings();
-		?>
-		<label>
-			<input
-				type="checkbox"
-				name="<?php echo esc_attr( self::OPTION_NAME ); ?>[enable_updates]"
-				value="1"
-				<?php checked( ! empty( $settings['enable_updates'] ) ); ?>
-			/>
-			<?php esc_html_e( 'Check GitHub releases for plugin updates.', 'tangnest-bebras' ); ?>
-		</label>
-		<?php
-	}
-
 	/**
 	 * Clears update-related caches when settings change.
 	 *
