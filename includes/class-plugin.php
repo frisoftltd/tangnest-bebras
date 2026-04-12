@@ -56,8 +56,8 @@ class Tangnest_Bebras_Plugin {
 		$this->settings      = new Tangnest_Bebras_Settings();
 		$this->task_registry = new Tangnest_Bebras_Task_Registry();
 		$this->tutor_lms     = new Tangnest_Bebras_Tutor_LMS();
-		$this->admin         = new Tangnest_Bebras_Admin( $this->settings, $this->tutor_lms, $this->task_registry );
 		$this->updater       = new Tangnest_Bebras_Updater( $this->settings );
+		$this->admin         = new Tangnest_Bebras_Admin( $this->settings, $this->tutor_lms, $this->task_registry, $this->updater );
 	}
 
 	/**

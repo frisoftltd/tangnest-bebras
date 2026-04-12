@@ -36,6 +36,13 @@ class Tangnest_Bebras_Admin {
 	protected $task_registry;
 
 	/**
+	 * Updater service.
+	 *
+	 * @var Tangnest_Bebras_Updater
+	 */
+	protected $updater;
+
+	/**
 	 * Page hook suffix.
 	 *
 	 * @var string
@@ -48,11 +55,13 @@ class Tangnest_Bebras_Admin {
 	 * @param Tangnest_Bebras_Settings      $settings      Settings service.
 	 * @param Tangnest_Bebras_Tutor_LMS     $tutor_lms     Tutor LMS service.
 	 * @param Tangnest_Bebras_Task_Registry $task_registry Task registry.
+	 * @param Tangnest_Bebras_Updater       $updater       Updater service.
 	 */
-	public function __construct( Tangnest_Bebras_Settings $settings, Tangnest_Bebras_Tutor_LMS $tutor_lms, Tangnest_Bebras_Task_Registry $task_registry ) {
+	public function __construct( Tangnest_Bebras_Settings $settings, Tangnest_Bebras_Tutor_LMS $tutor_lms, Tangnest_Bebras_Task_Registry $task_registry, Tangnest_Bebras_Updater $updater ) {
 		$this->settings      = $settings;
 		$this->tutor_lms     = $tutor_lms;
 		$this->task_registry = $task_registry;
+		$this->updater       = $updater;
 	}
 
 	/**
@@ -63,6 +72,7 @@ class Tangnest_Bebras_Admin {
 	public function register_hooks() {
 		add_action( 'admin_menu', array( $this, 'register_menu' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
+		add_action( 'admin_post_tangnest_bebras_check_updates', array( $this, 'handle_manual_update_check' ) );
 	}
 
 	/**
@@ -124,6 +134,7 @@ class Tangnest_Bebras_Admin {
 		<div class="wrap tangnest-bebras-admin">
 			<h1><?php esc_html_e( 'Tangnest Bebras', 'tangnest-bebras' ); ?></h1>
 			<p><?php esc_html_e( 'Foundation settings for Bebras-style interactive learning experiences.', 'tangnest-bebras' ); ?></p>
+			<?php $this->render_admin_notices(); ?>
 
 			<div class="tangnest-bebras-admin__meta">
 				<div class="tangnest-bebras-card">
@@ -156,6 +167,56 @@ class Tangnest_Bebras_Admin {
 				submit_button( __( 'Save Settings', 'tangnest-bebras' ) );
 				?>
 			</form>
+
+			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+				<input type="hidden" name="action" value="tangnest_bebras_check_updates" />
+				<?php wp_nonce_field( 'tangnest_bebras_check_updates', 'tangnest_bebras_check_updates_nonce' ); ?>
+				<?php submit_button( __( 'Check for Updates Now', 'tangnest-bebras' ), 'secondary', 'submit', false ); ?>
+			</form>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Handles the manual updater request.
+	 *
+	 * @return void
+	 */
+	public function handle_manual_update_check() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( 'You are not allowed to perform this action.', 'tangnest-bebras' ) );
+		}
+
+		check_admin_referer( 'tangnest_bebras_check_updates', 'tangnest_bebras_check_updates_nonce' );
+
+		$this->updater->run_manual_check();
+
+		wp_safe_redirect(
+			add_query_arg(
+				array(
+					'page'                   => 'tangnest-bebras',
+					'tangnest_bebras_notice' => 'update-check-completed',
+				),
+				admin_url( 'admin.php' )
+			)
+		);
+		exit;
+	}
+
+	/**
+	 * Renders settings-page notices.
+	 *
+	 * @return void
+	 */
+	protected function render_admin_notices() {
+		$notice = isset( $_GET['tangnest_bebras_notice'] ) ? sanitize_key( wp_unslash( $_GET['tangnest_bebras_notice'] ) ) : '';
+
+		if ( 'update-check-completed' !== $notice ) {
+			return;
+		}
+		?>
+		<div class="notice notice-success is-dismissible">
+			<p><?php esc_html_e( 'Update check completed.', 'tangnest-bebras' ); ?></p>
 		</div>
 		<?php
 	}

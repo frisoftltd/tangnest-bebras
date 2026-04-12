@@ -182,6 +182,22 @@ class Tangnest_Bebras_Updater {
 	}
 
 	/**
+	 * Runs a manual update check for this plugin.
+	 *
+	 * @return void
+	 */
+	public function run_manual_check() {
+		delete_transient( 'tangnest_bebras_github_release' );
+		delete_site_transient( 'update_plugins' );
+
+		if ( ! function_exists( 'wp_update_plugins' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/update.php';
+		}
+
+		wp_update_plugins();
+	}
+
+	/**
 	 * Returns true when release update checks are enabled.
 	 *
 	 * @return bool
