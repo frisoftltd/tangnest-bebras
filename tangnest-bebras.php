@@ -3,7 +3,7 @@
  * Plugin Name: Tangnest Bebras
  * Plugin URI:  https://github.com/frisoftltd/tangnest-bebras
  * Description: Foundation plugin for Bebras-style interactive tasks with Tutor LMS integration and GitHub-based updates.
- * Version:     0.1.5
+ * Version:     0.1.6
  * Author:      Tangnest
  * Author URI:  https://github.com/frisoftltd/tangnest-bebras
  * Text Domain: tangnest-bebras
@@ -16,11 +16,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'TANGNEST_BEBRAS_VERSION', '0.1.5' );
+define( 'TANGNEST_BEBRAS_VERSION', '0.1.6' );
 define( 'TANGNEST_BEBRAS_FILE', __FILE__ );
 define( 'TANGNEST_BEBRAS_BASENAME', plugin_basename( __FILE__ ) );
 define( 'TANGNEST_BEBRAS_PATH', plugin_dir_path( __FILE__ ) );
 define( 'TANGNEST_BEBRAS_URL', plugin_dir_url( __FILE__ ) );
+define( 'TANGNEST_BEBRAS_GITHUB_REPO_URL', 'https://github.com/frisoftltd/tangnest-bebras' );
+define( 'TANGNEST_BEBRAS_GITHUB_BRANCH', 'main' );
 
 /**
  * Loads plugin class files.
@@ -29,7 +31,8 @@ define( 'TANGNEST_BEBRAS_URL', plugin_dir_url( __FILE__ ) );
  */
 function tangnest_bebras_load_dependencies() {
 	require_once TANGNEST_BEBRAS_PATH . 'includes/class-activator.php';
-	require_once TANGNEST_BEBRAS_PATH . 'includes/class-settings.php';
+	require_once TANGNEST_BEBRAS_PATH . 'includes/class-quiz-registry.php';
+	require_once TANGNEST_BEBRAS_PATH . 'includes/class-quiz-engine.php';
 	require_once TANGNEST_BEBRAS_PATH . 'includes/class-task-registry.php';
 	require_once TANGNEST_BEBRAS_PATH . 'includes/class-tutor-lms.php';
 	require_once TANGNEST_BEBRAS_PATH . 'includes/class-admin.php';

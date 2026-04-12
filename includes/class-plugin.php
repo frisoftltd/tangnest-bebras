@@ -15,11 +15,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Tangnest_Bebras_Plugin {
 
 	/**
-	 * Settings module.
+	 * Quiz registry module.
 	 *
-	 * @var Tangnest_Bebras_Settings
+	 * @var Tangnest_Bebras_Quiz_Registry
 	 */
-	protected $settings;
+	protected $quiz_registry;
 
 	/**
 	 * Task registry module.
@@ -50,14 +50,22 @@ class Tangnest_Bebras_Plugin {
 	protected $updater;
 
 	/**
+	 * Frontend quiz engine.
+	 *
+	 * @var Tangnest_Bebras_Quiz_Engine
+	 */
+	protected $quiz_engine;
+
+	/**
 	 * Creates plugin services.
 	 */
 	public function __construct() {
-		$this->settings      = new Tangnest_Bebras_Settings();
 		$this->task_registry = new Tangnest_Bebras_Task_Registry();
+		$this->quiz_registry = new Tangnest_Bebras_Quiz_Registry();
 		$this->tutor_lms     = new Tangnest_Bebras_Tutor_LMS();
-		$this->updater       = new Tangnest_Bebras_Updater( $this->settings );
-		$this->admin         = new Tangnest_Bebras_Admin( $this->settings, $this->tutor_lms, $this->task_registry, $this->updater );
+		$this->updater       = new Tangnest_Bebras_Updater();
+		$this->admin         = new Tangnest_Bebras_Admin( $this->tutor_lms, $this->task_registry, $this->updater );
+		$this->quiz_engine   = new Tangnest_Bebras_Quiz_Engine( $this->quiz_registry, $this->task_registry );
 	}
 
 	/**
@@ -68,11 +76,12 @@ class Tangnest_Bebras_Plugin {
 	public function run() {
 		add_action( 'plugins_loaded', array( $this, 'load_textdomain' ) );
 
-		$this->settings->register_hooks();
 		$this->task_registry->register_hooks();
+		$this->quiz_registry->register_hooks();
 		$this->tutor_lms->register_hooks();
 		$this->admin->register_hooks();
 		$this->updater->register_hooks();
+		$this->quiz_engine->register_hooks();
 	}
 
 	/**

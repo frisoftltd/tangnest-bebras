@@ -20,17 +20,10 @@ class Tangnest_Bebras_Activator {
 	 * @return void
 	 */
 	public static function activate() {
-		$defaults = Tangnest_Bebras_Settings::defaults();
-		$current  = get_option( Tangnest_Bebras_Settings::OPTION_NAME, array() );
-
-		if ( ! is_array( $current ) ) {
-			$current = array();
-		}
-
-		update_option( Tangnest_Bebras_Settings::OPTION_NAME, wp_parse_args( $current, $defaults ) );
 		update_option( 'tangnest_bebras_version', TANGNEST_BEBRAS_VERSION );
 
 		delete_transient( 'tangnest_bebras_github_release' );
+		delete_site_transient( 'update_plugins' );
 		flush_rewrite_rules();
 	}
 }
@@ -47,6 +40,7 @@ class Tangnest_Bebras_Deactivator {
 	 */
 	public static function deactivate() {
 		delete_transient( 'tangnest_bebras_github_release' );
+		delete_site_transient( 'update_plugins' );
 		flush_rewrite_rules();
 	}
 }

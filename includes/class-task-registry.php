@@ -42,12 +42,13 @@ class Tangnest_Bebras_Task_Registry {
 			'multiple_choice_interactive',
 			array(
 				'label'               => __( 'Multiple Choice Interactive', 'tangnest-bebras' ),
-				'description'         => __( 'Placeholder for future multiple-choice Bebras tasks.', 'tangnest-bebras' ),
+				'description'         => __( 'Interactive choice tasks rendered by the Bebras quiz engine foundation.', 'tangnest-bebras' ),
 				'render_callback'     => null,
 				'evaluate_callback'   => null,
 				'editor_schema'       => array(),
+				'frontend_handler'    => 'multiple_choice_interactive',
 				'supports_tutor_lms'  => true,
-				'is_implemented'      => false,
+				'is_implemented'      => true,
 			)
 		);
 
@@ -59,6 +60,7 @@ class Tangnest_Bebras_Task_Registry {
 				'render_callback'     => null,
 				'evaluate_callback'   => null,
 				'editor_schema'       => array(),
+				'frontend_handler'    => 'drag_and_drop',
 				'supports_tutor_lms'  => true,
 				'is_implemented'      => false,
 			)
@@ -68,12 +70,13 @@ class Tangnest_Bebras_Task_Registry {
 			'sequence_order',
 			array(
 				'label'               => __( 'Sequence / Order', 'tangnest-bebras' ),
-				'description'         => __( 'Placeholder for future sequencing and ordering tasks.', 'tangnest-bebras' ),
+				'description'         => __( 'Sequencing tasks rendered by the Bebras quiz engine foundation.', 'tangnest-bebras' ),
 				'render_callback'     => null,
 				'evaluate_callback'   => null,
 				'editor_schema'       => array(),
+				'frontend_handler'    => 'sequence_order',
 				'supports_tutor_lms'  => true,
-				'is_implemented'      => false,
+				'is_implemented'      => true,
 			)
 		);
 
@@ -85,6 +88,7 @@ class Tangnest_Bebras_Task_Registry {
 				'render_callback'     => null,
 				'evaluate_callback'   => null,
 				'editor_schema'       => array(),
+				'frontend_handler'    => 'grid_logic_puzzle',
 				'supports_tutor_lms'  => true,
 				'is_implemented'      => false,
 			)
@@ -112,6 +116,7 @@ class Tangnest_Bebras_Task_Registry {
 			'render_callback'    => null,
 			'evaluate_callback'  => null,
 			'editor_schema'      => array(),
+			'frontend_handler'   => '',
 			'supports_tutor_lms' => false,
 			'is_implemented'     => false,
 		);

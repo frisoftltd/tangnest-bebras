@@ -15,22 +15,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Tangnest_Bebras_Updater {
 
 	/**
-	 * Settings service.
-	 *
-	 * @var Tangnest_Bebras_Settings
-	 */
-	protected $settings;
-
-	/**
-	 * Constructor.
-	 *
-	 * @param Tangnest_Bebras_Settings $settings Settings service.
-	 */
-	public function __construct( Tangnest_Bebras_Settings $settings ) {
-		$this->settings = $settings;
-	}
-
-	/**
 	 * Registers updater hooks.
 	 *
 	 * @return void
@@ -49,7 +33,7 @@ class Tangnest_Bebras_Updater {
 	 * @return stdClass
 	 */
 	public function inject_update( $transient ) {
-		if ( empty( $transient->checked ) || ! $this->updates_enabled() ) {
+		if ( empty( $transient->checked ) ) {
 			return $transient;
 		}
 
@@ -104,8 +88,16 @@ class Tangnest_Bebras_Updater {
 		$version     = $this->normalize_version( $release['tag_name'] );
 		$package_url = $this->get_release_package_url( $release );
 		$sections    = array(
-			'description' => wp_kses_post( wpautop( __( 'Tangnest Bebras provides a modular WordPress foundation for future Bebras-style tasks and Tutor LMS integration.', 'tangnest-bebras' ) ) ),
-			'installation' => wp_kses_post( wpautop( __( 'Upload the plugin zip in WordPress admin, activate the plugin, then configure GitHub updates on the Tangnest Bebras settings screen.', 'tangnest-bebras' ) ) ),
+			'description'  => wp_kses_post( wpautop( __( 'Tangnest Bebras provides a modular WordPress foundation for future Bebras-style tasks and Tutor LMS integration.', 'tangnest-bebras' ) ) ),
+			'installation' => wp_kses_post(
+				wpautop(
+					sprintf(
+						/* translators: %s: GitHub branch name. */
+						__( 'Upload the plugin zip in WordPress admin, activate the plugin, then use the Plugins screen to run a manual update check if needed. The plugin is configured to use the %s branch for repository metadata.', 'tangnest-bebras' ),
+						esc_html( $this->get_repository_branch() )
+					)
+				)
+			),
 			'changelog'   => wp_kses_post( wpautop( ! empty( $release['body'] ) ? $release['body'] : __( 'Release notes are not available for this version yet.', 'tangnest-bebras' ) ) ),
 		);
 
@@ -198,21 +190,21 @@ class Tangnest_Bebras_Updater {
 	}
 
 	/**
-	 * Returns true when release update checks are enabled.
-	 *
-	 * @return bool
-	 */
-	protected function updates_enabled() {
-		return (bool) $this->settings->get( 'enable_updates', 0 ) && ! empty( $this->get_repository_url() );
-	}
-
-	/**
 	 * Returns the configured repository URL.
 	 *
 	 * @return string
 	 */
 	protected function get_repository_url() {
-		return (string) $this->settings->get( 'github_repo_url', '' );
+		return TANGNEST_BEBRAS_GITHUB_REPO_URL;
+	}
+
+	/**
+	 * Returns the configured repository branch.
+	 *
+	 * @return string
+	 */
+	protected function get_repository_branch() {
+		return TANGNEST_BEBRAS_GITHUB_BRANCH;
 	}
 
 	/**

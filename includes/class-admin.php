@@ -13,14 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Manages the plugin admin experience.
  */
 class Tangnest_Bebras_Admin {
-
-	/**
-	 * Settings service.
-	 *
-	 * @var Tangnest_Bebras_Settings
-	 */
-	protected $settings;
-
 	/**
 	 * Tutor LMS service.
 	 *
@@ -50,22 +42,13 @@ class Tangnest_Bebras_Admin {
 	protected $page_hook = '';
 
 	/**
-	 * Whether settings were saved during this request.
-	 *
-	 * @var bool
-	 */
-	protected $settings_saved = false;
-
-	/**
 	 * Constructor.
 	 *
-	 * @param Tangnest_Bebras_Settings      $settings      Settings service.
 	 * @param Tangnest_Bebras_Tutor_LMS     $tutor_lms     Tutor LMS service.
 	 * @param Tangnest_Bebras_Task_Registry $task_registry Task registry.
 	 * @param Tangnest_Bebras_Updater       $updater       Updater service.
 	 */
-	public function __construct( Tangnest_Bebras_Settings $settings, Tangnest_Bebras_Tutor_LMS $tutor_lms, Tangnest_Bebras_Task_Registry $task_registry, Tangnest_Bebras_Updater $updater ) {
-		$this->settings      = $settings;
+	public function __construct( Tangnest_Bebras_Tutor_LMS $tutor_lms, Tangnest_Bebras_Task_Registry $task_registry, Tangnest_Bebras_Updater $updater ) {
 		$this->tutor_lms     = $tutor_lms;
 		$this->task_registry = $task_registry;
 		$this->updater       = $updater;
@@ -80,6 +63,8 @@ class Tangnest_Bebras_Admin {
 		add_action( 'admin_menu', array( $this, 'register_menu' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 		add_action( 'admin_post_tangnest_bebras_check_updates', array( $this, 'handle_manual_update_check' ) );
+		add_action( 'admin_notices', array( $this, 'render_update_check_notice' ) );
+		add_filter( 'plugin_action_links_' . TANGNEST_BEBRAS_BASENAME, array( $this, 'add_plugin_action_links' ) );
 	}
 
 	/**
@@ -136,25 +121,11 @@ class Tangnest_Bebras_Admin {
 			return;
 		}
 
-		$this->maybe_handle_settings_save();
-
 		$task_types = $this->task_registry->get_task_types();
-		$stored_settings = get_option( Tangnest_Bebras_Settings::OPTION_NAME, array() );
-
-		if ( ! is_array( $stored_settings ) ) {
-			$stored_settings = array();
-		}
-
-		$settings = array(
-			'github_repo_url' => isset( $stored_settings['github_repo_url'] ) ? (string) $stored_settings['github_repo_url'] : '',
-			'github_branch'   => isset( $stored_settings['github_branch'] ) && '' !== $stored_settings['github_branch'] ? (string) $stored_settings['github_branch'] : 'main',
-			'enable_updates'  => ! empty( $stored_settings['enable_updates'] ) ? 1 : 0,
-		);
 		?>
 		<div class="wrap tangnest-bebras-admin">
 			<h1><?php esc_html_e( 'Tangnest Bebras', 'tangnest-bebras' ); ?></h1>
-			<p><?php esc_html_e( 'Foundation settings for Bebras-style interactive learning experiences.', 'tangnest-bebras' ); ?></p>
-			<?php $this->render_admin_notices(); ?>
+			<p><?php esc_html_e( 'Foundation overview for Bebras-style interactive learning experiences.', 'tangnest-bebras' ); ?></p>
 
 			<div class="tangnest-bebras-admin__meta">
 				<div class="tangnest-bebras-card">
@@ -179,71 +150,33 @@ class Tangnest_Bebras_Admin {
 					</ul>
 				</div>
 			</div>
-
-			<form method="post" action="<?php echo esc_url( menu_page_url( 'tangnest-bebras', false ) ); ?>">
-				<input type="hidden" name="tangnest_bebras_save_settings" value="1" />
-				<?php wp_nonce_field( 'tangnest_bebras_save_settings', 'tangnest_bebras_save_settings_nonce' ); ?>
-				<table class="form-table" role="presentation">
-					<tbody>
-						<tr>
-							<th scope="row">
-								<label for="tangnest-bebras-github-repo-url"><?php esc_html_e( 'GitHub Repository URL', 'tangnest-bebras' ); ?></label>
-							</th>
-							<td>
-								<input
-									id="tangnest-bebras-github-repo-url"
-									type="url"
-									class="regular-text"
-									name="tangnest_bebras_settings[github_repo_url]"
-									value="<?php echo esc_attr( $settings['github_repo_url'] ); ?>"
-									placeholder="https://github.com/your-org/tangnest-bebras"
-								/>
-								<p class="description"><?php esc_html_e( 'Enter the public GitHub repository URL used for plugin releases.', 'tangnest-bebras' ); ?></p>
-							</td>
-						</tr>
-						<tr>
-							<th scope="row">
-								<label for="tangnest-bebras-github-branch"><?php esc_html_e( 'GitHub Branch', 'tangnest-bebras' ); ?></label>
-							</th>
-							<td>
-								<input
-									id="tangnest-bebras-github-branch"
-									type="text"
-									class="regular-text"
-									name="tangnest_bebras_settings[github_branch]"
-									value="<?php echo esc_attr( $settings['github_branch'] ); ?>"
-									placeholder="main"
-								/>
-								<p class="description"><?php esc_html_e( 'Branch used for repository metadata and future fallback workflows.', 'tangnest-bebras' ); ?></p>
-							</td>
-						</tr>
-						<tr>
-							<th scope="row"><?php esc_html_e( 'Enable Update Checks', 'tangnest-bebras' ); ?></th>
-							<td>
-								<label for="tangnest-bebras-enable-updates">
-									<input
-										id="tangnest-bebras-enable-updates"
-										type="checkbox"
-										name="tangnest_bebras_settings[enable_updates]"
-										value="1"
-										<?php checked( $settings['enable_updates'] ); ?>
-									/>
-									<?php esc_html_e( 'Check GitHub releases for plugin updates.', 'tangnest-bebras' ); ?>
-								</label>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-				<?php submit_button( __( 'Save Settings', 'tangnest-bebras' ) ); ?>
-			</form>
-
-			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
-				<input type="hidden" name="action" value="tangnest_bebras_check_updates" />
-				<?php wp_nonce_field( 'tangnest_bebras_check_updates', 'tangnest_bebras_check_updates_nonce' ); ?>
-				<?php submit_button( __( 'Check for Updates Now', 'tangnest-bebras' ), 'secondary', 'submit', false ); ?>
-			</form>
 		</div>
 		<?php
+	}
+
+	/**
+	 * Adds plugin row actions on the Plugins screen.
+	 *
+	 * @param array<string, string> $actions Existing action links.
+	 * @return array<string, string>
+	 */
+	public function add_plugin_action_links( $actions ) {
+		if ( ! current_user_can( 'activate_plugins' ) && ! current_user_can( 'manage_options' ) ) {
+			return $actions;
+		}
+
+		$url = wp_nonce_url(
+			admin_url( 'admin-post.php?action=tangnest_bebras_check_updates' ),
+			'tangnest_bebras_check_updates'
+		);
+
+		$actions['tangnest_bebras_check_updates'] = sprintf(
+			'<a href="%1$s">%2$s</a>',
+			esc_url( $url ),
+			esc_html__( 'Check for Updates', 'tangnest-bebras' )
+		);
+
+		return $actions;
 	}
 
 	/**
@@ -252,41 +185,37 @@ class Tangnest_Bebras_Admin {
 	 * @return void
 	 */
 	public function handle_manual_update_check() {
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( 'activate_plugins' ) && ! current_user_can( 'manage_options' ) ) {
 			wp_die( esc_html__( 'You are not allowed to perform this action.', 'tangnest-bebras' ) );
 		}
 
-		check_admin_referer( 'tangnest_bebras_check_updates', 'tangnest_bebras_check_updates_nonce' );
-
+		check_admin_referer( 'tangnest_bebras_check_updates' );
+		delete_site_transient( 'update_plugins' );
 		$this->updater->run_manual_check();
 
 		wp_safe_redirect(
 			add_query_arg(
-				array(
-					'page'                   => 'tangnest-bebras',
-					'tangnest_bebras_notice' => 'update-check-completed',
-				),
-				admin_url( 'admin.php' )
+				'tangnest_bebras_notice',
+				'update-check-completed',
+				admin_url( 'plugins.php' )
 			)
 		);
 		exit;
 	}
 
 	/**
-	 * Renders settings-page notices.
+	 * Renders the update-check notice on the Plugins screen.
 	 *
 	 * @return void
 	 */
-	protected function render_admin_notices() {
-		$notice = isset( $_GET['tangnest_bebras_notice'] ) ? sanitize_key( wp_unslash( $_GET['tangnest_bebras_notice'] ) ) : '';
+	public function render_update_check_notice() {
+		$current_screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
 
-		if ( $this->settings_saved ) {
-			?>
-			<div class="notice notice-success is-dismissible">
-				<p><?php esc_html_e( 'Settings saved.', 'tangnest-bebras' ); ?></p>
-			</div>
-			<?php
+		if ( ! $current_screen || 'plugins' !== $current_screen->id ) {
+			return;
 		}
+
+		$notice = isset( $_GET['tangnest_bebras_notice'] ) ? sanitize_key( wp_unslash( $_GET['tangnest_bebras_notice'] ) ) : '';
 
 		if ( 'update-check-completed' !== $notice ) {
 			return;
@@ -296,38 +225,5 @@ class Tangnest_Bebras_Admin {
 			<p><?php esc_html_e( 'Update check completed.', 'tangnest-bebras' ); ?></p>
 		</div>
 		<?php
-	}
-
-	/**
-	 * Saves settings from the current admin page request.
-	 *
-	 * @return void
-	 */
-	protected function maybe_handle_settings_save() {
-		if ( 'POST' !== strtoupper( (string) $_SERVER['REQUEST_METHOD'] ) ) {
-			return;
-		}
-
-		if ( empty( $_POST['tangnest_bebras_save_settings'] ) ) {
-			return;
-		}
-
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return;
-		}
-
-		check_admin_referer( 'tangnest_bebras_save_settings', 'tangnest_bebras_save_settings_nonce' );
-
-		$raw_settings = array();
-
-		if ( isset( $_POST['tangnest_bebras_settings'] ) && is_array( $_POST['tangnest_bebras_settings'] ) ) {
-			$raw_settings = wp_unslash( $_POST['tangnest_bebras_settings'] );
-		}
-
-		$sanitized_settings = $this->settings->sanitize_settings( $raw_settings );
-
-		update_option( 'tangnest_bebras_settings', $sanitized_settings );
-
-		$this->settings_saved = true;
 	}
 }
