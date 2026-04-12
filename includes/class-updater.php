@@ -21,6 +21,7 @@ class Tangnest_Bebras_Updater {
 	 */
 	public function register_hooks() {
 		add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'inject_update' ) );
+		add_filter( 'site_transient_update_plugins', array( $this, 'inject_update' ) );
 		add_filter( 'plugins_api', array( $this, 'inject_plugin_information' ), 20, 3 );
 		add_filter( 'upgrader_source_selection', array( $this, 'rename_plugin_source_directory' ), 10, 4 );
 		add_action( 'upgrader_process_complete', array( $this, 'clear_cached_release_data' ), 10, 2 );
@@ -33,37 +34,161 @@ class Tangnest_Bebras_Updater {
 	 * @return stdClass
 	 */
 	public function inject_update( $transient ) {
-		if ( empty( $transient->checked ) ) {
+		if ( ! is_object( $transient ) ) {
+			$transient = new stdClass();
+		}
+
+		if ( empty( $transient->checked ) || ! is_array( $transient->checked ) ) {
+			$transient->checked = array(
+				TANGNEST_BEBRAS_BASENAME => TANGNEST_BEBRAS_VERSION,
+			);
+		}
+
+		return $this->merge_update_into_transient( $transient );
+	}
+
+	/**
+	 * Merges this plugin's update payload into the update_plugins transient.
+	 *
+	 * @param stdClass $transient Existing update transient.
+	 * @return stdClass
+	 */
+	protected function merge_update_into_transient( $transient ) {
+		if ( ! isset( $transient->response ) || ! is_array( $transient->response ) ) {
+			$transient->response = array();
+		}
+
+		if ( ! isset( $transient->no_update ) || ! is_array( $transient->no_update ) ) {
+			$transient->no_update = array();
+		}
+
+		unset( $transient->response[ TANGNEST_BEBRAS_BASENAME ] );
+		unset( $transient->no_update[ TANGNEST_BEBRAS_BASENAME ] );
+
+		$installed_version = $this->get_installed_version( $transient );
+		$update_offer      = $this->build_update_offer( $installed_version );
+
+		if ( $update_offer ) {
+			$transient->response[ TANGNEST_BEBRAS_BASENAME ] = $update_offer;
+			$this->log_debug(
+				'Update offer injected into update_plugins transient.',
+				array(
+					'basename'          => TANGNEST_BEBRAS_BASENAME,
+					'installed_version' => $installed_version,
+					'new_version'       => $update_offer->new_version,
+				)
+			);
+
 			return $transient;
 		}
 
+		$transient->no_update[ TANGNEST_BEBRAS_BASENAME ] = $this->build_no_update_item( $installed_version );
+		$this->log_debug(
+			'No update offer available for current installed version.',
+			array(
+				'basename'          => TANGNEST_BEBRAS_BASENAME,
+				'installed_version' => $installed_version,
+			)
+		);
+
+		return $transient;
+	}
+
+	/**
+	 * Builds the WordPress plugin update object when a newer release exists.
+	 *
+	 * @param string $installed_version Installed plugin version.
+	 * @return object|null
+	 */
+	protected function build_update_offer( $installed_version ) {
 		$release = $this->get_latest_release();
 
 		if ( empty( $release ) ) {
-			return $transient;
+			$this->log_debug( 'GitHub release lookup returned no release payload.' );
+			return null;
 		}
 
 		$version = $this->normalize_version( $release['tag_name'] );
 
-		if ( empty( $version ) || version_compare( $version, TANGNEST_BEBRAS_VERSION, '<=' ) ) {
-			return $transient;
+		if ( empty( $version ) ) {
+			$this->log_debug(
+				'GitHub release tag could not be normalized to a plugin version.',
+				array(
+					'tag_name' => isset( $release['tag_name'] ) ? (string) $release['tag_name'] : '',
+				)
+			);
+			return null;
+		}
+
+		if ( version_compare( $version, $installed_version, '<=' ) ) {
+			return null;
 		}
 
 		$package_url = $this->get_release_package_url( $release );
 
 		if ( empty( $package_url ) ) {
-			return $transient;
+			$this->log_debug(
+				'GitHub release did not provide a usable package URL.',
+				array(
+					'tag_name' => isset( $release['tag_name'] ) ? (string) $release['tag_name'] : '',
+				)
+			);
+			return null;
 		}
 
-		$transient->response[ TANGNEST_BEBRAS_BASENAME ] = (object) array(
+		return (object) array(
+			'id'          => $this->get_repository_url() . '#tangnest-bebras',
 			'slug'        => dirname( TANGNEST_BEBRAS_BASENAME ),
 			'plugin'      => TANGNEST_BEBRAS_BASENAME,
 			'new_version' => $version,
 			'url'         => $this->get_repository_url(),
 			'package'     => $package_url,
+			'icons'       => array(),
+			'banners'     => array(),
+			'banners_rtl' => array(),
+			'tested'      => '',
+			'requires'    => '',
+			'requires_php'=> '',
+			'compatibility' => new stdClass(),
 		);
+	}
 
-		return $transient;
+	/**
+	 * Builds the WordPress no_update object for this plugin.
+	 *
+	 * @param string $installed_version Installed plugin version.
+	 * @return object
+	 */
+	protected function build_no_update_item( $installed_version ) {
+		return (object) array(
+			'id'          => $this->get_repository_url() . '#tangnest-bebras',
+			'slug'        => dirname( TANGNEST_BEBRAS_BASENAME ),
+			'plugin'      => TANGNEST_BEBRAS_BASENAME,
+			'new_version' => $installed_version,
+			'url'         => $this->get_repository_url(),
+			'package'     => '',
+			'icons'       => array(),
+			'banners'     => array(),
+			'banners_rtl' => array(),
+			'tested'      => '',
+			'requires'    => '',
+			'requires_php'=> '',
+			'compatibility' => new stdClass(),
+		);
+	}
+
+	/**
+	 * Determines the installed plugin version from the transient when possible.
+	 *
+	 * @param stdClass $transient Update transient.
+	 * @return string
+	 */
+	protected function get_installed_version( $transient ) {
+		if ( ! empty( $transient->checked[ TANGNEST_BEBRAS_BASENAME ] ) ) {
+			return (string) $transient->checked[ TANGNEST_BEBRAS_BASENAME ];
+		}
+
+		return TANGNEST_BEBRAS_VERSION;
 	}
 
 	/**
@@ -195,13 +320,29 @@ class Tangnest_Bebras_Updater {
 		$transient = get_site_transient( 'update_plugins' );
 
 		if ( ! is_object( $transient ) ) {
-			return array(
-				'status'     => 'check-failed',
-				'has_update' => false,
+			$transient = new stdClass();
+		}
+
+		if ( empty( $transient->checked ) || ! is_array( $transient->checked ) ) {
+			$transient->checked = array(
+				TANGNEST_BEBRAS_BASENAME => TANGNEST_BEBRAS_VERSION,
 			);
 		}
 
+		$transient = $this->merge_update_into_transient( $transient );
+		set_site_transient( 'update_plugins', $transient );
+
 		$has_update = ! empty( $transient->response[ TANGNEST_BEBRAS_BASENAME ] );
+
+		$this->log_debug(
+			'Manual update check completed.',
+			array(
+				'basename'              => TANGNEST_BEBRAS_BASENAME,
+				'has_update'            => $has_update,
+				'transient_response_key'=> isset( $transient->response[ TANGNEST_BEBRAS_BASENAME ] ),
+				'transient_no_update_key' => isset( $transient->no_update[ TANGNEST_BEBRAS_BASENAME ] ),
+			)
+		);
 
 		if ( $has_update ) {
 			return array(
@@ -268,12 +409,19 @@ class Tangnest_Bebras_Updater {
 		);
 
 		if ( is_wp_error( $response ) || 200 !== (int) wp_remote_retrieve_response_code( $response ) ) {
+			$this->log_debug(
+				'GitHub latest release request failed.',
+				array(
+					'status_code' => is_wp_error( $response ) ? 'wp_error' : (string) wp_remote_retrieve_response_code( $response ),
+				)
+			);
 			return array();
 		}
 
 		$release = json_decode( wp_remote_retrieve_body( $response ), true );
 
 		if ( ! is_array( $release ) || empty( $release['tag_name'] ) ) {
+			$this->log_debug( 'GitHub latest release payload was invalid or missing tag_name.' );
 			return array();
 		}
 
@@ -346,5 +494,26 @@ class Tangnest_Bebras_Updater {
 		}
 
 		return ! empty( $release['zipball_url'] ) ? esc_url_raw( $release['zipball_url'] ) : '';
+	}
+
+	/**
+	 * Writes updater debug details to error_log when debug logging is enabled.
+	 *
+	 * @param string               $message Log message.
+	 * @param array<string, mixed> $context Optional context.
+	 * @return void
+	 */
+	protected function log_debug( $message, $context = array() ) {
+		if ( ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) {
+			return;
+		}
+
+		$line = '[Tangnest Bebras Updater] ' . $message;
+
+		if ( ! empty( $context ) ) {
+			$line .= ' ' . wp_json_encode( $context );
+		}
+
+		error_log( $line );
 	}
 }

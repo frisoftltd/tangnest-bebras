@@ -3,7 +3,7 @@
  * Plugin Name: Tangnest Bebras
  * Plugin URI:  https://github.com/frisoftltd/tangnest-bebras
  * Description: Foundation plugin for Bebras-style interactive tasks with Tutor LMS integration and GitHub-based updates.
- * Version:     0.1.7
+ * Version:     0.1.9
  * Author:      Tangnest
  * Author URI:  https://github.com/frisoftltd/tangnest-bebras
  * Text Domain: tangnest-bebras
@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'TANGNEST_BEBRAS_VERSION', '0.1.7' );
+define( 'TANGNEST_BEBRAS_VERSION', '0.1.9' );
 define( 'TANGNEST_BEBRAS_FILE', __FILE__ );
 define( 'TANGNEST_BEBRAS_BASENAME', plugin_basename( __FILE__ ) );
 define( 'TANGNEST_BEBRAS_PATH', plugin_dir_path( __FILE__ ) );
