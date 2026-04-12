@@ -162,8 +162,9 @@ class Tangnest_Bebras_Admin {
 
 			<form method="post" action="options.php">
 				<?php
-				settings_fields( 'tangnest_bebras_settings_group' );
-				do_settings_sections( 'tangnest-bebras' );
+				settings_fields( Tangnest_Bebras_Settings::OPTION_GROUP );
+				do_settings_sections( Tangnest_Bebras_Settings::SETTINGS_PAGE );
+				settings_errors( Tangnest_Bebras_Settings::OPTION_GROUP );
 				submit_button( __( 'Save Settings', 'tangnest-bebras' ) );
 				?>
 			</form>

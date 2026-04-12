@@ -15,11 +15,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Tangnest_Bebras_Settings {
 
 	/**
+	 * Settings group key.
+	 *
+	 * @var string
+	 */
+	const OPTION_GROUP = 'tangnest_bebras_settings_group';
+
+	/**
 	 * Option key.
 	 *
 	 * @var string
 	 */
 	const OPTION_NAME = 'tangnest_bebras_settings';
+
+	/**
+	 * Settings page slug.
+	 *
+	 * @var string
+	 */
+	const SETTINGS_PAGE = 'tangnest-bebras';
 
 	/**
 	 * Registers settings-related hooks.
@@ -79,23 +93,27 @@ class Tangnest_Bebras_Settings {
 	 */
 	public function register_settings() {
 		register_setting(
-			'tangnest_bebras_settings_group',
+			self::OPTION_GROUP,
 			self::OPTION_NAME,
-			array( $this, 'sanitize_settings' )
+			array(
+				'type'              => 'array',
+				'sanitize_callback' => array( $this, 'sanitize_settings' ),
+				'default'           => self::defaults(),
+			)
 		);
 
 		add_settings_section(
 			'tangnest_bebras_update_settings',
 			__( 'Update Settings', 'tangnest-bebras' ),
 			array( $this, 'render_update_section' ),
-			'tangnest-bebras'
+			self::SETTINGS_PAGE
 		);
 
 		add_settings_field(
 			'github_repo_url',
 			__( 'GitHub Repository URL', 'tangnest-bebras' ),
 			array( $this, 'render_repo_url_field' ),
-			'tangnest-bebras',
+			self::SETTINGS_PAGE,
 			'tangnest_bebras_update_settings'
 		);
 
@@ -103,7 +121,7 @@ class Tangnest_Bebras_Settings {
 			'github_branch',
 			__( 'GitHub Branch', 'tangnest-bebras' ),
 			array( $this, 'render_branch_field' ),
-			'tangnest-bebras',
+			self::SETTINGS_PAGE,
 			'tangnest_bebras_update_settings'
 		);
 
@@ -111,7 +129,7 @@ class Tangnest_Bebras_Settings {
 			'enable_updates',
 			__( 'Enable Update Checks', 'tangnest-bebras' ),
 			array( $this, 'render_enable_updates_field' ),
-			'tangnest-bebras',
+			self::SETTINGS_PAGE,
 			'tangnest_bebras_update_settings'
 		);
 	}
