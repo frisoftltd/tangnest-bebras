@@ -29,10 +29,10 @@ if [ -n "$GITHUB_REF" ] && [[ "$GITHUB_REF" == refs/tags/* ]]; then
     exit 1
   fi
 
-  echo "Version verified: $PLUGIN_VERSION matches tag $TAG"
+  echo "Version verified: $PLUGIN_VERSION matches tag $TAG" >&2
 else
-  echo "Plugin version: $PLUGIN_VERSION"
+  echo "Plugin version: $PLUGIN_VERSION" >&2
 fi
 
-# Output the bare version for use in release.yml step outputs.
+# Output ONLY the bare version to stdout — captured as $VERSION in release.yml.
 echo "$PLUGIN_VERSION"
