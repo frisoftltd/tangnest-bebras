@@ -1,3 +1,5 @@
 .DS_Store
 dist/
 *.zip
+*.save
+# vendor/ is intentionally NOT ignored — shipped with the plugin zip
