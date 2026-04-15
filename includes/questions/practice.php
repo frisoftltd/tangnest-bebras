@@ -124,27 +124,32 @@ return [
 		'color_labels'         => [ 'Red', 'Yellow', 'Green' ],
 	],
 
-	// ── P-LR-02 · Logical · click-color · Easy ───────────────────
+	// ── P-LR-02 · Logical · match-pairs · Easy ──────────────────
 	[
 		'id'                   => 'P-LR-02',
 		'skill'                => 'logical',
-		'type'                 => 'click-color',
+		'type'                 => 'match-pairs',
 		'difficulty'           => 'easy',
-		'title'                => 'Colour the Leaf',
-		'title_icon'           => 'leaf',
-		'instruction'          => 'Choose a colour and click each part of the leaf to paint it. Make sure no two touching parts have the same colour.',
-		'hint'                 => 'Start with the leaf body, then pick a different colour for the parts that touch it.',
-		'practice_explanation' => 'Two parts that touch each other must have different colours — this is called graph colouring! There are many correct answers.',
-		'svg'                  => 'leaf',
-		'regions'              => [ 'bg', 'body', 'vein', 'stem' ],
-		'adjacency'            => [
-			[ 'bg',   'body' ],
-			[ 'bg',   'stem' ],
-			[ 'body', 'vein' ],
-			[ 'body', 'stem' ],
+		'title'                => 'What Makes It Work?',
+		'title_icon'           => 'torch',
+		'instruction'          => 'Match each object on the left to what it needs on the right to work.',
+		'hint'                 => 'Think: what makes a torch shine? What makes a bulb glow? What comes out of a tap?',
+		'practice_explanation' => 'A torch needs a battery to shine. A light bulb needs electricity. A tap needs a water connection. Matching by logic shows clear thinking!',
+		'left'                 => [
+			[ 'id' => 'torch', 'icon' => 'torch', 'label' => 'Torch'      ],
+			[ 'id' => 'bulb',  'icon' => 'bulb',  'label' => 'Light bulb' ],
+			[ 'id' => 'tap',   'icon' => 'tap',   'label' => 'Tap'        ],
 		],
-		'colors'               => [ '#27ae60', '#f1c40f', '#795548' ],
-		'color_labels'         => [ 'Green', 'Yellow', 'Brown' ],
+		'right'                => [
+			[ 'id' => 'battery',     'icon' => 'battery',          'label' => 'Battery'          ],
+			[ 'id' => 'electricity', 'icon' => 'electricity-plug', 'label' => 'Electricity'      ],
+			[ 'id' => 'water',       'icon' => 'water-drop',       'label' => 'Water connection' ],
+		],
+		'pairs'                => [
+			[ 'torch', 'battery'     ],
+			[ 'bulb',  'electricity' ],
+			[ 'tap',   'water'       ],
+		],
 	],
 
 ];
