@@ -57,31 +57,23 @@ return [
 		'answer'               => [ 'b', 'a', 'd', 'c' ],
 	],
 
-	// ── P-PR-01 · Pattern · pattern-next · Easy ──────────────────
+	// ── P-PR-01 · Pattern · loop-count · Easy ───────────────────
 	[
 		'id'                   => 'P-PR-01',
 		'skill'                => 'pattern',
-		'type'                 => 'pattern-next',
+		'type'                 => 'loop-count',
 		'difficulty'           => 'easy',
-		'title'                => 'Bead Necklace',
-		'title_icon'           => 'bead-red',
-		'instruction'          => 'Look at the bead pattern. Which bead comes next?',
-		'hint'                 => 'Look at what colour comes after each red bead.',
-		'practice_explanation' => 'The pattern is red, blue, red, blue, red... so the next bead is blue. The pattern repeats every 2 beads.',
-		'pattern'              => [
-			[ 'icon' => 'bead-red'  ],
-			[ 'icon' => 'bead-blue' ],
-			[ 'icon' => 'bead-red'  ],
-			[ 'icon' => 'bead-blue' ],
-			[ 'icon' => 'bead-red'  ],
-		],
-		'choices'              => [
-			[ 'id' => 'a', 'icon' => 'bead-blue',   'label' => 'Blue'   ],
-			[ 'id' => 'b', 'icon' => 'bead-red',    'label' => 'Red'    ],
-			[ 'id' => 'c', 'icon' => 'bead-yellow', 'label' => 'Yellow' ],
-			[ 'id' => 'd', 'icon' => 'bead-green',  'label' => 'Green'  ],
-		],
-		'answer'               => 'a',
+		'title'                => 'Count the Steps',
+		'title_icon'           => 'footstep',
+		'instruction'          => 'Mugisha walks from his house to the water tap. How many steps does he take?',
+		'hint'                 => 'Count the footsteps one by one.',
+		'practice_explanation' => 'There are 5 footsteps shown — Mugisha takes 5 steps. Counting things in order is a pattern skill!',
+		'tiles'                => 5,
+		'tile_icon'            => 'footstep',
+		'min'                  => 1,
+		'max'                  => 10,
+		'initial'              => 1,
+		'answer'               => 5,
 	],
 
 	// ── P-PR-02 · Pattern · drag-sort · Medium ───────────────────
