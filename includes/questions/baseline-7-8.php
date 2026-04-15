@@ -186,28 +186,24 @@ return [
 	],
 
 	// ── B-78-LR-03 · Logical · pattern-next · Hard ───────────────
+	// Uses pattern-next renderer with empty pattern (choices only).
+	// Logical reasoning: switch ON AND bulb not broken → bulb turns on.
 	[
 		'id'         => 'B-78-LR-03',
 		'skill'      => 'logical',
 		'type'       => 'pattern-next',
 		'difficulty' => 'hard',
-		'title'      => 'Switch and Bulb',
+		'title'      => 'What Must Happen First?',
 		'title_icon' => 'bulb-lit',
-		'instruction'=> 'When the switch is ON the bulb lights up. When the switch is OFF the bulb goes dark. Look at the pattern — what comes next?',
-		'pattern'    => [
-			[ 'icon' => 'switch-on'    ],
-			[ 'icon' => 'switch-off'   ],
-			[ 'icon' => 'switch-on'    ],
-			[ 'icon' => 'switch-off'   ],
-			[ 'icon' => 'switch-on'    ],
-		],
+		'instruction'=> 'The light bulb will only turn on if the switch is flipped AND the bulb is not broken. Which picture shows when the bulb turns ON?',
+		'pattern'    => [],
 		'choices'    => [
-			[ 'id' => 'a', 'icon' => 'switch-off', 'label' => 'Switch OFF' ],
-			[ 'id' => 'b', 'icon' => 'switch-on',  'label' => 'Switch ON'  ],
-			[ 'id' => 'c', 'icon' => 'bulb-lit',   'label' => 'Bulb ON'    ],
-			[ 'id' => 'd', 'icon' => 'bulb-broken', 'label' => 'Bulb OFF'  ],
+			[ 'id' => 'a', 'icon' => 'switch-on-bulb-broken',  'label' => 'Switch ON + broken bulb'  ],
+			[ 'id' => 'b', 'icon' => 'switch-off-bulb-good',   'label' => 'Switch OFF + good bulb'   ],
+			[ 'id' => 'c', 'icon' => 'switch-on-bulb-good',    'label' => 'Switch ON + good bulb'    ],
+			[ 'id' => 'd', 'icon' => 'switch-off-bulb-broken', 'label' => 'Switch OFF + broken bulb' ],
 		],
-		'answer'     => 'a',
+		'answer'     => 'c',
 	],
 
 ];
