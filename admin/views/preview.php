@@ -77,9 +77,7 @@ $page_url = admin_url( 'admin.php?page=tnq-preview' );
 	<?php if ( empty( $questions ) ) : ?>
 	<div class="notice notice-warning inline">
 		<p>No questions found for the selected filters.
-		<?php if ( 'endline' === $filter_mode ) : ?>
-		Endline questions will be added in Phase B after the CHECKPOINT 1 user review.
-		<?php elseif ( 'baseline' === $filter_mode && '7-8' !== $filter_age ) : ?>
+		<?php if ( 'baseline' === $filter_mode && '7-8' !== $filter_age ) : ?>
 		Age bands 9–10 and 11–12 are coming in M3.
 		<?php endif; ?>
 		</p>
