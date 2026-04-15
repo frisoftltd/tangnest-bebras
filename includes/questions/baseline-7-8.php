@@ -75,29 +75,22 @@ return [
 
 	// ══ PATTERN (3) ══════════════════════════════════════════════
 
-	// ── B-78-PR-01 · Pattern · pattern-next · Easy ───────────────
+	// ── B-78-PR-01 · Pattern · loop-count · Easy ────────────────
 	[
-		'id'         => 'B-78-PR-01',
-		'skill'      => 'pattern',
-		'type'       => 'pattern-next',
-		'difficulty' => 'easy',
-		'title'      => 'Shape Pattern',
-		'title_icon' => 'star',
-		'instruction'=> 'Look at the shapes. Which shape comes next?',
-		'pattern'    => [
-			[ 'icon' => 'star'   ],
-			[ 'icon' => 'circle' ],
-			[ 'icon' => 'star'   ],
-			[ 'icon' => 'circle' ],
-			[ 'icon' => 'star'   ],
-		],
-		'choices'    => [
-			[ 'id' => 'a', 'icon' => 'circle',   'label' => 'Circle'   ],
-			[ 'id' => 'b', 'icon' => 'star',     'label' => 'Star'     ],
-			[ 'id' => 'c', 'icon' => 'square',   'label' => 'Square'   ],
-			[ 'id' => 'd', 'icon' => 'triangle', 'label' => 'Triangle' ],
-		],
-		'answer'     => 'a',
+		'id'              => 'B-78-PR-01',
+		'skill'           => 'pattern',
+		'type'            => 'loop-count',
+		'difficulty'      => 'easy',
+		'title'           => 'Clap Clap Clap',
+		'title_icon'      => 'clap-hand',
+		'instruction'     => 'The teacher claps 3 times, pauses, claps 3 times again. The class does this 4 times total. How many claps in all?',
+		'tiles'           => 12,
+		'tile_icon'       => 'clap-hand',
+		'tile_group_size' => 3,
+		'min'             => 1,
+		'max'             => 20,
+		'initial'         => 1,
+		'answer'          => 12,
 	],
 
 	// ── B-78-PR-02 · Pattern · pattern-next · Medium ─────────────
