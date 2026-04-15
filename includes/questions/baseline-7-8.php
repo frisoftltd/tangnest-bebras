@@ -44,16 +44,16 @@ return [
 		'skill'      => 'algorithmic',
 		'type'       => 'drag-sequence',
 		'difficulty' => 'medium',
-		'title'      => 'Packing a School Bag',
+		'title'      => 'Pack the School Bag',
 		'title_icon' => 'school-bag',
-		'instruction'=> 'Put the steps in the right order to pack your school bag.',
+		'instruction'=> 'Akimana packs her bag. What is the right order?',
 		'items'      => [
-			[ 'id' => 'a', 'icon' => 'pencil',     'label' => 'Put in your pencil'    ],
-			[ 'id' => 'b', 'icon' => 'books',      'label' => 'Put in your books'     ],
-			[ 'id' => 'c', 'icon' => 'zip',        'label' => 'Zip the bag closed'    ],
-			[ 'id' => 'd', 'icon' => 'school-bag', 'label' => 'Pick up your bag'      ],
+			[ 'id' => 'a', 'icon' => 'books',      'label' => 'Put in books'  ],
+			[ 'id' => 'b', 'icon' => 'school-bag', 'label' => 'Open the bag'  ],
+			[ 'id' => 'c', 'icon' => 'zip',        'label' => 'Close the zip' ],
+			[ 'id' => 'd', 'icon' => 'pencil',     'label' => 'Add pencils'   ],
 		],
-		'answer'     => [ 'a', 'b', 'c', 'd' ],
+		'answer'     => [ 'b', 'a', 'd', 'c' ],
 	],
 
 	// ── B-78-AT-03 · Algorithmic · loop-count · Hard ─────────────
