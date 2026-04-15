@@ -103,32 +103,25 @@ return [
 		'answer'               => 'a',
 	],
 
-	// ── P-LR-01 · Logical · match-pairs · Easy ───────────────────
+	// ── P-LR-01 · Logical · click-color · Easy ──────────────────
 	[
 		'id'                   => 'P-LR-01',
 		'skill'                => 'logical',
-		'type'                 => 'match-pairs',
+		'type'                 => 'click-color',
 		'difficulty'           => 'easy',
-		'title'                => 'What Does It Need?',
-		'title_icon'           => 'bulb',
-		'instruction'          => 'Match each thing on the left to what it needs to work on the right.',
-		'hint'                 => 'Think: what do you put in a torch? What does a bulb connect to?',
-		'practice_explanation' => 'A torch needs a battery to shine. A bulb needs an electricity plug to glow. A tap gives water. Matching shows logical thinking!',
-		'left'                 => [
-			[ 'id' => 'torch', 'icon' => 'torch',            'label' => 'Torch'      ],
-			[ 'id' => 'bulb',  'icon' => 'bulb',             'label' => 'Light bulb' ],
-			[ 'id' => 'tap',   'icon' => 'tap',              'label' => 'Tap'        ],
+		'title'                => 'Color the Flag',
+		'title_icon'           => 'flag-colorable',
+		'instruction'          => 'Color each part of the flag. Rule: Two touching parts cannot be the same color.',
+		'hint'                 => 'The top and bottom bands do not touch each other — only middle touches both.',
+		'practice_explanation' => 'The middle band touches both the top and bottom, so it must be different from both. The top and bottom can be the same color since they do not touch. Many correct answers exist!',
+		'svg'                  => 'flag-colorable',
+		'regions'              => [ 'top', 'middle', 'bottom' ],
+		'adjacency'            => [
+			[ 'top',    'middle' ],
+			[ 'middle', 'bottom' ],
 		],
-		'right'                => [
-			[ 'id' => 'battery', 'icon' => 'battery',           'label' => 'Battery'     ],
-			[ 'id' => 'plug',    'icon' => 'electricity-plug',   'label' => 'Electric plug'],
-			[ 'id' => 'water',   'icon' => 'water-drop',        'label' => 'Water'        ],
-		],
-		'pairs'                => [
-			[ 'torch', 'battery' ],
-			[ 'bulb',  'plug'    ],
-			[ 'tap',   'water'   ],
-		],
+		'colors'               => [ '#C0392B', '#f1c40f', '#1E8449' ],
+		'color_labels'         => [ 'Red', 'Yellow', 'Green' ],
 	],
 
 	// ── P-LR-02 · Logical · click-color · Easy ───────────────────
