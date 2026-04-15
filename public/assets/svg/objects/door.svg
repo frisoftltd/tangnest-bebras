@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
+  <!-- Door frame -->
+  <rect x="10" y="8" width="44" height="56" rx="2" fill="#c8a97a" stroke="#795548" stroke-width="2.5"/>
+  <!-- Door panel -->
+  <rect x="14" y="12" width="36" height="48" rx="2" fill="#e8d5b0" stroke="#795548" stroke-width="2"/>
+  <!-- Door panels decoration -->
+  <rect x="18" y="16" width="12" height="16" rx="2" fill="none" stroke="#795548" stroke-width="1.5"/>
+  <rect x="34" y="16" width="12" height="16" rx="2" fill="none" stroke="#795548" stroke-width="1.5"/>
+  <rect x="18" y="38" width="28" height="18" rx="2" fill="none" stroke="#795548" stroke-width="1.5"/>
+  <!-- Doorknob -->
+  <circle cx="44" cy="38" r="4" fill="#F39C12" stroke="#d68910" stroke-width="2"/>
+</svg>

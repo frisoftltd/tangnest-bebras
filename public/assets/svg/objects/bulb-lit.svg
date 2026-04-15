@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
+  <!-- Bright glow background -->
+  <circle cx="32" cy="28" r="18" fill="rgba(243,156,18,0.15)"/>
+  <!-- Bulb glass (lit) -->
+  <path d="M20 28 Q20 12 32 12 Q44 12 44 28 Q44 38 38 44 L26 44 Q20 38 20 28 Z" fill="#fff8a0" stroke="#F39C12" stroke-width="2.5"/>
+  <!-- Filament glowing -->
+  <path d="M28 36 Q30 32 32 36 Q34 32 36 36" stroke="#e67e22" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+  <!-- Base -->
+  <rect x="26" y="44" width="12" height="6" rx="1" fill="#888" stroke="#555" stroke-width="2"/>
+  <rect x="27" y="50" width="10" height="5" rx="1" fill="#888" stroke="#555" stroke-width="2"/>
+  <rect x="28" y="55" width="8" height="4" rx="1" fill="#888" stroke="#555" stroke-width="2"/>
+  <!-- Strong glow lines -->
+  <line x1="32" y1="8" x2="32" y2="3" stroke="#F39C12" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="16" y1="16" x2="12" y2="12" stroke="#F39C12" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="48" y1="16" x2="52" y2="12" stroke="#F39C12" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="14" y1="28" x2="9" y2="28" stroke="#F39C12" stroke-width="2" stroke-linecap="round"/>
+  <line x1="50" y1="28" x2="55" y2="28" stroke="#F39C12" stroke-width="2" stroke-linecap="round"/>
+</svg>

@@ -1,1 +1,488 @@
-/* CT Assessment quiz scripts — implemented in M2 */
+/**
+ * Tangnest CT Assessment — Quiz Engine
+ *
+ * Coordinates the assessment/practice flow:
+ *   - Shows one question at a time
+ *   - Drives the soft timer (assessment mode)
+ *   - Handles practice feedback / hints
+ *   - Submits answers via AJAX on completion
+ *
+ * Depends on: interactions/*.js (loaded before this file)
+ */
+
+/* global TNQData, TNQInteractions */
+
+(function () {
+	'use strict';
+
+	/** Namespace for interaction modules loaded from interactions/*.js */
+	window.TNQInteractions = window.TNQInteractions || {};
+
+	// ── TNQ_Timer ────────────────────────────────────────────────
+
+	function TNQTimer(displayEl, durationSeconds) {
+		this.el       = displayEl;
+		this.total    = durationSeconds;
+		this.remaining = durationSeconds;
+		this.ticking  = false;
+		this.elapsed  = 0;
+		this._interval = null;
+	}
+
+	TNQTimer.prototype.start = function () {
+		if (this.ticking) return;
+		this.ticking = true;
+		var self = this;
+		this._interval = setInterval(function () {
+			self.remaining = Math.max(0, self.remaining - 1);
+			self.elapsed++;
+			self._render();
+			if (self.remaining === 0) {
+				clearInterval(self._interval);
+				self.ticking = false;
+			}
+		}, 1000);
+		this._render();
+	};
+
+	TNQTimer.prototype.stop = function () {
+		clearInterval(this._interval);
+		this.ticking = false;
+	};
+
+	TNQTimer.prototype.reset = function (durationSeconds) {
+		this.stop();
+		this.remaining = durationSeconds !== undefined ? durationSeconds : this.total;
+		this._render();
+	};
+
+	TNQTimer.prototype._render = function () {
+		if (!this.el) return;
+		var r = this.remaining;
+		var mins = Math.floor(r / 60);
+		var secs = r % 60;
+		var timeStr = mins + ':' + (secs < 10 ? '0' : '') + secs;
+
+		var ratio = this.total > 0 ? r / this.total : 0;
+		this.el.classList.remove('is-amber', 'is-red', 'is-done');
+
+		var msgEl = this.el.querySelector('.tnq-timer-expired-msg');
+
+		if (r === 0) {
+			this.el.classList.add('is-done');
+			if (msgEl) msgEl.textContent = 'Time\'s up — take your time';
+		} else if (ratio < 0.2) {
+			this.el.classList.add('is-red');
+			if (msgEl) msgEl.textContent = '';
+		} else if (ratio < 0.5) {
+			this.el.classList.add('is-amber');
+			if (msgEl) msgEl.textContent = '';
+		} else {
+			if (msgEl) msgEl.textContent = '';
+		}
+
+		var timeDisplay = this.el.querySelector('.tnq-timer-display');
+		if (timeDisplay) timeDisplay.textContent = timeStr;
+	};
+
+	// ── TNQ_Quiz ────────────────────────────────────────────────
+
+	function TNQQuiz(container) {
+		this.container   = container;
+		this.mode        = container.dataset.mode || 'practice';
+		this.ageBand     = container.dataset.age  || '7-8';
+		this.assessType  = container.dataset.assessType || '';
+		this.questions   = Array.from(container.querySelectorAll('.tnq-question'));
+		this.currentIdx  = 0;
+		this.answers     = {};
+		this.durations   = {};
+		this.itemStartTime = null;
+		this.timer       = null;
+		this.totalElapsed = 0;
+	}
+
+	TNQQuiz.prototype.init = function () {
+		if (this.questions.length === 0) return;
+
+		// Show first question
+		this._showQuestion(0);
+
+		// Wire nav buttons
+		var self = this;
+
+		var btnCheck = this.container.querySelector('.tnq-btn-check');
+		var btnNext  = this.container.querySelector('.tnq-btn-next');
+		var btnHint  = this.container.querySelector('.tnq-btn-hint');
+
+		if (btnCheck) {
+			btnCheck.addEventListener('click', function () {
+				self._onCheck();
+			});
+		}
+		if (btnNext) {
+			btnNext.addEventListener('click', function () {
+				self._onNext();
+			});
+		}
+		if (btnHint) {
+			btnHint.addEventListener('click', function () {
+				self._onHint();
+			});
+		}
+	};
+
+	TNQQuiz.prototype._showQuestion = function (idx) {
+		this.questions.forEach(function (q, i) {
+			q.style.display = i === idx ? '' : 'none';
+		});
+
+		this.currentIdx = idx;
+		this.itemStartTime = Date.now();
+		this._updateProgress();
+		this._initCurrentInteraction();
+
+		// Reset timer for this question
+		if (this.mode !== 'practice') {
+			this._startTimer();
+		}
+
+		// Reset nav buttons state
+		var btnCheck = this.container.querySelector('.tnq-btn-check');
+		var btnNext  = this.container.querySelector('.tnq-btn-next');
+		var btnHint  = this.container.querySelector('.tnq-btn-hint');
+
+		if (this.mode === 'practice') {
+			if (btnCheck) { btnCheck.style.display = ''; btnCheck.textContent = 'Check my answer'; }
+			if (btnNext)  { btnNext.style.display  = 'none'; }
+			if (btnHint)  { btnHint.style.display  = ''; }
+		} else {
+			if (btnCheck) { btnCheck.style.display = ''; btnCheck.textContent = idx < this.questions.length - 1 ? 'Next question \u2192' : 'Finish'; }
+			if (btnNext)  { btnNext.style.display  = 'none'; }
+			if (btnHint)  { btnHint.style.display  = 'none'; }
+		}
+
+		// Hide feedback from previous question
+		var feedbackEl   = this.container.querySelector('.tnq-feedback');
+		var explanationEl = this.container.querySelector('.tnq-explanation');
+		var hintBox      = this.container.querySelector('.tnq-hint-box');
+
+		if (feedbackEl)    { feedbackEl.classList.remove('is-visible'); }
+		if (explanationEl) { explanationEl.classList.remove('is-visible'); }
+		if (hintBox)       { hintBox.classList.remove('is-visible'); }
+	};
+
+	TNQQuiz.prototype._initCurrentInteraction = function () {
+		var q    = this.questions[this.currentIdx];
+		var type = q.dataset.type;
+		var interactionEl = q.querySelector('.tnq-interaction');
+
+		if (!interactionEl) return;
+
+		var module = this._getModule(type);
+		if (module && module.init) {
+			module.init(interactionEl);
+		}
+	};
+
+	TNQQuiz.prototype._getModule = function (type) {
+		var map = {
+			'drag-sequence': TNQInteractions.dragSequence,
+			'loop-count':    TNQInteractions.loopCount,
+			'click-color':   TNQInteractions.clickColor,
+			'pattern-next':  TNQInteractions.patternNext,
+			'match-pairs':   TNQInteractions.matchPairs,
+			'drag-sort':     TNQInteractions.dragSort,
+		};
+		return map[type] || null;
+	};
+
+	TNQQuiz.prototype._startTimer = function () {
+		var timerEl = this.container.querySelector('.tnq-timer');
+		if (!timerEl) return;
+
+		timerEl.style.display = '';
+
+		var duration = 90; // default 7-8 band
+		if (this.ageBand === '9-10')  duration = 75;
+		if (this.ageBand === '11-12') duration = 60;
+
+		if (!this.timer) {
+			this.timer = new TNQTimer(timerEl, duration);
+		} else {
+			this.timer.reset(duration);
+		}
+		this.timer.start();
+	};
+
+	TNQQuiz.prototype._updateProgress = function () {
+		var total    = this.questions.length;
+		var current  = this.currentIdx + 1;
+		var pct      = ((current - 1) / total) * 100;
+
+		var progressFill  = this.container.querySelector('.tnq-progress-fill');
+		var progressLabel = this.container.querySelector('.tnq-progress-label');
+
+		if (progressFill)  progressFill.style.width = pct + '%';
+		if (progressLabel) progressLabel.textContent = 'Question ' + current + ' of ' + total;
+	};
+
+	TNQQuiz.prototype._getCurrentAnswer = function () {
+		var q    = this.questions[this.currentIdx];
+		var type = q.dataset.type;
+		var interactionEl = q.querySelector('.tnq-interaction');
+		if (!interactionEl) return null;
+
+		var module = this._getModule(type);
+		if (module && module.getAnswer) {
+			return module.getAnswer(interactionEl);
+		}
+		return null;
+	};
+
+	TNQQuiz.prototype._isAnswerCorrect = function () {
+		var q    = this.questions[this.currentIdx];
+		var type = q.dataset.type;
+		var correctRaw = q.dataset.answer;
+		if (!correctRaw) return false;
+
+		var correct;
+		try { correct = JSON.parse(correctRaw); } catch(e) { correct = correctRaw; }
+
+		var submitted = this._getCurrentAnswer();
+		var module    = this._getModule(type);
+		if (module && module.validate) {
+			return module.validate(submitted, correct);
+		}
+		return false;
+	};
+
+	TNQQuiz.prototype._recordAnswer = function () {
+		var q   = this.questions[this.currentIdx];
+		var id  = q.dataset.id;
+		var elapsed = Math.round((Date.now() - this.itemStartTime) / 1000);
+
+		this.answers[id]   = this._getCurrentAnswer();
+		this.durations[id] = elapsed;
+		this.totalElapsed += elapsed;
+
+		if (this.timer) {
+			this.timer.stop();
+		}
+	};
+
+	TNQQuiz.prototype._onCheck = function () {
+		// Practice mode: show feedback
+		if (this.mode === 'practice') {
+			this._recordAnswer();
+			var correct = this._isAnswerCorrect();
+			this._showFeedback(correct);
+
+			var btnCheck = this.container.querySelector('.tnq-btn-check');
+			var btnNext  = this.container.querySelector('.tnq-btn-next');
+			if (btnCheck) btnCheck.style.display = 'none';
+			if (btnNext)  {
+				btnNext.style.display = '';
+				btnNext.textContent   = this.currentIdx < this.questions.length - 1 ? 'Next question \u2192' : 'Finish practice';
+			}
+		} else {
+			// Assessment mode: "Check" is actually Next/Submit
+			this._recordAnswer();
+			this._advance();
+		}
+	};
+
+	TNQQuiz.prototype._onNext = function () {
+		this._advance();
+	};
+
+	TNQQuiz.prototype._advance = function () {
+		if (this.currentIdx < this.questions.length - 1) {
+			this._showQuestion(this.currentIdx + 1);
+		} else {
+			this._onComplete();
+		}
+	};
+
+	TNQQuiz.prototype._onHint = function () {
+		var hintBox = this.container.querySelector('.tnq-hint-box');
+		if (hintBox) hintBox.classList.add('is-visible');
+	};
+
+	TNQQuiz.prototype._showFeedback = function (correct) {
+		var feedbackEl    = this.container.querySelector('.tnq-feedback');
+		var explanationEl = this.container.querySelector('.tnq-explanation');
+
+		if (feedbackEl) {
+			feedbackEl.classList.remove('is-correct', 'is-wrong');
+			feedbackEl.classList.add('is-visible', correct ? 'is-correct' : 'is-wrong');
+
+			var icon = correct ? '\u2714' : '\u2718';
+			var msg  = correct ? 'Correct! Well done.' : 'Not quite right. Try again or see the explanation below.';
+			var iconEl = feedbackEl.querySelector('.tnq-feedback-icon');
+			var msgEl  = feedbackEl.querySelector('.tnq-feedback-msg');
+			if (iconEl) iconEl.textContent = icon;
+			if (msgEl)  msgEl.textContent  = msg;
+		}
+
+		if (explanationEl) {
+			explanationEl.classList.add('is-visible');
+		}
+	};
+
+	TNQQuiz.prototype._onComplete = function () {
+		if (this.mode === 'practice') {
+			// Practice never submits — show a simple done message
+			this._showPracticeDone();
+			return;
+		}
+
+		// Assessment: submit via AJAX
+		var self = this;
+		var submitBtn = this.container.querySelector('.tnq-btn-check');
+		if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Submitting\u2026'; }
+
+		var data = {
+			action:           'tnq_submit_assessment',
+			nonce:            TNQData.nonce,
+			assessment_type:  this.assessType,
+			age_band:         this.ageBand,
+			answers:          JSON.stringify(this.answers),
+			duration_seconds: this.totalElapsed,
+			tutor_course_id:  TNQData.courseId  || 0,
+			tutor_lesson_id:  TNQData.lessonId  || 0,
+		};
+
+		var xhr = new XMLHttpRequest();
+		xhr.open('POST', TNQData.ajaxUrl, true);
+		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		xhr.onload = function () {
+			if (xhr.status === 200) {
+				try {
+					var resp = JSON.parse(xhr.responseText);
+					if (resp.success) {
+						self._showResults(resp.data);
+					} else {
+						self._showError(resp.data && resp.data.message ? resp.data.message : 'Submission failed. Please try again.');
+					}
+				} catch (e) {
+					self._showError('Unexpected response from server.');
+				}
+			} else {
+				self._showError('Network error. Please check your connection.');
+			}
+		};
+		xhr.onerror = function () {
+			self._showError('Network error. Please check your connection.');
+		};
+
+		// Encode body
+		var body = Object.keys(data).map(function (k) {
+			return encodeURIComponent(k) + '=' + encodeURIComponent(
+				typeof data[k] === 'object' ? JSON.stringify(data[k]) : data[k]
+			);
+		}).join('&');
+
+		xhr.send(body);
+	};
+
+	TNQQuiz.prototype._showPracticeDone = function () {
+		var html = '<div class="tnq-results-screen">' +
+			'<div class="tnq-score-display">Great work!</div>' +
+			'<div class="tnq-score-label">You finished all the practice questions.</div>' +
+			'<div class="tnq-interpretation">Practice helps you get ready for the real assessment. Ask your teacher when you are ready to begin.</div>' +
+			'</div>';
+
+		var questionsWrap = this.container.querySelector('.tnq-questions');
+		if (questionsWrap) questionsWrap.style.display = 'none';
+		var navEl = this.container.querySelector('.tnq-nav');
+		if (navEl) navEl.style.display = 'none';
+		var timerEl = this.container.querySelector('.tnq-timer');
+		if (timerEl) timerEl.style.display = 'none';
+
+		var done = document.createElement('div');
+		done.innerHTML = html;
+		this.container.appendChild(done);
+	};
+
+	TNQQuiz.prototype._showResults = function (data) {
+		var total   = data.score_total    || 0;
+		var algScore = data.score_algorithmic || 0;
+		var patScore = data.score_pattern     || 0;
+		var logScore = data.score_logical     || 0;
+		var interp  = data.interpretation  || '';
+		var growth  = data.growth;
+
+		var growthHtml = '';
+		if (typeof growth === 'number') {
+			if (growth > 0) {
+				growthHtml = '<div class="tnq-growth-line tnq-growth-positive">You improved by +' + growth + ' point' + (growth !== 1 ? 's' : '') + '!</div>';
+			} else if (growth === 0) {
+				growthHtml = '<div class="tnq-growth-line tnq-growth-zero">You held steady.</div>';
+			} else {
+				growthHtml = '<div class="tnq-growth-line tnq-growth-negative">This was a tricky one \u2014 don\'t worry, you\'re learning!</div>';
+			}
+		}
+
+		var barHtml = this._skillBarHtml('Algorithmic', algScore) +
+		              this._skillBarHtml('Pattern',     patScore) +
+		              this._skillBarHtml('Logical',     logScore);
+
+		var html = '<div class="tnq-results-screen">' +
+			'<div class="tnq-score-display">You got ' + total + ' / 9</div>' +
+			'<div class="tnq-score-label">Well done for completing the assessment!</div>' +
+			'<div class="tnq-skill-bars">' + barHtml + '</div>' +
+			growthHtml +
+			'<div class="tnq-interpretation">' + this._esc(interp) + '</div>' +
+			'</div>';
+
+		var questionsWrap = this.container.querySelector('.tnq-questions');
+		if (questionsWrap) questionsWrap.style.display = 'none';
+		var navEl = this.container.querySelector('.tnq-nav');
+		if (navEl) navEl.style.display = 'none';
+		var progressEl = this.container.querySelector('.tnq-progress');
+		if (progressEl) progressEl.style.display = 'none';
+		var timerEl = this.container.querySelector('.tnq-timer');
+		if (timerEl) timerEl.style.display = 'none';
+
+		var resultDiv = document.createElement('div');
+		resultDiv.innerHTML = html;
+		this.container.appendChild(resultDiv);
+	};
+
+	TNQQuiz.prototype._skillBarHtml = function (label, score) {
+		var pct = Math.round((score / 3) * 100);
+		return '<div class="tnq-skill-row">' +
+			'<span class="tnq-skill-name">' + label + '</span>' +
+			'<div class="tnq-skill-bar-track"><div class="tnq-skill-bar-fill" style="width:' + pct + '%"></div></div>' +
+			'<span class="tnq-skill-fraction">' + score + ' / 3</span>' +
+			'</div>';
+	};
+
+	TNQQuiz.prototype._showError = function (msg) {
+		var errDiv = document.createElement('div');
+		errDiv.className = 'tnq-message';
+		errDiv.textContent = msg;
+		this.container.appendChild(errDiv);
+	};
+
+	TNQQuiz.prototype._esc = function (str) {
+		var d = document.createElement('div');
+		d.textContent = str;
+		return d.innerHTML;
+	};
+
+	// ── Boot ────────────────────────────────────────────────────
+
+	function boot() {
+		document.querySelectorAll('.tnq-quiz').forEach(function (container) {
+			var quiz = new TNQQuiz(container);
+			quiz.init();
+		});
+	}
+
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', boot);
+	} else {
+		boot();
+	}
+}());

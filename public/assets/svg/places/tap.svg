@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
+  <!-- Tap pipe -->
+  <rect x="28" y="8" width="8" height="24" rx="3" fill="#888" stroke="#555" stroke-width="2"/>
+  <!-- Tap bend -->
+  <path d="M32 32 Q32 40 24 40" stroke="#888" stroke-width="8" stroke-linecap="round" fill="none"/>
+  <!-- Spout end -->
+  <rect x="14" y="36" width="10" height="10" rx="2" fill="#888" stroke="#555" stroke-width="2"/>
+  <!-- Handle -->
+  <rect x="24" y="12" width="16" height="6" rx="3" fill="#1A56A0" stroke="#154580" stroke-width="2"/>
+  <!-- Water drops -->
+  <ellipse cx="19" cy="52" rx="2.5" ry="4" fill="#1A56A0" opacity="0.8"/>
+  <ellipse cx="19" cy="60" rx="2" ry="3" fill="#1A56A0" opacity="0.5"/>
+</svg>

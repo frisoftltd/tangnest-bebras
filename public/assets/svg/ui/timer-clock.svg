@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
+  <circle cx="32" cy="36" r="22" fill="#fff" stroke="currentColor" stroke-width="2.5"/>
+  <line x1="32" y1="36" x2="32" y2="22" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+  <line x1="32" y1="36" x2="42" y2="42" stroke="#F39C12" stroke-width="2.5" stroke-linecap="round"/>
+  <circle cx="32" cy="36" r="3" fill="currentColor"/>
+  <!-- Crown top -->
+  <rect x="28" y="12" width="8" height="4" rx="1" fill="currentColor"/>
+  <rect x="24" y="8" width="6" height="6" rx="2" fill="currentColor"/>
+  <rect x="34" y="8" width="6" height="6" rx="2" fill="currentColor"/>
+  <!-- Tick marks -->
+  <line x1="32" y1="16" x2="32" y2="19" stroke="currentColor" stroke-width="2"/>
+  <line x1="32" y1="53" x2="32" y2="56" stroke="currentColor" stroke-width="2"/>
+  <line x1="12" y1="36" x2="15" y2="36" stroke="currentColor" stroke-width="2"/>
+  <line x1="49" y1="36" x2="52" y2="36" stroke="currentColor" stroke-width="2"/>
+</svg>

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
+  <!-- Zipper track -->
+  <line x1="12" y1="32" x2="52" y2="32" stroke="#888" stroke-width="6" stroke-linecap="round"/>
+  <!-- Zipper teeth left side (open) -->
+  <line x1="12" y1="28" x2="28" y2="28" stroke="#555" stroke-width="2.5" stroke-dasharray="5 3" stroke-linecap="round"/>
+  <!-- Zipper teeth right side (open) -->
+  <line x1="12" y1="36" x2="28" y2="36" stroke="#555" stroke-width="2.5" stroke-dasharray="5 3" stroke-linecap="round"/>
+  <!-- Zipper teeth closed -->
+  <line x1="28" y1="28" x2="52" y2="28" stroke="#1A56A0" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="28" y1="36" x2="52" y2="36" stroke="#1A56A0" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Zipper pull -->
+  <rect x="24" y="24" width="10" height="16" rx="4" fill="#F39C12" stroke="#d68910" stroke-width="2"/>
+  <!-- Pull tab -->
+  <path d="M34 30 Q42 28 44 22" stroke="#d68910" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+  <circle cx="44" cy="22" r="4" fill="#F39C12" stroke="#d68910" stroke-width="1.5"/>
+  <!-- Done indicator arrow -->
+  <path d="M48 38 L52 42 L44 48" stroke="#1E8449" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+</svg>

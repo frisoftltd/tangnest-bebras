@@ -25,10 +25,12 @@ class TNQ_Plugin {
 		( new TNQ_I18n() )->load();
 		( new TNQ_Updater() )->init();
 		( new TNQ_Legacy_Quiz() )->init();
+		( new TNQ_Assessment_Ajax() )->init();
 		( new TNQ_Shortcodes() )->init();
 		if ( is_admin() ) {
 			( new TNQ_Admin() )->init();
 			( new TNQ_Admin_Menu() )->init();
+			( new TNQ_Preview() )->init();
 		} else {
 			( new TNQ_Public() )->init();
 		}

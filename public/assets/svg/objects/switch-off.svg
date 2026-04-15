@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
+  <!-- Switch plate -->
+  <rect x="12" y="16" width="40" height="32" rx="6" fill="#f0f0f0" stroke="#555" stroke-width="2.5"/>
+  <!-- Toggle track -->
+  <rect x="18" y="24" width="28" height="16" rx="8" fill="#aaa" stroke="#777" stroke-width="2"/>
+  <!-- Toggle knob (OFF = left) -->
+  <circle cx="26" cy="32" r="7" fill="#fff" stroke="#777" stroke-width="2"/>
+  <!-- OFF label -->
+  <text x="34" y="36" font-size="9" fill="#555" font-weight="bold">OFF</text>
+</svg>

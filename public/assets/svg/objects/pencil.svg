@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
+  <!-- Pencil body (diagonal) -->
+  <rect x="26" y="6" width="12" height="42" rx="2" fill="#F39C12" stroke="#d68910" stroke-width="2" transform="rotate(-30 32 32)"/>
+  <!-- Eraser end -->
+  <rect x="26" y="6" width="12" height="8" rx="2 2 0 0" fill="#e0a0a0" stroke="#c0706b" stroke-width="2" transform="rotate(-30 32 32)"/>
+  <!-- Tip -->
+  <path d="M22 52 L28 46 L34 52 Z" fill="#c8a97a" stroke="#795548" stroke-width="1.5" stroke-linejoin="round" transform="rotate(-30 32 32) translate(-2 0)"/>
+  <!-- Graphite tip -->
+  <path d="M24 54 L28 50" stroke="#555" stroke-width="2" stroke-linecap="round" transform="rotate(-30 32 32) translate(-2 0)"/>
+</svg>

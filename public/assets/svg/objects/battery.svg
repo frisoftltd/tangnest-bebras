@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
+  <!-- Battery body -->
+  <rect x="10" y="22" width="44" height="24" rx="4" fill="#e8f4f8" stroke="#1A56A0" stroke-width="2.5"/>
+  <!-- Positive terminal -->
+  <rect x="54" y="28" width="6" height="12" rx="2" fill="#1A56A0"/>
+  <!-- Charge segments -->
+  <rect x="16" y="28" width="8" height="12" rx="2" fill="#1E8449"/>
+  <rect x="28" y="28" width="8" height="12" rx="2" fill="#1E8449"/>
+  <rect x="40" y="28" width="8" height="12" rx="2" fill="#F39C12"/>
+  <!-- Plus/minus -->
+  <text x="57" y="37" font-size="10" fill="#fff" font-weight="bold" text-anchor="middle">+</text>
+</svg>

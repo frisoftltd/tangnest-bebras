@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
+  <!-- Ball -->
+  <circle cx="32" cy="32" r="26" fill="#fff" stroke="#333" stroke-width="2.5"/>
+  <!-- Pentagon patches -->
+  <polygon points="32,10 38,18 36,26 28,26 26,18" fill="#333"/>
+  <polygon points="52,24 56,32 52,40 44,38 42,30" fill="#333"/>
+  <polygon points="44,48 38,54 30,52 30,44 38,40" fill="#333"/>
+  <polygon points="20,48 14,44 14,36 22,32 28,40" fill="#333"/>
+  <polygon points="12,24 18,18 26,20 26,28 18,32" fill="#333"/>
+</svg>

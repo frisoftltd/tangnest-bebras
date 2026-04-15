@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
+  <!-- Tap handle (lever-style) -->
+  <!-- Pipe/valve body -->
+  <circle cx="32" cy="36" r="12" fill="#e8e8e8" stroke="#555" stroke-width="2.5"/>
+  <circle cx="32" cy="36" r="6" fill="#888" stroke="#555" stroke-width="2"/>
+  <!-- Handle bar -->
+  <rect x="32" y="12" width="8" height="26" rx="4" fill="#1A56A0" stroke="#154580" stroke-width="2" transform="rotate(0 32 36)"/>
+  <!-- Arrow showing turning -->
+  <path d="M18 22 Q10 30 14 40" stroke="#F39C12" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+  <path d="M10 38 L14 40 L16 35" stroke="#F39C12" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+</svg>

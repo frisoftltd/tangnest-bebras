@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
+  <!-- Cup tilted slightly with liquid going in -->
+  <!-- Cup body -->
+  <path d="M16 28 L20 52 Q20 54 22 54 L44 54 Q46 54 46 52 L50 28 Z" fill="#fff8e1" stroke="#1A56A0" stroke-width="2.5" stroke-linejoin="round"/>
+  <!-- Handle -->
+  <path d="M50 34 Q58 34 58 42 Q58 48 50 48" stroke="#F39C12" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+  <!-- Water stream going into cup -->
+  <path d="M28 10 Q30 14 28 18 Q26 22 28 26" stroke="#1A56A0" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <path d="M34 8 Q36 12 34 16 Q32 20 34 24" stroke="#1A56A0" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.6"/>
+</svg>
