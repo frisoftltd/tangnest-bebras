@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
+  <!-- Folded blanket - side view showing it being removed/folded -->
+  <!-- Bottom layer (bed) -->
+  <rect x="8" y="44" width="48" height="8" rx="3" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="2"/>
+  <!-- Folded blanket in arms -->
+  <path d="M14 28 Q12 32 16 38 L48 38 Q52 32 50 28 Q32 20 14 28 Z" fill="#e74c3c" stroke="#c0392b" stroke-width="2"/>
+  <!-- Fold lines on blanket -->
+  <path d="M20 30 Q32 26 44 30" stroke="#c0392b" stroke-width="1.5" stroke-dasharray="3 2" fill="none"/>
+  <path d="M18 34 Q32 30 46 34" stroke="#c0392b" stroke-width="1.5" stroke-dasharray="3 2" fill="none"/>
+  <!-- Hands holding blanket -->
+  <path d="M10 32 Q8 36 12 40 L16 38 Q14 34 16 30 Z" fill="#f5cba7" stroke="#d4956b" stroke-width="1.5"/>
+  <path d="M54 32 Q56 36 52 40 L48 38 Q50 34 48 30 Z" fill="#f5cba7" stroke="#d4956b" stroke-width="1.5"/>
+  <!-- Arrow indicating removal -->
+  <path d="M32 10 L32 20" stroke="#3498db" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M28 14 L32 10 L36 14" stroke="#3498db" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+</svg>

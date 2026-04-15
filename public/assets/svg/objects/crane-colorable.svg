@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
+  <!-- Background region -->
+  <rect data-region="bg" x="0" y="0" width="64" height="64" fill="transparent"/>
+  <!-- Beak -->
+  <path data-region="beak" d="M44 14 L56 18 L54 22 L44 18 Z" fill="#F39C12" stroke="#d4ac0d" stroke-width="1.5"/>
+  <!-- Body -->
+  <path data-region="body" d="M20 18 Q16 30 18 44 Q22 56 32 56 Q42 56 46 44 Q50 30 44 18 Q38 12 32 14 Q26 12 20 18 Z" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="2"/>
+  <!-- Wing (right side) -->
+  <path data-region="wing" d="M44 18 Q56 22 58 36 Q56 48 46 44 Q50 30 44 18 Z" fill="#f0f0f0" stroke="#bdc3c7" stroke-width="2"/>
+  <!-- Tail feathers -->
+  <path data-region="tail" d="M18 44 Q12 52 14 60 Q20 56 22 50 Q26 58 28 60 Q30 54 28 48 Q22 52 18 44 Z" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="2"/>
+  <!-- Head and crest (part of body, not interactive) -->
+  <circle cx="36" cy="14" r="6" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="1.5"/>
+  <!-- Red crown/crest (decorative only) -->
+  <circle cx="36" cy="8" r="3" fill="#e74c3c"/>
+  <path d="M34 10 L36 4 L38 10" fill="#e74c3c" stroke="#c0392b" stroke-width="1"/>
+  <!-- Eye -->
+  <circle cx="40" cy="14" r="2" fill="#2c3e50"/>
+  <circle cx="40" cy="14" r="1" fill="#fff"/>
+  <!-- Legs -->
+  <line x1="28" y1="56" x2="26" y2="62" stroke="#888" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="36" y1="56" x2="34" y2="62" stroke="#888" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M22 62 L26 62 L30 62" stroke="#888" stroke-width="2" stroke-linecap="round"/>
+  <path d="M30 62 L34 62 L38 62" stroke="#888" stroke-width="2" stroke-linecap="round"/>
+</svg>

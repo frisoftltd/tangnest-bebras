@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
+  <!-- Rain cloud -->
+  <path d="M4 14 Q2 8 8 6 Q8 2 14 2 Q18 0 20 4 Q26 4 26 10 Q26 14 20 14 Z" fill="#95a5a6" stroke="#7f8c8d" stroke-width="1.5"/>
+  <!-- Rain drops (heavy) -->
+  <line x1="6" y1="16" x2="4" y2="22" stroke="#3498db" stroke-width="2" stroke-linecap="round"/>
+  <line x1="12" y1="16" x2="10" y2="22" stroke="#3498db" stroke-width="2" stroke-linecap="round"/>
+  <line x1="18" y1="16" x2="16" y2="22" stroke="#3498db" stroke-width="2" stroke-linecap="round"/>
+  <line x1="24" y1="16" x2="22" y2="22" stroke="#3498db" stroke-width="2" stroke-linecap="round"/>
+  <!-- Person with umbrella (correct answer scenario) -->
+  <circle cx="16" cy="36" r="5" fill="#f5cba7" stroke="#d4956b" stroke-width="1.5"/>
+  <!-- Umbrella over person -->
+  <path d="M4 32 Q16 20 28 32" fill="#9b59b6" stroke="#8e44ad" stroke-width="2"/>
+  <line x1="16" y1="32" x2="16" y2="42" stroke="#8e44ad" stroke-width="2" stroke-linecap="round"/>
+  <!-- Person body -->
+  <path d="M16 41 L16 54" stroke="#555" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M10 44 L16 42 L22 44" stroke="#555" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M16 54 L12 62" stroke="#555" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M16 54 L20 62" stroke="#555" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Long road + school (far) -->
+  <path d="M24 58 Q40 54 58 56" stroke="#bdc3c7" stroke-width="3" stroke-dasharray="4 3" stroke-linecap="round" fill="none"/>
+  <!-- School (far, small) -->
+  <path d="M50 42 L62 42 L62 58 L50 58 Z" fill="#3498db" stroke="#2980b9" stroke-width="1.5"/>
+  <path d="M49 42 L56 32 L63 42 Z" fill="#e74c3c" stroke="#c0392b" stroke-width="1.5"/>
+  <!-- Long arrow (far) -->
+  <path d="M26 48 L46 48" stroke="#3498db" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 2"/>
+  <path d="M44 46 L46 48 L44 50" stroke="#3498db" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+</svg>

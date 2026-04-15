@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
+  <!-- Bed base -->
+  <rect x="6" y="44" width="52" height="12" rx="3" fill="#bdc3c7" stroke="#95a5a6" stroke-width="2"/>
+  <!-- Flat sheet on bed -->
+  <rect x="8" y="28" width="48" height="20" rx="2" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="2"/>
+  <!-- Sheet top fold -->
+  <path d="M8 28 Q32 24 56 28" stroke="#bdc3c7" stroke-width="2" fill="none"/>
+  <!-- Straightening arrows (both sides) -->
+  <path d="M14 34 L10 34 L10 38 L14 38" stroke="#3498db" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <path d="M50 34 L54 34 L54 38 L50 38" stroke="#3498db" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <!-- Center line showing flat/smooth -->
+  <path d="M18 36 Q32 34 46 36" stroke="#3498db" stroke-width="2" stroke-dasharray="4 2" stroke-linecap="round" fill="none"/>
+  <!-- Pillow outline -->
+  <rect x="18" y="20" width="28" height="10" rx="5" fill="#fff" stroke="#bdc3c7" stroke-width="1.5"/>
+</svg>

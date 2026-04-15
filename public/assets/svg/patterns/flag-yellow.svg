@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
+  <!-- Flag pole -->
+  <rect x="6" y="4" width="4" height="56" rx="2" fill="#888" stroke="#555" stroke-width="1.5"/>
+  <!-- Yellow flag -->
+  <rect x="10" y="8" width="46" height="32" rx="2" fill="#f1c40f" stroke="#d4ac0d" stroke-width="1.5"/>
+</svg>

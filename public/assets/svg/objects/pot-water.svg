@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
+  <!-- Pot body -->
+  <path d="M12 28 Q10 48 16 54 L48 54 Q54 48 52 28 Z" fill="#95a5a6" stroke="#7f8c8d" stroke-width="2.5"/>
+  <!-- Pot rim -->
+  <rect x="10" y="24" width="44" height="6" rx="3" fill="#7f8c8d" stroke="#555" stroke-width="2"/>
+  <!-- Handles -->
+  <path d="M10 30 Q4 30 4 36 Q4 42 10 42" stroke="#7f8c8d" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <path d="M54 30 Q60 30 60 36 Q60 42 54 42" stroke="#7f8c8d" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <!-- Water drops inside (showing water) -->
+  <circle cx="28" cy="38" r="4" fill="#3498db" opacity="0.7"/>
+  <circle cx="36" cy="42" r="3" fill="#3498db" opacity="0.7"/>
+  <circle cx="38" cy="34" r="2.5" fill="#3498db" opacity="0.6"/>
+  <!-- Water drop above (being poured) -->
+  <path d="M32 8 Q30 12 32 16 Q34 12 32 8 Z" fill="#3498db"/>
+  <path d="M40 4 Q38 8 40 12 Q42 8 40 4 Z" fill="#3498db" opacity="0.7"/>
+</svg>

@@ -239,21 +239,39 @@ class TNQ_Renderer {
 
 	// ── loop-count ───────────────────────────────────────────────
 	private static function render_loop_count( array $q ): string {
-		$min     = (int) ( $q['min']    ?? 1 );
-		$max     = (int) ( $q['max']    ?? 30 );
-		$initial = (int) ( $q['initial'] ?? $min );
-		$tiles   = (int) ( $q['tiles']  ?? 0 );
+		$min        = (int) ( $q['min']             ?? 1 );
+		$max        = (int) ( $q['max']             ?? 30 );
+		$initial    = (int) ( $q['initial']         ?? $min );
+		$tiles      = (int) ( $q['tiles']           ?? 0 );
+		$tile_icon  = $q['tile_icon']               ?? '';
+		$group_size = (int) ( $q['tile_group_size'] ?? 0 );
 
 		ob_start();
 		?>
 		<div class="tnq-loop-count" data-min="<?php echo esc_attr( $min ); ?>" data-max="<?php echo esc_attr( $max ); ?>" data-initial="<?php echo esc_attr( $initial ); ?>" tabindex="0">
 			<div class="tnq-loop-display">
 				<?php if ( $tiles > 0 ) : ?>
-				<div class="tnq-tiles-grid">
-					<?php for ( $i = 0; $i < $tiles; $i++ ) : ?>
-					<div class="tnq-tile" style="background:var(--tnq-primary)"></div>
-					<?php endfor; ?>
-				</div>
+				<div class="tnq-tiles-grid<?php echo $tile_icon ? ' tnq-tiles-grid--icons' : ''; ?>"><?php
+					if ( $group_size > 0 && $tile_icon ) :
+						$groups = (int) ceil( $tiles / $group_size );
+						for ( $g = 0; $g < $groups; $g++ ) :
+							$count = min( $group_size, $tiles - $g * $group_size );
+							?><div class="tnq-tile-group"><?php
+							for ( $i = 0; $i < $count; $i++ ) :
+								?><div class="tnq-tile tnq-tile--icon"><?php echo TNQ_Icons::icon( $tile_icon ); ?></div><?php
+							endfor;
+							?></div><?php
+						endfor;
+					else :
+						for ( $i = 0; $i < $tiles; $i++ ) :
+							if ( $tile_icon ) :
+								?><div class="tnq-tile tnq-tile--icon"><?php echo TNQ_Icons::icon( $tile_icon ); ?></div><?php
+							else :
+								?><div class="tnq-tile" style="background:var(--tnq-primary)"></div><?php
+							endif;
+						endfor;
+					endif;
+				?></div>
 				<?php endif; ?>
 				<div class="tnq-counter-row">
 					<button class="tnq-counter-btn" data-dir="-" type="button" aria-label="Decrease" <?php echo $initial <= $min ? 'disabled' : ''; ?>>&#8722;</button>

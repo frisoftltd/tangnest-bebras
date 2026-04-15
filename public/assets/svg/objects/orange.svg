@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
+  <!-- Orange fruit -->
+  <circle cx="32" cy="36" r="22" fill="#e67e22" stroke="#ca6f1e" stroke-width="2"/>
+  <!-- Texture segments hint -->
+  <path d="M32 14 Q38 24 32 36" stroke="#d35400" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+  <path d="M32 14 Q26 24 32 36" stroke="#d35400" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+  <path d="M10 30 Q22 32 32 36" stroke="#d35400" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+  <path d="M54 30 Q42 32 32 36" stroke="#d35400" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+  <!-- Highlight -->
+  <ellipse cx="24" cy="24" rx="6" ry="4" fill="#f39c12" opacity="0.4"/>
+  <!-- Stem and leaf -->
+  <rect x="30" y="8" width="4" height="8" rx="2" fill="#6d4c41" stroke="#5d4037" stroke-width="1"/>
+  <path d="M32 12 Q40 6 42 10 Q36 14 32 12 Z" fill="#27ae60" stroke="#196f3d" stroke-width="1.5"/>
+</svg>

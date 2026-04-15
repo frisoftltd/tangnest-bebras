@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
+  <!-- Traffic light housing -->
+  <rect x="18" y="4" width="28" height="52" rx="8" fill="#2c3e50" stroke="#1a252f" stroke-width="2.5"/>
+  <!-- Red light ON -->
+  <circle cx="32" cy="18" r="9" fill="#e74c3c" stroke="#c0392b" stroke-width="2"/>
+  <circle cx="32" cy="18" r="5" fill="#ff6b6b" opacity="0.6"/>
+  <!-- Amber light OFF -->
+  <circle cx="32" cy="32" r="9" fill="#555" stroke="#333" stroke-width="2"/>
+  <!-- Green light OFF -->
+  <circle cx="32" cy="46" r="9" fill="#555" stroke="#333" stroke-width="2"/>
+  <!-- Glow around red light -->
+  <circle cx="32" cy="18" r="12" fill="none" stroke="#e74c3c" stroke-width="1.5" opacity="0.3"/>
+</svg>

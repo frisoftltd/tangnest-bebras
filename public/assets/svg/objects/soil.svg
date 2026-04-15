@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
+  <!-- Soil mound / pot of soil -->
+  <rect x="10" y="38" width="44" height="18" rx="4" fill="#795548" stroke="#5d4037" stroke-width="2.5"/>
+  <!-- Soil surface texture -->
+  <path d="M10 38 Q22 34 32 38 Q42 34 54 38" fill="#8d6e63" stroke="#795548" stroke-width="1.5"/>
+  <!-- Soil clumps -->
+  <ellipse cx="20" cy="44" rx="5" ry="3" fill="#6d4c41"/>
+  <ellipse cx="36" cy="46" rx="6" ry="3" fill="#6d4c41"/>
+  <ellipse cx="48" cy="42" rx="4" ry="2.5" fill="#6d4c41"/>
+  <!-- Small pebbles -->
+  <circle cx="28" cy="42" r="2" fill="#9e9e9e"/>
+  <circle cx="44" cy="48" r="1.5" fill="#9e9e9e"/>
+  <!-- Label text area -->
+  <path d="M16 52 Q32 50 48 52" stroke="#a1887f" stroke-width="1" stroke-dasharray="3 2" fill="none"/>
+</svg>

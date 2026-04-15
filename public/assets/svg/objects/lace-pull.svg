@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
+  <!-- Shoe outline -->
+  <path d="M8 44 Q8 36 16 32 L28 28 Q34 26 40 30 L56 34 Q60 40 56 46 Q52 50 46 50 L14 50 Q8 50 8 44 Z" fill="#795548" stroke="#5d4037" stroke-width="2.5"/>
+  <!-- Shoe toe cap -->
+  <path d="M44 30 Q54 32 56 40 L50 42 Q46 36 44 30 Z" fill="#6d4c41" stroke="#5d4037" stroke-width="1.5"/>
+  <!-- Lace crossing -->
+  <path d="M20 28 L36 24" stroke="#f1c40f" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M28 28 L22 22" stroke="#f1c40f" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M28 28 L34 22" stroke="#f1c40f" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Lace bow loops -->
+  <path d="M22 22 Q16 16 20 12 Q24 14 26 18" stroke="#f1c40f" stroke-width="2" stroke-linecap="round" fill="none"/>
+  <path d="M34 22 Q40 16 36 12 Q32 14 30 18" stroke="#f1c40f" stroke-width="2" stroke-linecap="round" fill="none"/>
+  <!-- Arrow showing pull action -->
+  <path d="M22 8 L22 12" stroke="#3498db" stroke-width="2" stroke-linecap="round"/>
+  <path d="M34 8 L34 12" stroke="#3498db" stroke-width="2" stroke-linecap="round"/>
+  <path d="M20 8 L22 5 L24 8" stroke="#3498db" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <path d="M32 8 L34 5 L36 8" stroke="#3498db" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+</svg>

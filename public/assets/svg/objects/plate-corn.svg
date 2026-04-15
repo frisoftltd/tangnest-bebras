@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
+  <!-- Plate -->
+  <ellipse cx="32" cy="50" rx="26" ry="8" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="2"/>
+  <ellipse cx="32" cy="48" rx="22" ry="6" fill="#f8f9fa" stroke="#bdc3c7" stroke-width="1.5"/>
+  <!-- Mini corn on plate (diagonal) -->
+  <path d="M18 42 Q16 36 22 28 Q28 20 36 22 Q44 24 44 32 Q44 40 38 44 Z" fill="#f1c40f" stroke="#d4ac0d" stroke-width="2"/>
+  <ellipse cx="26" cy="34" rx="2.5" ry="3" fill="#F39C12" stroke="#d4ac0d" stroke-width="1"/>
+  <ellipse cx="30" cy="30" rx="2.5" ry="3" fill="#F39C12" stroke="#d4ac0d" stroke-width="1"/>
+  <ellipse cx="34" cy="28" rx="2.5" ry="3" fill="#F39C12" stroke="#d4ac0d" stroke-width="1"/>
+  <ellipse cx="26" cy="40" rx="2.5" ry="3" fill="#F39C12" stroke="#d4ac0d" stroke-width="1"/>
+  <ellipse cx="30" cy="37" rx="2.5" ry="3" fill="#F39C12" stroke="#d4ac0d" stroke-width="1"/>
+  <ellipse cx="34" cy="34" rx="2.5" ry="3" fill="#F39C12" stroke="#d4ac0d" stroke-width="1"/>
+  <!-- Steam lines -->
+  <path d="M36 18 Q34 14 36 10" stroke="#95a5a6" stroke-width="2" stroke-linecap="round" fill="none"/>
+  <path d="M42 20 Q40 16 42 12" stroke="#95a5a6" stroke-width="2" stroke-linecap="round" fill="none"/>
+</svg>

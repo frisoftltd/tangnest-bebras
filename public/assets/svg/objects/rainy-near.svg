@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
+  <!-- Rain cloud (top left) -->
+  <path d="M6 18 Q4 12 10 10 Q10 6 16 6 Q20 4 22 8 Q28 8 28 14 Q28 18 22 18 Z" fill="#95a5a6" stroke="#7f8c8d" stroke-width="1.5"/>
+  <!-- Rain drops -->
+  <line x1="10" y1="20" x2="8" y2="26" stroke="#3498db" stroke-width="2" stroke-linecap="round"/>
+  <line x1="16" y1="20" x2="14" y2="26" stroke="#3498db" stroke-width="2" stroke-linecap="round"/>
+  <line x1="22" y1="20" x2="20" y2="26" stroke="#3498db" stroke-width="2" stroke-linecap="round"/>
+  <!-- Person (no umbrella, getting wet) -->
+  <circle cx="28" cy="34" r="5" fill="#f5cba7" stroke="#d4956b" stroke-width="1.5"/>
+  <path d="M28 39 L28 54" stroke="#555" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M22 42 L28 40 L34 42" stroke="#555" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M28 54 L24 62" stroke="#555" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M28 54 L32 62" stroke="#555" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Rain on person -->
+  <line x1="24" y1="28" x2="22" y2="34" stroke="#3498db" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="30" y1="26" x2="28" y2="32" stroke="#3498db" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- House nearby -->
+  <path d="M42 38 L54 38 L54 58 L42 58 Z" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="2"/>
+  <path d="M40 38 L48 26 L56 38 Z" fill="#e74c3c" stroke="#c0392b" stroke-width="2"/>
+  <!-- Short arrow (nearby) -->
+  <path d="M34 48 L40 48" stroke="#3498db" stroke-width="2" stroke-linecap="round"/>
+  <path d="M38 46 L40 48 L38 50" stroke="#3498db" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+</svg>

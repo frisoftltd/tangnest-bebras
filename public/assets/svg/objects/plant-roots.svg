@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
+  <!-- Soil surface line -->
+  <path d="M6 30 Q32 26 58 30" stroke="#795548" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <!-- Soil fill below -->
+  <rect x="4" y="30" width="56" height="30" rx="2" fill="#d7ccc8"/>
+  <path d="M4 30 Q32 26 60 30 L60 60 L4 60 Z" fill="#8d6e63" opacity="0.3"/>
+  <!-- Stem above soil -->
+  <path d="M32 30 Q30 22 32 14" stroke="#27ae60" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <!-- Leaves -->
+  <path d="M32 22 Q24 16 22 10 Q30 14 32 20" fill="#27ae60" stroke="#1e8449" stroke-width="1.5"/>
+  <path d="M32 18 Q40 12 42 6 Q34 10 32 16" fill="#27ae60" stroke="#1e8449" stroke-width="1.5"/>
+  <!-- Roots below soil -->
+  <path d="M32 30 Q28 36 22 40 Q18 46 20 52" stroke="#a1887f" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+  <path d="M32 32 Q36 40 32 48 Q30 54 32 58" stroke="#a1887f" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+  <path d="M32 30 Q38 36 44 38 Q50 44 48 52" stroke="#a1887f" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+  <path d="M22 40 Q16 42 14 48" stroke="#a1887f" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+  <path d="M44 38 Q50 38 52 44" stroke="#a1887f" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+</svg>

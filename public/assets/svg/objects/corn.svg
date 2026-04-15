@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
+  <!-- Corn cob body -->
+  <path d="M24 52 Q18 44 20 28 Q22 14 32 12 Q42 14 44 28 Q46 44 40 52 Z" fill="#f1c40f" stroke="#d4ac0d" stroke-width="2"/>
+  <!-- Kernel rows -->
+  <ellipse cx="28" cy="24" rx="3" ry="4" fill="#F39C12" stroke="#d4ac0d" stroke-width="1"/>
+  <ellipse cx="32" cy="22" rx="3" ry="4" fill="#F39C12" stroke="#d4ac0d" stroke-width="1"/>
+  <ellipse cx="36" cy="24" rx="3" ry="4" fill="#F39C12" stroke="#d4ac0d" stroke-width="1"/>
+  <ellipse cx="27" cy="32" rx="3" ry="4" fill="#F39C12" stroke="#d4ac0d" stroke-width="1"/>
+  <ellipse cx="32" cy="30" rx="3" ry="4" fill="#F39C12" stroke="#d4ac0d" stroke-width="1"/>
+  <ellipse cx="37" cy="32" rx="3" ry="4" fill="#F39C12" stroke="#d4ac0d" stroke-width="1"/>
+  <ellipse cx="28" cy="40" rx="3" ry="4" fill="#F39C12" stroke="#d4ac0d" stroke-width="1"/>
+  <ellipse cx="32" cy="38" rx="3" ry="4" fill="#F39C12" stroke="#d4ac0d" stroke-width="1"/>
+  <ellipse cx="36" cy="40" rx="3" ry="4" fill="#F39C12" stroke="#d4ac0d" stroke-width="1"/>
+  <!-- Husk leaves -->
+  <path d="M40 52 Q48 44 44 36 Q50 40 46 52 Z" fill="#27ae60" stroke="#196f3d" stroke-width="1.5"/>
+  <path d="M24 52 Q16 44 20 36 Q14 40 18 52 Z" fill="#27ae60" stroke="#196f3d" stroke-width="1.5"/>
+</svg>

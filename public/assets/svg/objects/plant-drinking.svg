@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
+  <!-- Pot -->
+  <path d="M18 38 Q16 52 20 56 L44 56 Q48 52 46 38 Z" fill="#e67e22" stroke="#ca6f1e" stroke-width="2"/>
+  <rect x="16" y="34" width="32" height="6" rx="3" fill="#d35400" stroke="#ca6f1e" stroke-width="2"/>
+  <!-- Soil surface -->
+  <ellipse cx="32" cy="37" rx="14" ry="3" fill="#795548"/>
+  <!-- Plant in pot -->
+  <path d="M32 37 Q30 30 32 22" stroke="#27ae60" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+  <path d="M32 30 Q26 26 24 20 Q30 24 32 28" fill="#27ae60" stroke="#1e8449" stroke-width="1.5"/>
+  <path d="M32 24 Q38 20 40 14 Q34 18 32 22" fill="#27ae60" stroke="#1e8449" stroke-width="1.5"/>
+  <!-- Water drops being absorbed by roots -->
+  <path d="M8 20 Q6 24 8 28 Q10 24 8 20 Z" fill="#3498db"/>
+  <path d="M14 26 Q12 30 14 34 Q16 30 14 26 Z" fill="#3498db"/>
+  <path d="M8 32 Q6 36 8 40 Q10 36 8 32 Z" fill="#3498db"/>
+  <!-- Arrow showing water going to roots -->
+  <path d="M10 40 L18 42" stroke="#3498db" stroke-width="2" stroke-linecap="round"/>
+  <path d="M16 40 L18 42 L16 44" stroke="#3498db" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+</svg>

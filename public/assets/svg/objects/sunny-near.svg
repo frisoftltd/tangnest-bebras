@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
+  <!-- Sun (top left) -->
+  <circle cx="14" cy="12" r="8" fill="#f1c40f" stroke="#F39C12" stroke-width="1.5"/>
+  <line x1="14" y1="2" x2="14" y2="6" stroke="#F39C12" stroke-width="2" stroke-linecap="round"/>
+  <line x1="4" y1="12" x2="8" y2="12" stroke="#F39C12" stroke-width="2" stroke-linecap="round"/>
+  <line x1="6" y1="6" x2="9" y2="9" stroke="#F39C12" stroke-width="2" stroke-linecap="round"/>
+  <line x1="22" y1="6" x2="19" y2="9" stroke="#F39C12" stroke-width="2" stroke-linecap="round"/>
+  <!-- Person (small, going short distance) -->
+  <!-- Person -->
+  <circle cx="28" cy="30" r="5" fill="#f5cba7" stroke="#d4956b" stroke-width="1.5"/>
+  <path d="M28 35 L28 50" stroke="#555" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M22 38 L28 36 L34 38" stroke="#555" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M28 50 L24 58" stroke="#555" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M28 50 L32 58" stroke="#555" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- House nearby (close) -->
+  <path d="M42 34 L54 34 L54 54 L42 54 Z" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="2"/>
+  <path d="M40 34 L48 22 L56 34 Z" fill="#e74c3c" stroke="#c0392b" stroke-width="2"/>
+  <!-- Short arrow (nearby) -->
+  <path d="M34 44 L40 44" stroke="#3498db" stroke-width="2" stroke-linecap="round"/>
+  <path d="M38 42 L40 44 L38 46" stroke="#3498db" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+</svg>
