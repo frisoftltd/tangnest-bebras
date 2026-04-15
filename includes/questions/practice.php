@@ -37,22 +37,24 @@ return [
 		'answer'               => [ 'c', 'a', 'b', 'd' ],
 	],
 
-	// ── P-AT-02 · Algorithmic · loop-count · Easy ────────────────
+	// ── P-AT-02 · Algorithmic · drag-sequence · Easy ─────────────
 	[
 		'id'                   => 'P-AT-02',
 		'skill'                => 'algorithmic',
-		'type'                 => 'loop-count',
+		'type'                 => 'drag-sequence',
 		'difficulty'           => 'easy',
-		'title'                => 'Filling Jerrycans',
+		'title'                => 'Fetching Water',
 		'title_icon'           => 'jerrycan',
-		'instruction'          => 'A tap fills 1 jerrycan at a time. How many times must you go to the tap to fill 3 jerrycans?',
-		'hint'                 => 'Count how many jerrycans you need to fill — that tells you how many trips.',
-		'practice_explanation' => 'Each trip to the tap fills 1 jerrycan. To fill 3 jerrycans you need to make 3 trips. Count the jerrycans!',
-		'tiles'                => 3,
-		'min'                  => 1,
-		'max'                  => 10,
-		'initial'              => 1,
-		'answer'               => 3,
+		'instruction'          => 'Kagiso needs to fetch water. Put the steps in the right order.',
+		'hint'                 => 'Think about what you must have before you go to the tap.',
+		'practice_explanation' => 'First pick up the jerrycan (B), then walk to the tap (A), then fill the jerrycan (D), and finally carry the water home (C).',
+		'items'                => [
+			[ 'id' => 'a', 'icon' => 'tap',        'label' => 'Walk to the tap'    ],
+			[ 'id' => 'b', 'icon' => 'jerrycan',   'label' => 'Pick up the jerrycan' ],
+			[ 'id' => 'c', 'icon' => 'house',      'label' => 'Carry water home'   ],
+			[ 'id' => 'd', 'icon' => 'water-drop', 'label' => 'Fill the jerrycan'  ],
+		],
+		'answer'               => [ 'b', 'a', 'd', 'c' ],
 	],
 
 	// ── P-PR-01 · Pattern · pattern-next · Easy ──────────────────
