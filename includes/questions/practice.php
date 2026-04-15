@@ -76,24 +76,31 @@ return [
 		'answer'               => 5,
 	],
 
-	// ── P-PR-02 · Pattern · drag-sort · Medium ───────────────────
+	// ── P-PR-02 · Pattern · pattern-next · Easy ─────────────────
 	[
 		'id'                   => 'P-PR-02',
 		'skill'                => 'pattern',
-		'type'                 => 'drag-sort',
-		'difficulty'           => 'medium',
-		'title'                => 'Water or Light?',
-		'title_icon'           => 'water-drop',
-		'instruction'          => 'Sort each thing — does it give water, or does it give light?',
-		'hint'                 => 'Think about what each thing does — does it carry water or help you see in the dark?',
-		'practice_explanation' => 'A tap and a jerrycan carry water. A torch and a bulb give light. Sorting by a rule is a pattern skill!',
-		'items'                => [
-			[ 'id' => 'tap',      'icon' => 'tap',        'label' => 'Tap',         'bin' => 0 ],
-			[ 'id' => 'jerrycan', 'icon' => 'jerrycan',   'label' => 'Jerrycan',    'bin' => 0 ],
-			[ 'id' => 'torch',    'icon' => 'torch',      'label' => 'Torch',       'bin' => 1 ],
-			[ 'id' => 'bulb',     'icon' => 'bulb',       'label' => 'Light bulb',  'bin' => 1 ],
+		'type'                 => 'pattern-next',
+		'difficulty'           => 'easy',
+		'title'                => 'What Comes Next?',
+		'title_icon'           => 'bead-red',
+		'instruction'          => 'Look at the bead pattern. What bead comes next?',
+		'hint'                 => 'Look at the two colours and which one comes after red.',
+		'practice_explanation' => 'The pattern is red, blue, red, blue, red... the next bead is blue. The pattern repeats every 2 beads!',
+		'pattern'              => [
+			[ 'icon' => 'bead-red'  ],
+			[ 'icon' => 'bead-blue' ],
+			[ 'icon' => 'bead-red'  ],
+			[ 'icon' => 'bead-blue' ],
+			[ 'icon' => 'bead-red'  ],
 		],
-		'bins'                 => [ 'Gives water', 'Gives light' ],
+		'choices'              => [
+			[ 'id' => 'a', 'icon' => 'bead-blue',   'label' => 'Blue'   ],
+			[ 'id' => 'b', 'icon' => 'bead-red',    'label' => 'Red'    ],
+			[ 'id' => 'c', 'icon' => 'bead-yellow', 'label' => 'Yellow' ],
+			[ 'id' => 'd', 'icon' => 'bead-green',  'label' => 'Green'  ],
+		],
+		'answer'               => 'a',
 	],
 
 	// ── P-LR-01 · Logical · match-pairs · Easy ───────────────────
