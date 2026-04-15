@@ -119,21 +119,19 @@ return [
 	],
 
 	// ── B-78-PR-03 · Pattern · drag-sort · Hard ──────────────────
-	// M2 briefing shows drag-sort example with clap-hand and ball-soccer
-	// in bins "Gets ball next" / "Does NOT get ball next".
 	[
 		'id'         => 'B-78-PR-03',
 		'skill'      => 'pattern',
 		'type'       => 'drag-sort',
 		'difficulty' => 'hard',
-		'title'      => 'Who Gets the Ball?',
+		'title'      => 'Pass the Ball',
 		'title_icon' => 'ball-soccer',
-		'instruction'=> 'Ange and Bella take turns getting the ball: Ange first, Bella second, Ange third... Ange has just gone. Who gets the ball next?',
+		'instruction'=> 'Look at how the ball is passed: Ange → Bella → Ange → Bella → ? Sort these two names: who gets the ball next?',
 		'items'      => [
-			[ 'id' => 'ange',  'icon' => 'clap-hand',  'label' => 'Ange',  'bin' => 1 ],
-			[ 'id' => 'bella', 'icon' => 'clap-hand',  'label' => 'Bella', 'bin' => 0 ],
+			[ 'id' => 'ange',  'icon' => 'clap-hand', 'label' => 'Ange',  'bin' => 0 ],
+			[ 'id' => 'bella', 'icon' => 'clap-hand', 'label' => 'Bella', 'bin' => 1 ],
 		],
-		'bins'       => [ 'Gets ball next', 'Does NOT get ball next' ],
+		'bins'       => [ 'Gets the ball NEXT', 'Does NOT get the ball next' ],
 	],
 
 	// ══ LOGICAL (3) ══════════════════════════════════════════════
