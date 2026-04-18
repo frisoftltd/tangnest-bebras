@@ -195,6 +195,28 @@ TNQInteractions.matchPairs = (function () {
 
         // Expose state for getAnswer
         el._tnqPairs = pairs;
+
+        // Expose reset for Retry button
+        el._tnqReset = function () {
+            // Remove all SVG lines
+            while (lineSvg.firstChild) { lineSvg.removeChild(lineSvg.firstChild); }
+            // Reset right-dot colours
+            rightCards.forEach(function (c) {
+                var dot = c.querySelector('.tnq-pair-dot-left');
+                if (dot) dot.style.background = '#ccc';
+            });
+            // Reset left-card state
+            leftCards.forEach(function (c) {
+                c.classList.remove('is-active-left');
+                var dot = c.querySelector('.tnq-pair-dot-right');
+                if (dot) { dot.style.transform = ''; dot.style.boxShadow = ''; }
+            });
+            // Clear state
+            Object.keys(pairs).forEach(function (k) { delete pairs[k]; });
+            Object.keys(lines).forEach(function (k) { delete lines[k]; });
+            activeLeft = null;
+            interacted = false;
+        };
     }
 
     // ─────────────────────────────────────────────────────────────
@@ -302,6 +324,9 @@ TNQInteractions.matchPairs = (function () {
         });
 
         el._tnqPairs = matched;
+
+        // Assessment mode: no retry needed, but wire a no-op reset for consistency
+        el._tnqReset = function () {};
     }
 
     // ─────────────────────────────────────────────────────────────
@@ -337,5 +362,9 @@ TNQInteractions.matchPairs = (function () {
         });
     }
 
-    return { init: init, getAnswer: getAnswer, validate: validate };
+    function reset(el) {
+        if (typeof el._tnqReset === 'function') el._tnqReset();
+    }
+
+    return { init: init, reset: reset, getAnswer: getAnswer, validate: validate };
 }());

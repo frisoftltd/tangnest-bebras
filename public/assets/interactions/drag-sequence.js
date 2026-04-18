@@ -253,9 +253,30 @@ TNQInteractions.dragSequence = (function () {
 
         // Expose slot state for getAnswer
         el._tnqSlots = slotContents;
+
+        // Expose reset for Retry button
+        el._tnqReset = function () {
+            // Clear state
+            for (var i = 0; i < slotContents.length; i++) { slotContents[i] = null; }
+            sourceCards.forEach(function (c) { itemInSlot[c.dataset.itemId] = null; });
+            // Clear DOM
+            slots.forEach(function (slot) {
+                var card = slot.querySelector('.tnq-slot-card');
+                if (card) card.remove();
+            });
+            sourceCards.forEach(function (c) {
+                c.classList.remove('is-placed', 'is-dragging');
+                c.setAttribute('draggable', 'true');
+            });
+            interacted = false;
+        };
     }
 
     // ── Public API ────────────────────────────────────────────────
+
+    function reset(el) {
+        if (typeof el._tnqReset === 'function') el._tnqReset();
+    }
 
     function getAnswer(el) {
         if (el._tnqSlots) {
@@ -274,5 +295,5 @@ TNQInteractions.dragSequence = (function () {
         return submitted.every(function (v, i) { return v === correct[i]; });
     }
 
-    return { init: init, getAnswer: getAnswer, validate: validate };
+    return { init: init, reset: reset, getAnswer: getAnswer, validate: validate };
 }());

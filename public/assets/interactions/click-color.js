@@ -61,6 +61,14 @@ TNQInteractions.clickColor = (function () {
             });
         }
 
+        // Store initial fills for reset
+        var initialFills = {};
+        regions.forEach(function (r) {
+            if (r.dataset.region && r.dataset.region !== 'bg') {
+                initialFills[r.dataset.region] = r.getAttribute('fill') || '';
+            }
+        });
+
         // ── Paint regions on click / touch ────────────────────────
         regions.forEach(function (region) {
             var regionName = region.dataset.region;
@@ -88,6 +96,24 @@ TNQInteractions.clickColor = (function () {
                 paint();
             }, { passive: false });
         });
+
+        // Expose reset for Retry button
+        el._tnqReset = function () {
+            regions.forEach(function (r) {
+                var name = r.dataset.region;
+                if (name && name !== 'bg') {
+                    var orig = initialFills[name];
+                    if (orig) { r.setAttribute('fill', orig); } else { r.removeAttribute('fill'); }
+                }
+            });
+            paletteItems.forEach(function (b) { b.classList.remove('is-active'); });
+            activeColor = null;
+            interacted  = false;
+        };
+    }
+
+    function reset(el) {
+        if (typeof el._tnqReset === 'function') el._tnqReset();
     }
 
     /**
@@ -131,5 +157,5 @@ TNQInteractions.clickColor = (function () {
         });
     }
 
-    return { init: init, getAnswer: getAnswer, validate: validate };
+    return { init: init, reset: reset, getAnswer: getAnswer, validate: validate };
 }());

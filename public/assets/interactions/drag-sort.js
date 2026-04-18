@@ -114,6 +114,21 @@ TNQInteractions.dragSort = (function () {
 		setTimeout(function () {
 			if (!hasDragged) showDragHint(el, true);
 		}, 5000);
+
+		// Expose reset for Retry button
+		el._tnqReset = function () {
+			bins.forEach(function (bin) {
+				var binItems = bin.querySelector('.tnq-bin-items');
+				if (!binItems) return;
+				Array.from(binItems.querySelectorAll('.tnq-card')).forEach(function (card) {
+					source.appendChild(card);
+					card.classList.remove('is-selected', 'is-dragging');
+				});
+			});
+			selected   = null;
+			hasDragged = false;
+			showDragHint(el, false);
+		};
 	}
 
 	function showDragHint(el, show) {
@@ -146,5 +161,9 @@ TNQInteractions.dragSort = (function () {
 		});
 	}
 
-	return { init: init, getAnswer: getAnswer, validate: validate };
+	function reset(el) {
+		if (typeof el._tnqReset === 'function') el._tnqReset();
+	}
+
+	return { init: init, reset: reset, getAnswer: getAnswer, validate: validate };
 }());

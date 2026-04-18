@@ -75,6 +75,21 @@ TNQInteractions.patternNext = (function () {
                 }
             });
         });
+
+        // Expose reset for Retry button
+        el._tnqReset = function () {
+            cards.forEach(function (c) {
+                c.classList.remove('is-selected');
+                var img = c.querySelector('img');
+                if (img && c.dataset.png) { img.src = c.dataset.png; }
+            });
+            if (blank) blank.innerHTML = '';
+            interacted = false;
+        };
+    }
+
+    function reset(el) {
+        if (typeof el._tnqReset === 'function') el._tnqReset();
     }
 
     function getAnswer(el) {
@@ -86,5 +101,5 @@ TNQInteractions.patternNext = (function () {
         return submitted === correct;
     }
 
-    return { init: init, getAnswer: getAnswer, validate: validate };
+    return { init: init, reset: reset, getAnswer: getAnswer, validate: validate };
 }());

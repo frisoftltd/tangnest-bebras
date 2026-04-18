@@ -346,10 +346,59 @@
 			var msgEl  = feedbackEl.querySelector('.tnq-feedback-msg');
 			if (iconEl) iconEl.textContent = icon;
 			if (msgEl)  msgEl.textContent  = msg;
+
+			// Remove any previous retry button
+			var oldRetry = feedbackEl.querySelector('.tnq-btn-retry');
+			if (oldRetry) oldRetry.remove();
+
+			// Inject Retry button on wrong answer
+			if (!correct) {
+				var self = this;
+				var retryBtn = document.createElement('button');
+				retryBtn.className   = 'tnq-btn-retry';
+				retryBtn.textContent = 'Try again \ud83d\udd04';
+				retryBtn.style.cssText = 'background:#F39C12;color:white;border:none;border-radius:10px;' +
+					'padding:12px 24px;font-size:16px;font-weight:bold;cursor:pointer;' +
+					'margin-top:12px;min-height:48px;display:block;';
+				retryBtn.addEventListener('click', function () { self._onRetry(); });
+				feedbackEl.appendChild(retryBtn);
+			}
 		}
 
 		if (explanationEl) {
 			explanationEl.classList.add('is-visible');
+		}
+	};
+
+	TNQQuiz.prototype._onRetry = function () {
+		var feedbackEl    = this.container.querySelector('.tnq-feedback');
+		var explanationEl = this.container.querySelector('.tnq-explanation');
+		var hintBox       = this.container.querySelector('.tnq-hint-box');
+		var btnCheck      = this.container.querySelector('.tnq-btn-check');
+		var btnNext       = this.container.querySelector('.tnq-btn-next');
+
+		// Hide feedback, explanation, hint
+		if (feedbackEl)    feedbackEl.classList.remove('is-visible');
+		if (explanationEl) explanationEl.classList.remove('is-visible');
+		if (hintBox)       hintBox.classList.remove('is-visible');
+
+		// Restore Check button (disabled until child interacts again)
+		if (btnCheck) {
+			btnCheck.style.display = '';
+			btnCheck.textContent   = 'Check my answer';
+			btnCheck.disabled      = true;
+		}
+		if (btnNext) { btnNext.style.display = 'none'; }
+
+		// Reset the interaction
+		var q    = this.questions[this.currentIdx];
+		var type = q ? q.dataset.type : null;
+		var interactionEl = q ? q.querySelector('.tnq-interaction') : null;
+		if (interactionEl && type) {
+			var module = this._getModule(type);
+			if (module && module.reset) {
+				module.reset(interactionEl);
+			}
 		}
 	};
 

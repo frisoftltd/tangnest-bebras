@@ -28,7 +28,8 @@ TNQInteractions.loopCount = (function () {
 
         var min     = parseInt(el.dataset.min,     10) || 1;
         var max     = parseInt(el.dataset.max,     10) || 30;
-        var current = parseInt(el.dataset.initial, 10) || min;
+        var initial = parseInt(el.dataset.initial, 10) || min;
+        var current = initial;
         var iconUrl = el.dataset.tileIconUrl || '';
 
         var interacted = false;
@@ -78,6 +79,17 @@ TNQInteractions.loopCount = (function () {
 
         // Initial render
         render();
+
+        // Expose reset for Retry button
+        el._tnqReset = function () {
+            current = initial;
+            render();
+            interacted = false;
+        };
+    }
+
+    function reset(el) {
+        if (typeof el._tnqReset === 'function') el._tnqReset();
     }
 
     function getAnswer(el) {
@@ -89,5 +101,5 @@ TNQInteractions.loopCount = (function () {
         return parseInt(submitted, 10) === parseInt(correct, 10);
     }
 
-    return { init: init, getAnswer: getAnswer, validate: validate };
+    return { init: init, reset: reset, getAnswer: getAnswer, validate: validate };
 }());
