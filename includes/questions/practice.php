@@ -1,14 +1,9 @@
 <?php
 /**
- * Practice questions — all age bands (6 questions).
+ * Practice questions — age band 7–8 (6 questions).
  *
  * IDs: P-AT-01, P-AT-02, P-PR-01, P-PR-02, P-LR-01, P-LR-02
- * Source: design doc §7.1
- *
- * NOTE: The design doc was not available during M2 build.
- * Question content was reconstructed from context clues in the M2 briefing
- * (SVG asset lists, data structure examples, pedagogical intent).
- * Verify against the original design doc and correct if needed.
+ * Source: design doc §7.1 + M2 briefing asset spec.
  *
  * @package Tangnest_Bebras
  */
@@ -26,15 +21,15 @@ return [
 		'title'                => 'Get Ready for School',
 		'title_icon'           => 'school-bag',
 		'instruction'          => 'Drag the pictures into the right order to show how Amina gets ready for school.',
-		'hint'                 => 'Think about what you do first when you wake up in the morning.',
-		'practice_explanation' => 'First Amina wakes up (C), then she brushes her teeth (A), then she puts on her uniform (B), and finally she picks up her school bag (D). Good sequencing!',
+		'hint'                 => "Amina's mum says: you can't brush your teeth before you wake up! And the very last thing before walking out the door is always grabbing your school bag.",
+		'practice_explanation' => 'First Amina wakes up, then she brushes her teeth, then she puts on her uniform, and finally she picks up her school bag. Good sequencing!',
 		'items'                => [
-			[ 'id' => 'a', 'icon' => 'brush-teeth', 'label' => 'Brush teeth'        ],
-			[ 'id' => 'b', 'icon' => 'uniform',     'label' => 'Put on uniform'     ],
-			[ 'id' => 'c', 'icon' => 'alarm-clock', 'label' => 'Wake up'            ],
-			[ 'id' => 'd', 'icon' => 'school-bag',  'label' => 'Pick up school bag' ],
+			[ 'id' => 'q1-wake-up',        'png' => 'people/q1-wake-up.png',        'label' => 'Wake up'        ],
+			[ 'id' => 'q1-brush-teeth',    'png' => 'people/q1-brush-teeth.png',    'label' => 'Brush teeth'    ],
+			[ 'id' => 'q1-put-on-uniform', 'png' => 'people/q1-put-on-uniform.png', 'label' => 'Put on uniform' ],
+			[ 'id' => 'q1-pick-up-bag',    'png' => 'people/q1-pick-up-bag.png',    'label' => 'Pick up bag'    ],
 		],
-		'answer'               => [ 'c', 'a', 'b', 'd' ],
+		'answer'               => [ 'q1-wake-up', 'q1-brush-teeth', 'q1-put-on-uniform', 'q1-pick-up-bag' ],
 	],
 
 	// ── P-AT-02 · Algorithmic · drag-sequence · Easy ─────────────
@@ -45,16 +40,16 @@ return [
 		'difficulty'           => 'easy',
 		'title'                => 'Fetching Water',
 		'title_icon'           => 'jerrycan',
-		'instruction'          => 'Kagiso needs to fetch water. Put the steps in the right order.',
-		'hint'                 => 'Think about what you must have before you go to the tap.',
-		'practice_explanation' => 'First pick up the jerrycan (B), then walk to the tap (A), then fill the jerrycan (D), and finally carry the water home (C).',
+		'instruction'          => 'Kalisa needs to fetch water. Put the steps in the right order.',
+		'hint'                 => "Kalisa's grandmother says: you must walk to the tap before you can fill anything! And you can only carry the jerrycan home once it is full and lifted up.",
+		'practice_explanation' => 'First Kalisa walks to the tap, then fills the jerrycan, then picks it up, and finally carries it home. Every step must happen in order!',
 		'items'                => [
-			[ 'id' => 'a', 'icon' => 'tap',        'label' => 'Walk to the tap'    ],
-			[ 'id' => 'b', 'icon' => 'jerrycan',   'label' => 'Pick up the jerrycan' ],
-			[ 'id' => 'c', 'icon' => 'house',      'label' => 'Carry water home'   ],
-			[ 'id' => 'd', 'icon' => 'water-drop', 'label' => 'Fill the jerrycan'  ],
+			[ 'id' => 'q2-walk-to-tap',      'png' => 'people/q2-walk-to-tap.png',      'label' => 'Walk to tap'      ],
+			[ 'id' => 'q2-fill-jerrycan',    'png' => 'people/q2-fill-jerrycan.png',    'label' => 'Fill jerrycan'    ],
+			[ 'id' => 'q2-pick-up-jerrycan', 'png' => 'people/q2-pick-up-jerrycan.png', 'label' => 'Pick up jerrycan' ],
+			[ 'id' => 'q2-carry-home',       'png' => 'people/q2-carry-home.png',       'label' => 'Carry home'       ],
 		],
-		'answer'               => [ 'b', 'a', 'd', 'c' ],
+		'answer'               => [ 'q2-walk-to-tap', 'q2-fill-jerrycan', 'q2-pick-up-jerrycan', 'q2-carry-home' ],
 	],
 
 	// ── P-PR-01 · Pattern · loop-count · Easy ───────────────────
@@ -66,10 +61,9 @@ return [
 		'title'                => 'Count the Steps',
 		'title_icon'           => 'footstep',
 		'instruction'          => 'Mugisha walks from his house to the water tap. How many steps does he take?',
-		'hint'                 => 'Count the footsteps one by one.',
+		'hint'                 => 'Touch each footprint one by one and count out loud with Mugisha as he walks to the tap — one, two, three…!',
 		'practice_explanation' => 'There are 5 footsteps shown — Mugisha takes 5 steps. Counting things in order is a pattern skill!',
-		'tiles'                => 5,
-		'tile_icon'            => 'footstep',
+		'tile_icon_png'        => 'ui/q3-count-the-steps.png',
 		'min'                  => 1,
 		'max'                  => 10,
 		'initial'              => 1,
@@ -85,7 +79,7 @@ return [
 		'title'                => 'What Comes Next?',
 		'title_icon'           => 'bead-red',
 		'instruction'          => 'Look at the bead pattern. What bead comes next?',
-		'hint'                 => 'Look at the two colours and which one comes after red.',
+		'hint'                 => 'Aisha made a bead necklace — she always puts one red bead, then one blue bead, then red again, then blue again. What colour always comes after red?',
 		'practice_explanation' => 'The pattern is red, blue, red, blue, red... the next bead is blue. The pattern repeats every 2 beads!',
 		'pattern'              => [
 			[ 'icon' => 'bead-red'  ],
@@ -95,12 +89,12 @@ return [
 			[ 'icon' => 'bead-red'  ],
 		],
 		'choices'              => [
-			[ 'id' => 'a', 'icon' => 'bead-blue',   'label' => 'Blue'   ],
-			[ 'id' => 'b', 'icon' => 'bead-red',    'label' => 'Red'    ],
-			[ 'id' => 'c', 'icon' => 'bead-yellow', 'label' => 'Yellow' ],
-			[ 'id' => 'd', 'icon' => 'bead-green',  'label' => 'Green'  ],
+			[ 'id' => 'blue',   'png' => 'patterns/q4-blue.png',   'active_png' => 'patterns/q4-blue-active.png',   'label' => 'Blue'   ],
+			[ 'id' => 'red',    'png' => 'patterns/q4-red.png',    'active_png' => 'patterns/q4-red-active.png',    'label' => 'Red'    ],
+			[ 'id' => 'yellow', 'png' => 'patterns/q4-yellow.png', 'active_png' => 'patterns/q4-yellow-active.png', 'label' => 'Yellow' ],
+			[ 'id' => 'green',  'png' => 'patterns/q4-green.png',  'active_png' => 'patterns/q4-green-active.png',  'label' => 'Green'  ],
 		],
-		'answer'               => 'a',
+		'answer'               => 'blue',
 	],
 
 	// ── P-LR-01 · Logical · click-color · Easy ──────────────────
@@ -112,16 +106,21 @@ return [
 		'title'                => 'Color the Flag',
 		'title_icon'           => 'flag-colorable',
 		'instruction'          => 'Color each part of the flag. Rule: Two touching parts cannot be the same color.',
-		'hint'                 => 'The top and bottom bands do not touch each other — only middle touches both.',
-		'practice_explanation' => 'The middle band touches both the top and bottom, so it must be different from both. The top and bottom can be the same color since they do not touch. Many correct answers exist!',
+		'hint'                 => 'Imagine painting houses on a street — two neighbours can never paint their house the same colour. Look at which parts of the flag are touching each other!',
+		'practice_explanation' => 'The Top and Bottom do not touch each other, and Left and Right do not touch each other — but all other pairs do touch. Many correct colour combinations exist!',
 		'svg'                  => 'flag-colorable',
-		'regions'              => [ 'top', 'middle', 'bottom' ],
+		'regions'              => [ 'top', 'bottom', 'left', 'right' ],
 		'adjacency'            => [
-			[ 'top',    'middle' ],
-			[ 'middle', 'bottom' ],
+			[ 'top',    'left'  ],
+			[ 'top',    'right' ],
+			[ 'bottom', 'left'  ],
+			[ 'bottom', 'right' ],
 		],
-		'colors'               => [ '#C0392B', '#f1c40f', '#1E8449' ],
-		'color_labels'         => [ 'Red', 'Yellow', 'Green' ],
+		'palette_pngs'         => [
+			[ 'png' => 'ui/q5-red.png',    'label' => 'Red',    'value' => 'red'    ],
+			[ 'png' => 'ui/q5-yellow.png', 'label' => 'Yellow', 'value' => 'yellow' ],
+			[ 'png' => 'ui/q5-green.png',  'label' => 'Green',  'value' => 'green'  ],
+		],
 	],
 
 	// ── P-LR-02 · Logical · match-pairs · Easy ──────────────────
@@ -133,22 +132,22 @@ return [
 		'title'                => 'What Makes It Work?',
 		'title_icon'           => 'torch',
 		'instruction'          => 'Match each object on the left to what it needs on the right to work.',
-		'hint'                 => 'Think: what makes a torch shine? What makes a bulb glow? What comes out of a tap?',
+		'hint'                 => 'A torch goes dark when the small round thing inside it runs out of power. A tap needs pipes in the wall. What does a light bulb need from the socket?',
 		'practice_explanation' => 'A torch needs a battery to shine. A light bulb needs electricity. A tap needs a water connection. Matching by logic shows clear thinking!',
 		'left'                 => [
-			[ 'id' => 'torch', 'icon' => 'torch', 'label' => 'Torch'      ],
-			[ 'id' => 'bulb',  'icon' => 'bulb',  'label' => 'Light bulb' ],
-			[ 'id' => 'tap',   'icon' => 'tap',   'label' => 'Tap'        ],
+			[ 'id' => 'torch',      'png' => 'objects/q6-torch.png',     'label' => 'Torch'      ],
+			[ 'id' => 'light_bulb', 'png' => 'objects/q6-light-bulb.png','label' => 'Light bulb' ],
+			[ 'id' => 'tap',        'png' => 'objects/q6-tap.png',       'label' => 'Tap'        ],
 		],
 		'right'                => [
-			[ 'id' => 'battery',     'icon' => 'battery',          'label' => 'Battery'          ],
-			[ 'id' => 'electricity', 'icon' => 'electricity-plug', 'label' => 'Electricity'      ],
-			[ 'id' => 'water',       'icon' => 'water-drop',       'label' => 'Water connection' ],
+			[ 'id' => 'battery',     'png' => 'objects/q6-battery.png',          'label' => 'Battery'          ],
+			[ 'id' => 'electricity', 'png' => 'objects/q6-electricity.png',      'label' => 'Electricity'      ],
+			[ 'id' => 'water',       'png' => 'objects/q6-water-connection.png', 'label' => 'Water connection' ],
 		],
 		'pairs'                => [
-			[ 'torch', 'battery'     ],
-			[ 'bulb',  'electricity' ],
-			[ 'tap',   'water'       ],
+			[ 'torch',      'battery'     ],
+			[ 'light_bulb', 'electricity' ],
+			[ 'tap',        'water'       ],
 		],
 	],
 

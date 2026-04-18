@@ -1,10 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
-  <!-- Flag pole -->
-  <rect x="4" y="4" width="5" height="56" rx="2" fill="#888" stroke="#555" stroke-width="1.5"/>
-  <!-- Top band -->
-  <rect data-region="top" x="9" y="6" width="50" height="16" rx="1" fill="#C0392B" stroke="#a93226" stroke-width="1"/>
-  <!-- Middle band -->
-  <rect data-region="middle" x="9" y="22" width="50" height="16" rx="1" fill="#f1c40f" stroke="#d4ac0d" stroke-width="1"/>
-  <!-- Bottom band -->
-  <rect data-region="bottom" x="9" y="38" width="50" height="16" rx="1" fill="#1E8449" stroke="#196f3d" stroke-width="1"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 80" fill="none">
+  <!-- X-divided flag: rectangle split into 4 triangles by both diagonals -->
+  <polygon data-region="top"    points="0,0 120,0 60,40"    fill="#d4d4d4" stroke="#bbb" stroke-width="0.75"/>
+  <polygon data-region="right"  points="120,0 120,80 60,40" fill="#b8b8b8" stroke="#bbb" stroke-width="0.75"/>
+  <polygon data-region="bottom" points="120,80 0,80 60,40"  fill="#c8c8c8" stroke="#bbb" stroke-width="0.75"/>
+  <polygon data-region="left"   points="0,80 0,0 60,40"     fill="#e0e0e0" stroke="#bbb" stroke-width="0.75"/>
+  <!-- Labels (optional, helps visual orientation) -->
+  <text x="60" y="16"  text-anchor="middle" font-size="9" fill="#666" font-family="sans-serif">Top</text>
+  <text x="60" y="72"  text-anchor="middle" font-size="9" fill="#666" font-family="sans-serif">Bottom</text>
+  <text x="10" y="43"  text-anchor="middle" font-size="9" fill="#666" font-family="sans-serif">Left</text>
+  <text x="110" y="43" text-anchor="middle" font-size="9" fill="#666" font-family="sans-serif">Right</text>
 </svg>

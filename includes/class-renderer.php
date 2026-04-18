@@ -91,7 +91,7 @@ class TNQ_Renderer {
 				</button>
 				<?php endif; ?>
 
-				<button class="tnq-btn tnq-btn-primary tnq-btn-check" type="button">
+				<button class="tnq-btn tnq-btn-primary tnq-btn-check" type="button" disabled>
 					<?php echo $is_practice ? 'Check my answer' : 'Next question &rarr;'; ?>
 				</button>
 
@@ -135,8 +135,8 @@ class TNQ_Renderer {
 			<!-- Question header -->
 			<div class="tnq-question-header">
 				<?php if ( ! empty( $q['title_icon'] ) ) : ?>
-				<div class="tnq-question-title-icon">
-					<?php echo TNQ_Icons::icon( $q['title_icon'] ); ?>
+				<div class="tnq-question-title-icon" style="width:72px;height:72px;flex-shrink:0">
+					<?php echo TNQ_Icons::icon( $q['title_icon'], [ 'style' => 'width:72px;height:72px' ] ); ?>
 				</div>
 				<?php endif; ?>
 				<h2 class="tnq-question-title"><?php echo esc_html( $title ); ?></h2>
@@ -204,6 +204,9 @@ class TNQ_Renderer {
 		$items  = $q['items'] ?? [];
 		$answer = $q['answer'] ?? [];
 
+		// Determine if items use PNG images
+		$use_png = ! empty( $items ) && ! empty( $items[0]['png'] );
+
 		// Shuffle items (reshuffle if shuffled order matches answer)
 		$shuffled = $items;
 		$tries    = 0;
@@ -216,20 +219,32 @@ class TNQ_Renderer {
 		ob_start();
 		?>
 		<div class="tnq-drag-sequence">
-			<p style="font-size:13px;color:#666;margin-bottom:8px;">Drag the cards into the right order:</p>
-			<div class="tnq-sequence-area">
+			<p style="font-size:14px;color:#666;margin-bottom:10px;">Drag the cards into the right order:</p>
+			<div class="tnq-sequence-area" style="min-height:<?php echo $use_png ? '280px' : '90px'; ?>">
 				<?php foreach ( $answer as $pos => $id ) : ?>
-				<div class="tnq-sequence-slot">
+				<div class="tnq-sequence-slot" style="<?php echo $use_png ? 'width:200px;min-height:270px;' : ''; ?>">
 					<span class="tnq-sequence-number"><?php echo esc_html( $pos + 1 ); ?></span>
 				</div>
 				<?php endforeach; ?>
 			</div>
 			<div class="tnq-source-area">
 				<?php foreach ( $shuffled as $item ) : ?>
-				<div class="tnq-card" data-item-id="<?php echo esc_attr( $item['id'] ); ?>" draggable="true" tabindex="0">
-					<?php echo TNQ_Icons::icon( $item['icon'] ?? '' ); ?>
-					<span class="tnq-card-label"><?php echo esc_html( $item['label'] ); ?></span>
-				</div>
+					<?php if ( $use_png ) : ?>
+					<div class="tnq-drag-card" data-item-id="<?php echo esc_attr( $item['id'] ); ?>" draggable="true" tabindex="0" role="button" aria-label="<?php echo esc_attr( $item['label'] ?? '' ); ?>">
+						<div class="tnq-drag-card-image">
+							<img src="<?php echo esc_url( TNQ_PLUGIN_URL . 'public/assets/svg/' . $item['png'] ); ?>"
+								 alt="<?php echo esc_attr( $item['label'] ?? '' ); ?>"
+								 loading="lazy"
+								 style="width:180px;height:180px;object-fit:contain">
+						</div>
+						<div class="tnq-drag-card-footer"><?php echo esc_html( $item['label'] ?? '' ); ?></div>
+					</div>
+					<?php else : ?>
+					<div class="tnq-card" data-item-id="<?php echo esc_attr( $item['id'] ); ?>" draggable="true" tabindex="0">
+						<?php echo TNQ_Icons::icon( $item['icon'] ?? '' ); ?>
+						<span class="tnq-card-label"><?php echo esc_html( $item['label'] ); ?></span>
+					</div>
+					<?php endif; ?>
 				<?php endforeach; ?>
 			</div>
 		</div>
@@ -239,18 +254,35 @@ class TNQ_Renderer {
 
 	// ── loop-count ───────────────────────────────────────────────
 	private static function render_loop_count( array $q ): string {
-		$min        = (int) ( $q['min']             ?? 1 );
-		$max        = (int) ( $q['max']             ?? 30 );
-		$initial    = (int) ( $q['initial']         ?? $min );
-		$tiles      = (int) ( $q['tiles']           ?? 0 );
-		$tile_icon  = $q['tile_icon']               ?? '';
-		$group_size = (int) ( $q['tile_group_size'] ?? 0 );
+		$min          = (int) ( $q['min']           ?? 1 );
+		$max          = (int) ( $q['max']           ?? 30 );
+		$initial      = (int) ( $q['initial']       ?? $min );
+		$tile_icon    = $q['tile_icon']             ?? '';
+		$tile_icon_png = $q['tile_icon_png']        ?? '';
+		$group_size   = (int) ( $q['tile_group_size'] ?? 0 );
+
+		// PNG-based dynamic tiles
+		$tile_icon_url = '';
+		if ( $tile_icon_png ) {
+			$tile_icon_url = TNQ_PLUGIN_URL . 'public/assets/svg/' . $tile_icon_png;
+		}
+
+		// Static tile count (legacy / non-PNG mode)
+		$tiles = ! $tile_icon_png ? (int) ( $q['tiles'] ?? 0 ) : 0;
 
 		ob_start();
 		?>
-		<div class="tnq-loop-count" data-min="<?php echo esc_attr( $min ); ?>" data-max="<?php echo esc_attr( $max ); ?>" data-initial="<?php echo esc_attr( $initial ); ?>" tabindex="0">
+		<div class="tnq-loop-count"
+			data-min="<?php echo esc_attr( $min ); ?>"
+			data-max="<?php echo esc_attr( $max ); ?>"
+			data-initial="<?php echo esc_attr( $initial ); ?>"
+			<?php if ( $tile_icon_url ) : ?>data-tile-icon-url="<?php echo esc_url( $tile_icon_url ); ?>"<?php endif; ?>
+			tabindex="0">
 			<div class="tnq-loop-display">
-				<?php if ( $tiles > 0 ) : ?>
+				<?php if ( $tile_icon_url ) : ?>
+				<!-- Dynamic footprint row — JS fills this on every counter change -->
+				<div class="tnq-dynamic-tiles" aria-live="polite"></div>
+				<?php elseif ( $tiles > 0 ) : ?>
 				<div class="tnq-tiles-grid<?php echo $tile_icon ? ' tnq-tiles-grid--icons' : ''; ?>"><?php
 					if ( $group_size > 0 && $tile_icon ) :
 						$groups = (int) ceil( $tiles / $group_size );
@@ -274,9 +306,13 @@ class TNQ_Renderer {
 				?></div>
 				<?php endif; ?>
 				<div class="tnq-counter-row">
-					<button class="tnq-counter-btn" data-dir="-" type="button" aria-label="Decrease" <?php echo $initial <= $min ? 'disabled' : ''; ?>>&#8722;</button>
+					<button class="tnq-counter-btn" data-dir="-" type="button" aria-label="Decrease"
+						style="width:64px;height:64px;font-size:28px"
+						<?php echo $initial <= $min ? 'disabled' : ''; ?>>&#8722;</button>
 					<div class="tnq-counter-value" aria-live="polite"><?php echo esc_html( $initial ); ?></div>
-					<button class="tnq-counter-btn" data-dir="+" type="button" aria-label="Increase" <?php echo $initial >= $max ? 'disabled' : ''; ?>>&#43;</button>
+					<button class="tnq-counter-btn" data-dir="+" type="button" aria-label="Increase"
+						style="width:64px;height:64px;font-size:28px"
+						<?php echo $initial >= $max ? 'disabled' : ''; ?>>&#43;</button>
 				</div>
 			</div>
 		</div>
@@ -286,25 +322,41 @@ class TNQ_Renderer {
 
 	// ── click-color ──────────────────────────────────────────────
 	private static function render_click_color( array $q ): string {
-		$svg_key      = $q['svg']         ?? 'leaf';
-		$colors       = $q['colors']       ?? [ '#27ae60', '#f1c40f', '#795548' ];
-		$color_labels = $q['color_labels'] ?? [ 'Green', 'Yellow', 'Brown' ];
-		$adjacency    = $q['adjacency']    ?? [];
+		$svg_key      = $q['svg']          ?? 'leaf';
+		$colors       = $q['colors']        ?? [ '#27ae60', '#f1c40f', '#795548' ];
+		$color_labels = $q['color_labels']  ?? [ 'Green', 'Yellow', 'Brown' ];
+		$adjacency    = $q['adjacency']     ?? [];
+		$palette_pngs = $q['palette_pngs']  ?? [];
 
 		ob_start();
 		?>
 		<div class="tnq-click-color" data-adjacency="<?php echo esc_attr( wp_json_encode( $adjacency ) ); ?>">
 			<div class="tnq-color-workspace">
-				<div class="tnq-svg-canvas">
-					<?php echo TNQ_Icons::icon( $svg_key, [ 'class' => 'tnq-colorable-svg', 'style' => 'width:180px;height:180px' ] ); ?>
+				<div class="tnq-svg-canvas" style="width:200px;height:160px">
+					<?php echo TNQ_Icons::icon( $svg_key, [ 'class' => 'tnq-colorable-svg', 'style' => 'width:200px;height:160px' ] ); ?>
 				</div>
 				<div class="tnq-color-palette">
-					<?php foreach ( $colors as $idx => $hex ) : ?>
-					<div class="tnq-color-item">
-						<div class="tnq-color-swatch" data-color="<?php echo esc_attr( $hex ); ?>" style="background:<?php echo esc_attr( $hex ); ?>" title="<?php echo esc_attr( $color_labels[ $idx ] ?? '' ); ?>" role="button" tabindex="0" aria-label="Select color: <?php echo esc_attr( $color_labels[ $idx ] ?? $hex ); ?>"></div>
-						<div class="tnq-color-swatch-label"><?php echo esc_html( $color_labels[ $idx ] ?? '' ); ?></div>
-					</div>
-					<?php endforeach; ?>
+					<?php if ( ! empty( $palette_pngs ) ) : ?>
+						<?php foreach ( $palette_pngs as $pal ) : ?>
+						<div class="tnq-color-item">
+							<button class="tnq-color-btn" type="button"
+								data-color="<?php echo esc_attr( $pal['value'] ); ?>"
+								aria-label="Select colour: <?php echo esc_attr( $pal['label'] ); ?>">
+								<img src="<?php echo esc_url( TNQ_PLUGIN_URL . 'public/assets/svg/' . $pal['png'] ); ?>"
+									 alt="<?php echo esc_attr( $pal['label'] ); ?>"
+									 style="width:68px;height:68px;object-fit:contain;border-radius:50%">
+							</button>
+							<div class="tnq-color-swatch-label" style="font-size:14px;font-weight:700;margin-top:4px"><?php echo esc_html( $pal['label'] ); ?></div>
+						</div>
+						<?php endforeach; ?>
+					<?php else : ?>
+						<?php foreach ( $colors as $idx => $hex ) : ?>
+						<div class="tnq-color-item">
+							<div class="tnq-color-swatch" data-color="<?php echo esc_attr( $hex ); ?>" style="background:<?php echo esc_attr( $hex ); ?>" title="<?php echo esc_attr( $color_labels[ $idx ] ?? '' ); ?>" role="button" tabindex="0" aria-label="Select color: <?php echo esc_attr( $color_labels[ $idx ] ?? $hex ); ?>"></div>
+							<div class="tnq-color-swatch-label"><?php echo esc_html( $color_labels[ $idx ] ?? '' ); ?></div>
+						</div>
+						<?php endforeach; ?>
+					<?php endif; ?>
 				</div>
 			</div>
 		</div>
@@ -322,21 +374,37 @@ class TNQ_Renderer {
 		<div class="tnq-pattern-next">
 			<div class="tnq-pattern-row">
 				<?php foreach ( $pattern as $item ) : ?>
-				<div class="tnq-pattern-slot">
-					<?php echo TNQ_Icons::icon( $item['icon'] ?? '' ); ?>
+				<div class="tnq-pattern-slot" style="width:80px;height:80px">
+					<?php echo TNQ_Icons::icon( $item['icon'] ?? '', [ 'style' => 'width:80px;height:80px' ] ); ?>
 				</div>
 				<?php endforeach; ?>
-				<div class="tnq-pattern-blank" aria-label="What comes next?">?</div>
+				<div class="tnq-pattern-blank" aria-label="What comes next?" style="width:80px;height:80px;font-size:28px">?</div>
 			</div>
-			<p style="font-size:14px;color:#666;margin:8px 0;">What comes next?</p>
-			<div class="tnq-choices">
+			<p style="font-size:15px;font-weight:600;color:#555;margin:12px 0 8px">What comes next?</p>
+			<div class="tnq-choices" style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center">
 				<?php foreach ( $choices as $choice ) : ?>
-				<div class="tnq-card" data-choice-id="<?php echo esc_attr( $choice['id'] ); ?>" tabindex="0" role="button">
-					<?php echo TNQ_Icons::icon( $choice['icon'] ?? '' ); ?>
-					<?php if ( ! empty( $choice['label'] ) ) : ?>
-					<span class="tnq-card-label"><?php echo esc_html( $choice['label'] ); ?></span>
+					<?php if ( ! empty( $choice['png'] ) ) : ?>
+					<div class="tnq-choice-card"
+						data-choice-id="<?php echo esc_attr( $choice['id'] ); ?>"
+						data-png="<?php echo esc_url( TNQ_PLUGIN_URL . 'public/assets/svg/' . $choice['png'] ); ?>"
+						data-active-png="<?php echo esc_url( TNQ_PLUGIN_URL . 'public/assets/svg/' . ( $choice['active_png'] ?? $choice['png'] ) ); ?>"
+						tabindex="0" role="button"
+						aria-label="<?php echo esc_attr( $choice['label'] ?? '' ); ?>">
+						<img src="<?php echo esc_url( TNQ_PLUGIN_URL . 'public/assets/svg/' . $choice['png'] ); ?>"
+							 alt="<?php echo esc_attr( $choice['label'] ?? '' ); ?>"
+							 style="width:180px;height:180px;object-fit:contain">
+						<?php if ( ! empty( $choice['label'] ) ) : ?>
+						<span class="tnq-card-label" style="font-size:18px;font-weight:700"><?php echo esc_html( $choice['label'] ); ?></span>
+						<?php endif; ?>
+					</div>
+					<?php else : ?>
+					<div class="tnq-card" data-choice-id="<?php echo esc_attr( $choice['id'] ); ?>" tabindex="0" role="button">
+						<?php echo TNQ_Icons::icon( $choice['icon'] ?? '' ); ?>
+						<?php if ( ! empty( $choice['label'] ) ) : ?>
+						<span class="tnq-card-label"><?php echo esc_html( $choice['label'] ); ?></span>
+						<?php endif; ?>
+					</div>
 					<?php endif; ?>
-				</div>
 				<?php endforeach; ?>
 			</div>
 		</div>
@@ -350,29 +418,73 @@ class TNQ_Renderer {
 		$right = $q['right'] ?? [];
 		$pairs = $q['pairs'] ?? [];
 
-		// Shuffle right side so it doesn't align with left
+		// Row colours for left-item dots (practice mode line drawing)
+		$dot_colors = [ '#F39C12', '#1A56A0', '#1E8449' ];
+
+		// Shuffle right side
 		$right_shuffled = $right;
 		shuffle( $right_shuffled );
+
+		// Detect if items use PNG images
+		$use_png = ! empty( $left ) && ! empty( $left[0]['png'] );
 
 		ob_start();
 		?>
 		<div class="tnq-match-pairs" data-pairs="<?php echo esc_attr( wp_json_encode( $pairs ) ); ?>" data-mode="<?php echo esc_attr( $mode ); ?>">
-			<div class="tnq-pairs-workspace">
-				<div class="tnq-pairs-col tnq-pairs-left">
-					<?php foreach ( $left as $item ) : ?>
-					<div class="tnq-card tnq-pair-item" data-pair-id="<?php echo esc_attr( $item['id'] ); ?>" tabindex="0" role="button">
+			<div class="tnq-pairs-workspace" style="position:relative;display:flex;gap:16px;align-items:flex-start">
+				<div class="tnq-pairs-col tnq-pairs-left" style="flex:1;display:flex;flex-direction:column;gap:12px">
+					<?php foreach ( $left as $row_idx => $item ) :
+						$dot_color = $dot_colors[ $row_idx % count( $dot_colors ) ];
+					?>
+					<?php if ( $use_png ) : ?>
+					<div class="tnq-pair-card tnq-pairs-left-item"
+						data-pair-id="<?php echo esc_attr( $item['id'] ); ?>"
+						data-dot-color="<?php echo esc_attr( $dot_color ); ?>"
+						tabindex="0" role="button"
+						style="min-height:80px;min-width:0;border-radius:12px;border:2px solid var(--tnq-border);background:#fff;display:flex;align-items:center;gap:10px;padding:8px 12px;cursor:pointer;position:relative;user-select:none">
+						<img src="<?php echo esc_url( TNQ_PLUGIN_URL . 'public/assets/svg/' . $item['png'] ); ?>"
+							 alt="<?php echo esc_attr( $item['label'] ?? '' ); ?>"
+							 style="width:80px;height:80px;object-fit:contain;flex-shrink:0">
+						<span style="font-size:18px;font-weight:700;color:#333;flex:1"><?php echo esc_html( $item['label'] ?? '' ); ?></span>
+						<span class="tnq-pair-dot tnq-pair-dot-right"
+							style="width:18px;height:18px;border-radius:50%;background:<?php echo esc_attr( $dot_color ); ?>;border:2px solid rgba(0,0,0,0.15);flex-shrink:0;display:block"
+							aria-hidden="true"></span>
+					</div>
+					<?php else : ?>
+					<div class="tnq-card tnq-pair-item tnq-pairs-left-item"
+						data-pair-id="<?php echo esc_attr( $item['id'] ); ?>"
+						data-dot-color="<?php echo esc_attr( $dot_color ); ?>"
+						tabindex="0" role="button">
 						<?php echo TNQ_Icons::icon( $item['icon'] ?? '' ); ?>
 						<span class="tnq-card-label"><?php echo esc_html( $item['label'] ); ?></span>
 					</div>
+					<?php endif; ?>
 					<?php endforeach; ?>
 				</div>
-				<div class="tnq-pairs-connectors"></div>
-				<div class="tnq-pairs-col tnq-pairs-right">
+				<div class="tnq-pairs-connectors" style="width:40px;flex-shrink:0;position:relative;align-self:stretch"></div>
+				<div class="tnq-pairs-col tnq-pairs-right" style="flex:1;display:flex;flex-direction:column;gap:12px">
 					<?php foreach ( $right_shuffled as $item ) : ?>
-					<div class="tnq-card tnq-pair-item" data-pair-id="<?php echo esc_attr( $item['id'] ); ?>" tabindex="0" role="button">
+					<?php if ( $use_png ) : ?>
+					<div class="tnq-pair-card tnq-pairs-right-item"
+						data-pair-id="<?php echo esc_attr( $item['id'] ); ?>"
+						tabindex="0" role="button"
+						style="min-height:80px;min-width:0;border-radius:12px;border:2px solid var(--tnq-border);background:#fff;display:flex;align-items:center;gap:10px;padding:8px 12px;cursor:pointer;position:relative;user-select:none">
+						<span class="tnq-pair-dot tnq-pair-dot-left"
+							style="width:18px;height:18px;border-radius:50%;background:#ccc;border:2px solid rgba(0,0,0,0.15);flex-shrink:0;display:block"
+							aria-hidden="true"></span>
+						<img src="<?php echo esc_url( TNQ_PLUGIN_URL . 'public/assets/svg/' . $item['png'] ); ?>"
+							 alt="<?php echo esc_attr( $item['label'] ?? '' ); ?>"
+							 style="width:80px;height:80px;object-fit:contain;flex-shrink:0">
+						<span style="font-size:18px;font-weight:700;color:#333;flex:1"><?php echo esc_html( $item['label'] ?? '' ); ?></span>
+					</div>
+					<?php else : ?>
+					<div class="tnq-card tnq-pair-item tnq-pairs-right-item"
+						data-pair-id="<?php echo esc_attr( $item['id'] ); ?>"
+						tabindex="0" role="button">
 						<?php echo TNQ_Icons::icon( $item['icon'] ?? '' ); ?>
 						<span class="tnq-card-label"><?php echo esc_html( $item['label'] ); ?></span>
 					</div>
+					<?php endif; ?>
 					<?php endforeach; ?>
 				</div>
 			</div>

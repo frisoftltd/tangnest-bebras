@@ -1,166 +1,257 @@
 /**
- * Drag-sequence interaction.
+ * Drag-sequence interaction — Q1 (Get Ready for School) and Q2 (Fetching Water).
  *
- * Students arrange cards into the correct order by dragging.
- * Fallback: click-to-select then click-to-place when no drag is detected.
+ * Children arrange picture cards into the correct order.
+ * Supports mouse drag-and-drop and touch/pointer ghost dragging for tablets.
  *
  * DOM expected:
  *   .tnq-drag-sequence
- *     .tnq-sequence-area    (drop zone with ordered slots)
- *     .tnq-source-area      (shuffled source cards)
- *
- * Each card: <div class="tnq-card" data-item-id="a" draggable="true">
+ *     .tnq-sequence-area
+ *       .tnq-sequence-slot (×N, numbered, initially empty)
+ *     .tnq-source-area
+ *       .tnq-drag-card[data-item-id] | .tnq-card[data-item-id]
  */
 TNQInteractions.dragSequence = (function () {
 
-	function init(el) {
-		const sequenceArea = el.querySelector('.tnq-sequence-area');
-		const sourceArea   = el.querySelector('.tnq-source-area');
-		const cards        = el.querySelectorAll('.tnq-card');
+    function fireInteracted(el) {
+        el.dispatchEvent(new CustomEvent('tnq:interacted', { bubbles: true }));
+    }
 
-		let dragSrc  = null;
-		let selected = null;    // click-to-select fallback state
-		let hasDragged = false; // track whether any drag started
+    function init(el) {
+        var slots       = Array.from(el.querySelectorAll('.tnq-sequence-slot'));
+        var sourceArea  = el.querySelector('.tnq-source-area');
+        var sourceCards = Array.from(el.querySelectorAll('.tnq-source-area [data-item-id]'));
 
-		// ── Drag events (mouse) ─────────────────────────────────
-		cards.forEach(function (card) {
-			card.setAttribute('draggable', 'true');
+        // slotContents[i] = itemId | null
+        var slotContents = slots.map(function () { return null; });
 
-			card.addEventListener('dragstart', function (e) {
-				hasDragged = true;
-				dragSrc = card;
-				card.classList.add('is-dragging');
-				e.dataTransfer.effectAllowed = 'move';
-				e.dataTransfer.setData('text/plain', card.dataset.itemId);
-			});
+        // itemInSlot[itemId] = slotIndex | null
+        var itemInSlot = {};
+        sourceCards.forEach(function (c) { itemInSlot[c.dataset.itemId] = null; });
 
-			card.addEventListener('dragend', function () {
-				card.classList.remove('is-dragging');
-				el.querySelectorAll('.drag-over').forEach(function (z) {
-					z.classList.remove('drag-over');
-				});
-				dragSrc = null;
-			});
-		});
+        var interacted = false;
 
-		// Dragover / drop on slots and areas
-		[sequenceArea].concat(Array.from(el.querySelectorAll('.tnq-sequence-slot'))).forEach(function (zone) {
-			zone.addEventListener('dragover', function (e) {
-				e.preventDefault();
-				e.dataTransfer.dropEffect = 'move';
-				zone.classList.add('drag-over');
-			});
-			zone.addEventListener('dragleave', function () {
-				zone.classList.remove('drag-over');
-			});
-			zone.addEventListener('drop', function (e) {
-				e.preventDefault();
-				zone.classList.remove('drag-over');
-				if (!dragSrc) return;
+        // ── State mutators ────────────────────────────────────────
 
-				const slot = zone.closest('.tnq-sequence-slot') || zone;
-				const existingCard = slot.querySelector('.tnq-card');
+        function placeItem(itemId, slotIdx) {
+            // Un-place from old slot (if already placed)
+            var oldSlot = itemInSlot[itemId];
+            if (oldSlot !== null) {
+                slotContents[oldSlot] = null;
+                renderSlot(oldSlot);
+            }
 
-				if (existingCard && existingCard !== dragSrc) {
-					// Swap: move existing card to dragSrc's previous parent
-					const srcParent = dragSrc.parentElement;
-					srcParent.appendChild(existingCard);
-				}
+            // Displace existing occupant of target slot
+            var displaced = slotContents[slotIdx];
+            if (displaced !== null && displaced !== itemId) {
+                itemInSlot[displaced] = null;
+                refreshSourceCard(displaced);
+            }
 
-				slot.appendChild(dragSrc);
-			});
-		});
+            // Place
+            slotContents[slotIdx] = itemId;
+            itemInSlot[itemId]    = slotIdx;
+            renderSlot(slotIdx);
+            refreshSourceCard(itemId);
 
-		// Also allow dropping back to source
-		sourceArea.addEventListener('dragover', function (e) {
-			e.preventDefault();
-			sourceArea.classList.add('drag-over');
-		});
-		sourceArea.addEventListener('dragleave', function () {
-			sourceArea.classList.remove('drag-over');
-		});
-		sourceArea.addEventListener('drop', function (e) {
-			e.preventDefault();
-			sourceArea.classList.remove('drag-over');
-			if (dragSrc) sourceArea.appendChild(dragSrc);
-		});
+            if (!interacted) {
+                interacted = true;
+                fireInteracted(el);
+            }
+        }
 
-		// ── Click-to-select / click-to-place fallback ───────────
-		function handleClick(card) {
-			if (hasDragged) return; // user already dragging, skip
+        function removeFromAnySlot(itemId) {
+            var slotIdx = itemInSlot[itemId];
+            if (slotIdx === null) return;
+            slotContents[slotIdx] = null;
+            itemInSlot[itemId]    = null;
+            renderSlot(slotIdx);
+            refreshSourceCard(itemId);
+        }
 
-			if (!selected) {
-				// Select this card
-				selected = card;
-				card.classList.add('is-selected');
-				showDragHint(el, true);
-			} else if (selected === card) {
-				// Deselect
-				card.classList.remove('is-selected');
-				selected = null;
-			} else {
-				// Place selected card into this card's slot, and swap
-				const aParent  = selected.parentElement;
-				const bParent  = card.parentElement;
-				const aNext    = selected.nextSibling;
+        function refreshSourceCard(itemId) {
+            sourceCards.forEach(function (c) {
+                if (c.dataset.itemId === itemId) {
+                    var placed = itemInSlot[itemId] !== null;
+                    c.classList.toggle('is-placed', placed);
+                    // Re-enable/disable draggable and pointer events
+                    c.setAttribute('draggable', placed ? 'false' : 'true');
+                }
+            });
+        }
 
-				bParent.insertBefore(selected, card);
-				if (aNext) {
-					aParent.insertBefore(card, aNext);
-				} else {
-					aParent.appendChild(card);
-				}
+        function renderSlot(slotIdx) {
+            var slot = slots[slotIdx];
+            // Remove existing slot card (but keep the number label)
+            var existing = slot.querySelector('.tnq-slot-card');
+            if (existing) existing.remove();
 
-				selected.classList.remove('is-selected');
-				selected = null;
-				showDragHint(el, false);
-			}
-		}
+            var itemId = slotContents[slotIdx];
+            if (itemId !== null) {
+                // Find source card and clone it into the slot
+                var srcCard = null;
+                sourceCards.forEach(function (c) {
+                    if (c.dataset.itemId === itemId) srcCard = c;
+                });
+                if (srcCard) {
+                    var clone = srcCard.cloneNode(true);
+                    clone.classList.remove('is-placed', 'is-dragging');
+                    clone.classList.add('tnq-slot-card');
+                    clone.setAttribute('draggable', 'false');
+                    clone.style.cursor  = 'default';
+                    clone.style.pointerEvents = 'none';
+                    clone.removeAttribute('tabindex');
+                    slot.appendChild(clone);
+                }
+            }
+        }
 
-		cards.forEach(function (card) {
-			card.addEventListener('click', function () {
-				handleClick(card);
-			});
-		});
+        // ── Mouse drag events ─────────────────────────────────────
 
-		// Fallback hint: show after 5s if no drag
-		setTimeout(function () {
-			if (!hasDragged) {
-				showDragHint(el, true);
-			}
-		}, 5000);
-	}
+        var dragItemId = null;
 
-	function showDragHint(el, show) {
-		const hint = el.querySelector('.tnq-drag-hint');
-		if (hint) {
-			hint.classList.toggle('is-visible', show);
-		}
-	}
+        sourceCards.forEach(function (card) {
+            card.setAttribute('draggable', 'true');
 
-	/**
-	 * Return the current order as array of item IDs.
-	 * Only counts cards inside .tnq-sequence-slot elements.
-	 */
-	function getAnswer(el) {
-		const slots = el.querySelectorAll('.tnq-sequence-slot');
-		if (slots.length === 0) {
-			// Flat sequence area — read order directly
-			return Array.from(el.querySelectorAll('.tnq-sequence-area .tnq-card')).map(function (c) {
-				return c.dataset.itemId;
-			});
-		}
-		return Array.from(slots).map(function (slot) {
-			const card = slot.querySelector('.tnq-card');
-			return card ? card.dataset.itemId : null;
-		}).filter(Boolean);
-	}
+            card.addEventListener('dragstart', function (e) {
+                if (card.classList.contains('is-placed')) { e.preventDefault(); return; }
+                dragItemId = card.dataset.itemId;
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/plain', dragItemId);
+                card.classList.add('is-dragging');
+            });
 
-	function validate(submitted, correct) {
-		if (!Array.isArray(submitted) || !Array.isArray(correct)) return false;
-		if (submitted.length !== correct.length) return false;
-		return submitted.every(function (v, i) { return v === correct[i]; });
-	}
+            card.addEventListener('dragend', function () {
+                card.classList.remove('is-dragging');
+                dragItemId = null;
+                el.querySelectorAll('.drag-over').forEach(function (z) {
+                    z.classList.remove('drag-over');
+                });
+            });
+        });
 
-	return { init: init, getAnswer: getAnswer, validate: validate };
+        slots.forEach(function (slot, slotIdx) {
+            slot.addEventListener('dragover', function (e) {
+                e.preventDefault();           // ← required for drop to fire
+                e.dataTransfer.dropEffect = 'move';
+                slot.classList.add('drag-over');
+            });
+            slot.addEventListener('dragleave', function () {
+                slot.classList.remove('drag-over');
+            });
+            slot.addEventListener('drop', function (e) {
+                e.preventDefault();
+                slot.classList.remove('drag-over');
+                if (!dragItemId) return;
+                placeItem(dragItemId, slotIdx);
+            });
+        });
+
+        // Allow dragging back to source area
+        sourceArea.addEventListener('dragover', function (e) { e.preventDefault(); });
+        sourceArea.addEventListener('drop', function (e) {
+            e.preventDefault();
+            if (dragItemId) {
+                removeFromAnySlot(dragItemId);
+            }
+        });
+
+        // ── Touch / pointer (tablet) ghost drag ───────────────────
+
+        var ghost       = null;
+        var touchId     = null;
+        var touchCardId = null;
+        var touchMoveHandler = null;
+        var touchUpHandler   = null;
+
+        sourceCards.forEach(function (card) {
+            card.addEventListener('pointerdown', function (e) {
+                if (e.pointerType === 'mouse') return;
+                if (card.classList.contains('is-placed')) return;
+                e.preventDefault();
+
+                touchCardId = card.dataset.itemId;
+                touchId     = e.pointerId;
+
+                // Create floating ghost clone
+                var rect = card.getBoundingClientRect();
+                ghost = card.cloneNode(true);
+                ghost.classList.remove('is-placed', 'is-dragging');
+                ghost.style.position     = 'fixed';
+                ghost.style.left         = (e.clientX - rect.width / 2) + 'px';
+                ghost.style.top          = (e.clientY - rect.height / 2) + 'px';
+                ghost.style.width        = rect.width + 'px';
+                ghost.style.pointerEvents = 'none';
+                ghost.style.opacity      = '0.85';
+                ghost.style.zIndex       = '99999';
+                ghost.style.transform    = 'scale(1.06)';
+                ghost.style.boxShadow    = '0 8px 28px rgba(0,0,0,0.28)';
+                ghost.style.borderRadius = '14px';
+                document.body.appendChild(ghost);
+                card.classList.add('is-dragging');
+
+                touchMoveHandler = function (ev) {
+                    if (ev.pointerId !== touchId) return;
+                    ghost.style.left = (ev.clientX - rect.width / 2) + 'px';
+                    ghost.style.top  = (ev.clientY - rect.height / 2) + 'px';
+                };
+
+                touchUpHandler = function (ev) {
+                    if (ev.pointerId !== touchId) return;
+
+                    // Temporarily hide ghost so elementFromPoint can see beneath it
+                    ghost.style.display = 'none';
+                    var target = document.elementFromPoint(ev.clientX, ev.clientY);
+                    ghost.style.display = '';
+
+                    if (target) {
+                        var slot = target.closest('.tnq-sequence-slot');
+                        if (slot) {
+                            var slotIdx = slots.indexOf(slot);
+                            if (slotIdx >= 0) placeItem(touchCardId, slotIdx);
+                        }
+                    }
+
+                    // Clean up
+                    document.body.removeChild(ghost);
+                    ghost = null;
+                    card.classList.remove('is-dragging');
+                    touchCardId = null;
+                    touchId     = null;
+
+                    document.removeEventListener('pointermove', touchMoveHandler);
+                    document.removeEventListener('pointerup',   touchUpHandler);
+                    touchMoveHandler = null;
+                    touchUpHandler   = null;
+                };
+
+                document.addEventListener('pointermove', touchMoveHandler);
+                document.addEventListener('pointerup',   touchUpHandler);
+            }, { passive: false });
+        });
+
+        // Expose slot state for getAnswer
+        el._tnqSlots = slotContents;
+    }
+
+    // ── Public API ────────────────────────────────────────────────
+
+    function getAnswer(el) {
+        if (el._tnqSlots) {
+            return el._tnqSlots.slice(); // copy
+        }
+        // Fallback: read from DOM (for getAnswer called before init)
+        return Array.from(el.querySelectorAll('.tnq-sequence-slot')).map(function (slot) {
+            var card = slot.querySelector('[data-item-id]');
+            return card ? card.dataset.itemId : null;
+        }).filter(Boolean);
+    }
+
+    function validate(submitted, correct) {
+        if (!Array.isArray(submitted) || !Array.isArray(correct)) return false;
+        if (submitted.length !== correct.length) return false;
+        return submitted.every(function (v, i) { return v === correct[i]; });
+    }
+
+    return { init: init, getAnswer: getAnswer, validate: validate };
 }());

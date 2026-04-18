@@ -1,160 +1,340 @@
 /**
- * Match-pairs interaction.
+ * Match-pairs interaction — Q6 (What Makes It Work?) and assessment questions.
  *
- * Click a left item, then click a right item to create a pair.
- * Correct pairs lock green; wrong pairs shake briefly in practice mode.
+ * Practice mode (data-mode="practice"):
+ *   Dot-and-line UX — click a left item to activate it (coloured dot highlights),
+ *   then click a right item to draw a line. Clicking an already-connected left
+ *   item removes its line so you can change your answer.
  *
- * DOM expected:
- *   .tnq-match-pairs[data-mode="practice|assessment"]
+ * Assessment mode (data-mode="baseline"|"endline"):
+ *   Classic click-to-select-then-confirm — correct pairs lock with a green line,
+ *   incorrect pairs shake briefly.
+ *
+ * DOM expected (practice, PNG cards):
+ *   .tnq-match-pairs[data-pairs="[[...]]"][data-mode="practice"]
  *     .tnq-pairs-workspace
  *       .tnq-pairs-col.tnq-pairs-left
- *         .tnq-card[data-pair-id="door"] ...
+ *         .tnq-pair-card.tnq-pairs-left-item[data-pair-id][data-dot-color]
+ *           img.tnq-pair-img  |  tnq-icon
+ *           span (label)
+ *           span.tnq-pair-dot.tnq-pair-dot-right
  *       .tnq-pairs-connectors
- *         svg (line canvas, injected by JS)
  *       .tnq-pairs-col.tnq-pairs-right
- *         .tnq-card[data-pair-id="key"] ...
+ *         .tnq-pair-card.tnq-pairs-right-item[data-pair-id]
+ *           span.tnq-pair-dot.tnq-pair-dot-left
+ *           img.tnq-pair-img  |  tnq-icon
+ *           span (label)
  */
 TNQInteractions.matchPairs = (function () {
 
-	function init(el) {
-		const leftCards  = Array.from(el.querySelectorAll('.tnq-pairs-left .tnq-card'));
-		const rightCards = Array.from(el.querySelectorAll('.tnq-pairs-right .tnq-card'));
-		const connDiv    = el.querySelector('.tnq-pairs-connectors');
-		const mode       = el.closest('.tnq-quiz') ? el.closest('.tnq-quiz').dataset.mode : 'assessment';
+    function fireInteracted(el) {
+        el.dispatchEvent(new CustomEvent('tnq:interacted', { bubbles: true }));
+    }
 
-		// Correct pairs data from data-pairs attribute (JSON)
-		const correctPairs = JSON.parse(el.dataset.pairs || '[]');
+    // ─────────────────────────────────────────────────────────────
+    // Practice mode: draw/remove SVG lines
+    // ─────────────────────────────────────────────────────────────
+    function initPractice(el) {
+        var leftCards  = Array.from(el.querySelectorAll('.tnq-pairs-left-item'));
+        var rightCards = Array.from(el.querySelectorAll('.tnq-pairs-right-item'));
+        var workspace  = el.querySelector('.tnq-pairs-workspace');
+        var connDiv    = el.querySelector('.tnq-pairs-connectors');
 
-		// State
-		let selectedLeft = null;
-		let matched      = {}; // left-id → right-id
+        // Build SVG overlay spanning the whole workspace
+        var lineSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        lineSvg.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none';
+        if (connDiv) connDiv.appendChild(lineSvg);
 
-		// SVG canvas for connection lines
-		let lineSvg = null;
-		if (connDiv) {
-			lineSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-			lineSvg.setAttribute('overflow', 'visible');
-			lineSvg.style.width  = '100%';
-			lineSvg.style.height = '100%';
-			connDiv.appendChild(lineSvg);
-		}
+        // State
+        var activeLeft  = null;  // leftId of currently selected left card
+        var pairs       = {};    // leftId → rightId
+        var lines       = {};    // leftId → SVG line element
 
-		function isCorrectPair(leftId, rightId) {
-			return correctPairs.some(function (pair) {
-				return pair[0] === leftId && pair[1] === rightId;
-			});
-		}
+        function dotColorFor(leftId) {
+            var card = leftCards.find(function (c) { return c.dataset.pairId === leftId; });
+            return card ? (card.dataset.dotColor || '#1A56A0') : '#1A56A0';
+        }
 
-		function lockPair(leftCard, rightCard, correct) {
-			leftCard.classList.add('is-matched', 'is-locked', correct ? 'is-correct' : '');
-			rightCard.classList.add('is-matched', 'is-locked', correct ? 'is-correct' : '');
-			matched[leftCard.dataset.pairId] = rightCard.dataset.pairId;
-			drawLine(leftCard, rightCard, correct ? '#1E8449' : '#C0392B');
-		}
+        function rightDotOf(rightId) {
+            var card = rightCards.find(function (c) { return c.dataset.pairId === rightId; });
+            return card ? card.querySelector('.tnq-pair-dot-left') : null;
+        }
 
-		function drawLine(leftCard, rightCard, color) {
-			if (!lineSvg || !connDiv) return;
+        function leftDotOf(leftId) {
+            var card = leftCards.find(function (c) { return c.dataset.pairId === leftId; });
+            return card ? card.querySelector('.tnq-pair-dot-right') : null;
+        }
 
-			const containerRect = connDiv.getBoundingClientRect();
-			const leftRect  = leftCard.getBoundingClientRect();
-			const rightRect = rightCard.getBoundingClientRect();
+        function drawLine(leftId, rightId) {
+            var leftCard  = leftCards.find(function (c) { return c.dataset.pairId === leftId; });
+            var rightCard = rightCards.find(function (c) { return c.dataset.pairId === rightId; });
+            if (!leftCard || !rightCard || !lineSvg || !workspace) return;
 
-			const x1 = leftRect.right  - containerRect.left;
-			const y1 = leftRect.top    - containerRect.top + leftRect.height  / 2;
-			const x2 = rightRect.left  - containerRect.left;
-			const y2 = rightRect.top   - containerRect.top + rightRect.height / 2;
+            var wRect  = workspace.getBoundingClientRect();
+            var lRect  = leftCard.getBoundingClientRect();
+            var rRect  = rightCard.getBoundingClientRect();
+            var color  = dotColorFor(leftId);
 
-			const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-			line.setAttribute('x1', x1);
-			line.setAttribute('y1', y1);
-			line.setAttribute('x2', x2);
-			line.setAttribute('y2', y2);
-			line.setAttribute('stroke', color || '#1A56A0');
-			line.setAttribute('stroke-width', '3');
-			line.setAttribute('stroke-linecap', 'round');
-			lineSvg.appendChild(line);
-		}
+            var x1 = lRect.right  - wRect.left;
+            var y1 = lRect.top    - wRect.top  + lRect.height / 2;
+            var x2 = rRect.left   - wRect.left;
+            var y2 = rRect.top    - wRect.top  + rRect.height / 2;
 
-		leftCards.forEach(function (card) {
-			card.addEventListener('click', function () {
-				if (card.classList.contains('is-locked')) return;
-				leftCards.forEach(function (c) { c.classList.remove('is-selected'); });
-				selectedLeft = card;
-				card.classList.add('is-selected');
-			});
-		});
+            var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', x1);
+            line.setAttribute('y1', y1);
+            line.setAttribute('x2', x2);
+            line.setAttribute('y2', y2);
+            line.setAttribute('stroke', color);
+            line.setAttribute('stroke-width', '3');
+            line.setAttribute('stroke-linecap', 'round');
+            lineSvg.appendChild(line);
+            lines[leftId] = line;
 
-		rightCards.forEach(function (card) {
-			card.addEventListener('click', function () {
-				if (!selectedLeft) return;
-				if (card.classList.contains('is-locked')) return;
+            // Colour the right dot to match
+            var rdot = rightDotOf(rightId);
+            if (rdot) rdot.style.background = color;
+        }
 
-				const leftId  = selectedLeft.dataset.pairId;
-				const rightId = card.dataset.pairId;
-				const correct = isCorrectPair(leftId, rightId);
+        function removeLine(leftId) {
+            if (lines[leftId]) {
+                lines[leftId].remove();
+                delete lines[leftId];
+            }
+            // Reset right dot colour
+            if (pairs[leftId]) {
+                var rdot = rightDotOf(pairs[leftId]);
+                if (rdot) rdot.style.background = '#ccc';
+            }
+        }
 
-				if (correct) {
-					lockPair(selectedLeft, card, true);
-					selectedLeft.classList.remove('is-selected');
-					selectedLeft = null;
+        function highlightDot(leftId, on) {
+            var dot = leftDotOf(leftId);
+            if (!dot) return;
+            dot.style.transform  = on ? 'scale(1.35)' : '';
+            dot.style.boxShadow  = on ? ('0 0 0 3px ' + dotColorFor(leftId) + '44') : '';
+        }
 
-					// Auto-complete: if only one pair remains, lock it
-					const unlockedLeft  = leftCards.filter(function (c) { return !c.classList.contains('is-locked'); });
-					const unlockedRight = rightCards.filter(function (c) { return !c.classList.contains('is-locked'); });
-					if (unlockedLeft.length === 1 && unlockedRight.length === 1) {
-						lockPair(unlockedLeft[0], unlockedRight[0], true);
-					}
-				} else {
-					if (mode === 'practice') {
-						// Shake both
-						[selectedLeft, card].forEach(function (c) {
-							c.classList.add('tnq-shake');
-							setTimeout(function () { c.classList.remove('tnq-shake'); }, 500);
-						});
-					}
-					selectedLeft.classList.remove('is-selected');
-					selectedLeft = null;
-				}
-			});
-		});
-	}
+        // Activate a left card, deactivate previous
+        function activateLeft(leftId) {
+            if (activeLeft) highlightDot(activeLeft, false);
+            var leftCard = leftCards.find(function (c) { return c.dataset.pairId === leftId; });
+            if (leftCard) leftCard.classList.remove('is-active-left');
+            activeLeft = leftId;
+            highlightDot(leftId, true);
+            var aCard = leftCards.find(function (c) { return c.dataset.pairId === leftId; });
+            if (aCard) aCard.classList.add('is-active-left');
+        }
 
-	/**
-	 * Return array of [leftId, rightId] pairs.
-	 */
-	function getAnswer(el) {
-		const result = [];
-		el.querySelectorAll('.tnq-pairs-left .tnq-card.is-matched').forEach(function (card) {
-			const leftId  = card.dataset.pairId;
-			const rightId = card.dataset.matchedTo;
-			if (leftId && rightId) result.push([leftId, rightId]);
-		});
+        function deactivateLeft() {
+            if (activeLeft) {
+                highlightDot(activeLeft, false);
+                var aCard = leftCards.find(function (c) { return c.dataset.pairId === activeLeft; });
+                if (aCard) aCard.classList.remove('is-active-left');
+                activeLeft = null;
+            }
+        }
 
-		// Alternative: derive from locked pairs by checking which right card
-		// shares a connector line — use matched state stored on cards.
-		el.querySelectorAll('.tnq-pairs-left .tnq-card.is-locked').forEach(function (lCard) {
-			if (lCard.dataset.matchedTo) return; // already handled
-			const leftId = lCard.dataset.pairId;
-			// Find the corresponding right card with same matched marker
-			el.querySelectorAll('.tnq-pairs-right .tnq-card.is-locked').forEach(function (rCard) {
-				if (rCard.dataset.matchedFrom === leftId) {
-					result.push([leftId, rCard.dataset.pairId]);
-				}
-			});
-		});
+        var interacted = false;
 
-		return result;
-	}
+        // ── Left card clicks ──────────────────────────────────────
+        leftCards.forEach(function (card) {
+            card.addEventListener('click', function () {
+                var leftId = card.dataset.pairId;
 
-	function validate(submitted, correct) {
-		if (!Array.isArray(submitted) || !Array.isArray(correct)) return false;
-		if (submitted.length !== correct.length) return false;
-		return correct.every(function (correctPair) {
-			return submitted.some(function (sub) {
-				return sub[0] === correctPair[0] && sub[1] === correctPair[1];
-			});
-		});
-	}
+                if (pairs[leftId]) {
+                    // Already has a line → remove line, activate this card to re-pair
+                    removeLine(leftId);
+                    delete pairs[leftId];
+                    activateLeft(leftId);
+                } else if (activeLeft === leftId) {
+                    // Clicking active card again → deselect
+                    deactivateLeft();
+                } else {
+                    // Activate
+                    activateLeft(leftId);
+                }
+            });
 
-	return { init: init, getAnswer: getAnswer, validate: validate };
+            card.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.click(); }
+            });
+        });
+
+        // ── Right card clicks ─────────────────────────────────────
+        rightCards.forEach(function (card) {
+            card.addEventListener('click', function () {
+                if (!activeLeft) return;
+
+                var rightId = card.dataset.pairId;
+
+                // If right item already paired to someone else, unlink
+                Object.keys(pairs).forEach(function (lId) {
+                    if (pairs[lId] === rightId && lId !== activeLeft) {
+                        removeLine(lId);
+                        delete pairs[lId];
+                    }
+                });
+
+                // Draw line
+                pairs[activeLeft] = rightId;
+                drawLine(activeLeft, rightId);
+                deactivateLeft();
+
+                if (!interacted) {
+                    interacted = true;
+                    fireInteracted(el);
+                }
+            });
+
+            card.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.click(); }
+            });
+        });
+
+        // Expose state for getAnswer
+        el._tnqPairs = pairs;
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Assessment mode: lock on correct, shake on wrong
+    // ─────────────────────────────────────────────────────────────
+    function initAssessment(el) {
+        var leftCards  = Array.from(el.querySelectorAll('.tnq-pairs-left .tnq-card, .tnq-pairs-left-item'));
+        var rightCards = Array.from(el.querySelectorAll('.tnq-pairs-right .tnq-card, .tnq-pairs-right-item'));
+        var connDiv    = el.querySelector('.tnq-pairs-connectors');
+        var correctPairs = JSON.parse(el.dataset.pairs || '[]');
+
+        var selectedLeft = null;
+        var matched      = {};
+
+        var lineSvg = null;
+        if (connDiv) {
+            lineSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            lineSvg.setAttribute('overflow', 'visible');
+            lineSvg.style.width  = '100%';
+            lineSvg.style.height = '100%';
+            connDiv.appendChild(lineSvg);
+        }
+
+        function isCorrectPair(leftId, rightId) {
+            return correctPairs.some(function (pair) {
+                return pair[0] === leftId && pair[1] === rightId;
+            });
+        }
+
+        function drawLine(leftCard, rightCard, color) {
+            if (!lineSvg || !connDiv) return;
+            var containerRect = connDiv.getBoundingClientRect();
+            var leftRect  = leftCard.getBoundingClientRect();
+            var rightRect = rightCard.getBoundingClientRect();
+
+            var x1 = leftRect.right  - containerRect.left;
+            var y1 = leftRect.top    - containerRect.top + leftRect.height  / 2;
+            var x2 = rightRect.left  - containerRect.left;
+            var y2 = rightRect.top   - containerRect.top + rightRect.height / 2;
+
+            var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', x1);
+            line.setAttribute('y1', y1);
+            line.setAttribute('x2', x2);
+            line.setAttribute('y2', y2);
+            line.setAttribute('stroke', color || '#1A56A0');
+            line.setAttribute('stroke-width', '3');
+            line.setAttribute('stroke-linecap', 'round');
+            lineSvg.appendChild(line);
+        }
+
+        function lockPair(leftCard, rightCard) {
+            leftCard.classList.add('is-matched', 'is-locked', 'is-correct');
+            rightCard.classList.add('is-matched', 'is-locked', 'is-correct');
+            matched[leftCard.dataset.pairId] = rightCard.dataset.pairId;
+            leftCard.dataset.matchedTo  = rightCard.dataset.pairId;
+            rightCard.dataset.matchedFrom = leftCard.dataset.pairId;
+            drawLine(leftCard, rightCard, '#1E8449');
+        }
+
+        var interacted = false;
+
+        leftCards.forEach(function (card) {
+            card.addEventListener('click', function () {
+                if (card.classList.contains('is-locked')) return;
+                leftCards.forEach(function (c) { c.classList.remove('is-selected'); });
+                selectedLeft = card;
+                card.classList.add('is-selected');
+            });
+        });
+
+        rightCards.forEach(function (card) {
+            card.addEventListener('click', function () {
+                if (!selectedLeft) return;
+                if (card.classList.contains('is-locked')) return;
+
+                var leftId  = selectedLeft.dataset.pairId;
+                var rightId = card.dataset.pairId;
+
+                if (!interacted) {
+                    interacted = true;
+                    fireInteracted(el);
+                }
+
+                if (isCorrectPair(leftId, rightId)) {
+                    lockPair(selectedLeft, card);
+                    selectedLeft.classList.remove('is-selected');
+                    selectedLeft = null;
+
+                    // Auto-complete last pair
+                    var unlockedL = leftCards.filter(function (c) { return !c.classList.contains('is-locked'); });
+                    var unlockedR = rightCards.filter(function (c) { return !c.classList.contains('is-locked'); });
+                    if (unlockedL.length === 1 && unlockedR.length === 1) {
+                        lockPair(unlockedL[0], unlockedR[0]);
+                    }
+                } else {
+                    [selectedLeft, card].forEach(function (c) {
+                        c.classList.add('tnq-shake');
+                        setTimeout(function () { c.classList.remove('tnq-shake'); }, 500);
+                    });
+                    selectedLeft.classList.remove('is-selected');
+                    selectedLeft = null;
+                }
+            });
+        });
+
+        el._tnqPairs = matched;
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Public
+    // ─────────────────────────────────────────────────────────────
+
+    function init(el) {
+        var mode = el.dataset.mode || 'practice';
+        if (mode === 'practice') {
+            initPractice(el);
+        } else {
+            initAssessment(el);
+        }
+    }
+
+    /**
+     * Return array of [leftId, rightId] pairs — format expected by scorer.
+     */
+    function getAnswer(el) {
+        var pairs = el._tnqPairs || {};
+        return Object.keys(pairs).map(function (leftId) {
+            return [leftId, pairs[leftId]];
+        });
+    }
+
+    function validate(submitted, correct) {
+        if (!Array.isArray(submitted) || !Array.isArray(correct)) return false;
+        if (submitted.length !== correct.length) return false;
+        return correct.every(function (correctPair) {
+            return submitted.some(function (sub) {
+                return sub[0] === correctPair[0] && sub[1] === correctPair[1];
+            });
+        });
+    }
+
+    return { init: init, getAnswer: getAnswer, validate: validate };
 }());

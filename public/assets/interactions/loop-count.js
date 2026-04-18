@@ -1,61 +1,92 @@
 /**
- * Loop-count interaction.
+ * Loop-count interaction — Q3 (Count the Steps).
  *
- * Students use +/- buttons to set a numeric answer.
+ * Children use +/- buttons to set a numeric answer.
+ * If data-tile-icon-url is set, a row of PNG icons re-renders in real time
+ * to show the current count visually.
  *
  * DOM expected:
- *   .tnq-loop-count
- *     .tnq-counter-btn[data-dir="-"]
- *     .tnq-counter-value
- *     .tnq-counter-btn[data-dir="+"]
- *
- * data-min / data-max / data-initial on the container.
+ *   .tnq-loop-count[data-min][data-max][data-initial][data-tile-icon-url?]
+ *     .tnq-dynamic-tiles   (optional — filled by JS when tile-icon-url is set)
+ *     .tnq-counter-row
+ *       .tnq-counter-btn[data-dir="-"]
+ *       .tnq-counter-value
+ *       .tnq-counter-btn[data-dir="+"]
  */
 TNQInteractions.loopCount = (function () {
 
-	function init(el) {
-		const valueEl = el.querySelector('.tnq-counter-value');
-		const btnMinus = el.querySelector('.tnq-counter-btn[data-dir="-"]');
-		const btnPlus  = el.querySelector('.tnq-counter-btn[data-dir="+"]');
+    function fireInteracted(el) {
+        el.dispatchEvent(new CustomEvent('tnq:interacted', { bubbles: true }));
+    }
 
-		const min     = parseInt(el.dataset.min, 10) || 1;
-		const max     = parseInt(el.dataset.max, 10) || 30;
-		let   current = parseInt(el.dataset.initial, 10) || min;
+    function init(el) {
+        var valueEl  = el.querySelector('.tnq-counter-value');
+        var btnMinus = el.querySelector('.tnq-counter-btn[data-dir="-"]');
+        var btnPlus  = el.querySelector('.tnq-counter-btn[data-dir="+"]');
+        var tilesEl  = el.querySelector('.tnq-dynamic-tiles');
 
-		function render() {
-			valueEl.textContent = current;
-			if (btnMinus) btnMinus.disabled = current <= min;
-			if (btnPlus)  btnPlus.disabled  = current >= max;
-		}
+        var min     = parseInt(el.dataset.min,     10) || 1;
+        var max     = parseInt(el.dataset.max,     10) || 30;
+        var current = parseInt(el.dataset.initial, 10) || min;
+        var iconUrl = el.dataset.tileIconUrl || '';
 
-		if (btnMinus) {
-			btnMinus.addEventListener('click', function () {
-				if (current > min) { current--; render(); }
-			});
-		}
-		if (btnPlus) {
-			btnPlus.addEventListener('click', function () {
-				if (current < max) { current++; render(); }
-			});
-		}
+        var interacted = false;
 
-		// Keyboard support when counter has focus
-		el.addEventListener('keydown', function (e) {
-			if (e.key === 'ArrowUp'   || e.key === '+') { if (current < max) { current++; render(); e.preventDefault(); } }
-			if (e.key === 'ArrowDown' || e.key === '-') { if (current > min) { current--; render(); e.preventDefault(); } }
-		});
+        function renderTiles() {
+            if (!tilesEl || !iconUrl) return;
+            tilesEl.innerHTML = '';
+            for (var i = 0; i < current; i++) {
+                var img = document.createElement('img');
+                img.src = iconUrl;
+                img.alt = 'footprint ' + (i + 1);
+                img.style.cssText = 'width:80px;height:80px;object-fit:contain';
+                tilesEl.appendChild(img);
+            }
+        }
 
-		render();
-	}
+        function render() {
+            if (valueEl) valueEl.textContent = current;
+            if (btnMinus) btnMinus.disabled = current <= min;
+            if (btnPlus)  btnPlus.disabled  = current >= max;
+            renderTiles();
+        }
 
-	function getAnswer(el) {
-		const valueEl = el.querySelector('.tnq-counter-value');
-		return valueEl ? parseInt(valueEl.textContent, 10) : 0;
-	}
+        function change(delta) {
+            var next = current + delta;
+            if (next < min || next > max) return;
+            current = next;
+            render();
+            if (!interacted) {
+                interacted = true;
+                fireInteracted(el);
+            }
+        }
 
-	function validate(submitted, correct) {
-		return parseInt(submitted, 10) === parseInt(correct, 10);
-	}
+        if (btnMinus) {
+            btnMinus.addEventListener('click', function () { change(-1); });
+        }
+        if (btnPlus) {
+            btnPlus.addEventListener('click', function () { change(1); });
+        }
 
-	return { init: init, getAnswer: getAnswer, validate: validate };
+        // Keyboard support
+        el.addEventListener('keydown', function (e) {
+            if (e.key === 'ArrowUp'   || e.key === '+') { change(1);  e.preventDefault(); }
+            if (e.key === 'ArrowDown' || e.key === '-') { change(-1); e.preventDefault(); }
+        });
+
+        // Initial render
+        render();
+    }
+
+    function getAnswer(el) {
+        var valueEl = el.querySelector('.tnq-counter-value');
+        return valueEl ? parseInt(valueEl.textContent, 10) : 0;
+    }
+
+    function validate(submitted, correct) {
+        return parseInt(submitted, 10) === parseInt(correct, 10);
+    }
+
+    return { init: init, getAnswer: getAnswer, validate: validate };
 }());

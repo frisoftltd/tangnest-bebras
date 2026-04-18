@@ -129,6 +129,16 @@
 				self._onHint();
 			});
 		}
+
+		// Enable "Check my answer" only after the child makes an interaction.
+		// Each interaction module fires 'tnq:interacted' when the first action happens.
+		this.container.addEventListener('tnq:interacted', function () {
+			var btn = self.container.querySelector('.tnq-btn-check');
+			if (btn) {
+				btn.disabled = false;
+				btn.removeAttribute('aria-disabled');
+			}
+		});
 	};
 
 	TNQQuiz.prototype._showQuestion = function (idx) {
@@ -152,11 +162,19 @@
 		var btnHint  = this.container.querySelector('.tnq-btn-hint');
 
 		if (this.mode === 'practice') {
-			if (btnCheck) { btnCheck.style.display = ''; btnCheck.textContent = 'Check my answer'; }
+			if (btnCheck) {
+				btnCheck.style.display = '';
+				btnCheck.textContent   = 'Check my answer';
+				btnCheck.disabled      = true;  // re-disable until child interacts
+			}
 			if (btnNext)  { btnNext.style.display  = 'none'; }
 			if (btnHint)  { btnHint.style.display  = ''; }
 		} else {
-			if (btnCheck) { btnCheck.style.display = ''; btnCheck.textContent = idx < this.questions.length - 1 ? 'Next question \u2192' : 'Finish'; }
+			if (btnCheck) {
+				btnCheck.style.display = '';
+				btnCheck.textContent   = idx < this.questions.length - 1 ? 'Next question \u2192' : 'Finish';
+				btnCheck.disabled      = false; // assessment mode: always enabled
+			}
 			if (btnNext)  { btnNext.style.display  = 'none'; }
 			if (btnHint)  { btnHint.style.display  = 'none'; }
 		}
