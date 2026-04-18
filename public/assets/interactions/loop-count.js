@@ -41,7 +41,7 @@ TNQInteractions.loopCount = (function () {
                 var img = document.createElement('img');
                 img.src = iconUrl;
                 img.alt = 'footprint ' + (i + 1);
-                img.style.cssText = 'width:80px;height:80px;object-fit:contain';
+                img.style.cssText = 'width:60px;height:60px;object-fit:contain';
                 tilesEl.appendChild(img);
             }
         }

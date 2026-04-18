@@ -64,6 +64,7 @@ return [
 		'hint'                 => 'Touch each footprint one by one and count out loud with Mugisha as he walks to the tap — one, two, three…!',
 		'practice_explanation' => 'There are 5 footsteps shown — Mugisha takes 5 steps. Counting things in order is a pattern skill!',
 		'tile_icon_png'        => 'ui/q3-count-the-steps.png',
+		'path_svg'             => 'house-to-tap',
 		'min'                  => 1,
 		'max'                  => 10,
 		'initial'              => 1,

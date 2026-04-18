@@ -259,24 +259,100 @@ class TNQ_Renderer {
 
 	// ── loop-count ───────────────────────────────────────────────
 	private static function render_loop_count( array $q ): string {
-		$min          = (int) ( $q['min']           ?? 1 );
-		$max          = (int) ( $q['max']           ?? 30 );
-		$initial      = (int) ( $q['initial']       ?? $min );
-		$tile_icon    = $q['tile_icon']             ?? '';
-		$tile_icon_png = $q['tile_icon_png']        ?? '';
+		$min          = (int) ( $q['min']             ?? 1 );
+		$max          = (int) ( $q['max']             ?? 30 );
+		$initial      = (int) ( $q['initial']         ?? $min );
+		$tile_icon    = $q['tile_icon']               ?? '';
+		$tile_icon_png = $q['tile_icon_png']          ?? '';
 		$group_size   = (int) ( $q['tile_group_size'] ?? 0 );
+		$path_svg     = $q['path_svg']                ?? '';
 
-		// PNG-based dynamic tiles
+		// When a path illustration is used, dynamic tiles are suppressed —
+		// children count from the fixed SVG visual above the counter.
 		$tile_icon_url = '';
-		if ( $tile_icon_png ) {
+		if ( $tile_icon_png && ! $path_svg ) {
 			$tile_icon_url = TNQ_PLUGIN_URL . 'public/assets/svg/' . $tile_icon_png;
+		}
+
+		// Static footprint decoration shown inside the counter row (path_svg mode)
+		$footprint_img_url = '';
+		if ( $path_svg && $tile_icon_png ) {
+			$footprint_img_url = TNQ_PLUGIN_URL . 'public/assets/svg/' . $tile_icon_png;
 		}
 
 		// Static tile count (legacy / non-PNG mode)
 		$tiles = ! $tile_icon_png ? (int) ( $q['tiles'] ?? 0 ) : 0;
 
 		ob_start();
+
+		// ── Path illustration (house → footprints → tap) ─────────
+		if ( $path_svg === 'house-to-tap' ) :
 		?>
+		<svg viewBox="0 0 500 120" xmlns="http://www.w3.org/2000/svg"
+			style="width:100%;height:120px;display:block;margin-bottom:8px"
+			aria-label="Mugisha walks from his house to the water tap — count the footprints"
+			role="img">
+
+			<!-- House (left) -->
+			<polygon points="5,65 88,65 47,22" fill="#1A56A0"/>
+			<rect x="10" y="65" width="74" height="45" fill="#1A56A0"/>
+			<rect x="32" y="82" width="18" height="28" fill="white"/>
+
+			<!-- Dashed path line -->
+			<line x1="92" y1="90" x2="415" y2="90"
+				stroke="#b0c4de" stroke-width="3" stroke-dasharray="6 4"/>
+
+			<!-- Footprint 1 — x=148 -->
+			<g transform="translate(148,72)" fill="#F39C12">
+				<ellipse cx="0" cy="5" rx="7" ry="9"/>
+				<circle cx="-6" cy="-7"  r="3"/>
+				<circle cx="-2" cy="-11" r="2.5"/>
+				<circle cx="3"  cy="-11" r="2.5"/>
+				<circle cx="7"  cy="-7"  r="3"/>
+			</g>
+			<!-- Footprint 2 — x=203 -->
+			<g transform="translate(203,72)" fill="#F39C12">
+				<ellipse cx="0" cy="5" rx="7" ry="9"/>
+				<circle cx="-6" cy="-7"  r="3"/>
+				<circle cx="-2" cy="-11" r="2.5"/>
+				<circle cx="3"  cy="-11" r="2.5"/>
+				<circle cx="7"  cy="-7"  r="3"/>
+			</g>
+			<!-- Footprint 3 — x=253 -->
+			<g transform="translate(253,72)" fill="#F39C12">
+				<ellipse cx="0" cy="5" rx="7" ry="9"/>
+				<circle cx="-6" cy="-7"  r="3"/>
+				<circle cx="-2" cy="-11" r="2.5"/>
+				<circle cx="3"  cy="-11" r="2.5"/>
+				<circle cx="7"  cy="-7"  r="3"/>
+			</g>
+			<!-- Footprint 4 — x=308 -->
+			<g transform="translate(308,72)" fill="#F39C12">
+				<ellipse cx="0" cy="5" rx="7" ry="9"/>
+				<circle cx="-6" cy="-7"  r="3"/>
+				<circle cx="-2" cy="-11" r="2.5"/>
+				<circle cx="3"  cy="-11" r="2.5"/>
+				<circle cx="7"  cy="-7"  r="3"/>
+			</g>
+			<!-- Footprint 5 — x=358 -->
+			<g transform="translate(358,72)" fill="#F39C12">
+				<ellipse cx="0" cy="5" rx="7" ry="9"/>
+				<circle cx="-6" cy="-7"  r="3"/>
+				<circle cx="-2" cy="-11" r="2.5"/>
+				<circle cx="3"  cy="-11" r="2.5"/>
+				<circle cx="7"  cy="-7"  r="3"/>
+			</g>
+
+			<!-- Tap (right) -->
+			<rect x="430" y="22" width="10" height="44" fill="#1A56A0" rx="3"/>
+			<rect x="418" y="30" width="34" height="8"  fill="#1A56A0" rx="4"/>
+			<rect x="422" y="64" width="28" height="27" fill="#1A56A0" rx="4"/>
+			<rect x="450" y="72" width="32" height="8"  fill="#1A56A0" rx="3"/>
+			<ellipse cx="485" cy="93"  rx="4"   ry="6"   fill="#1A56A0" opacity="0.5"/>
+			<ellipse cx="479" cy="104" rx="3"   ry="4.5" fill="#1A56A0" opacity="0.35"/>
+		</svg>
+		<?php endif; ?>
+
 		<div class="tnq-loop-count"
 			data-min="<?php echo esc_attr( $min ); ?>"
 			data-max="<?php echo esc_attr( $max ); ?>"
@@ -314,6 +390,11 @@ class TNQ_Renderer {
 					<button class="tnq-counter-btn" data-dir="-" type="button" aria-label="Decrease"
 						style="width:64px;height:64px;font-size:28px"
 						<?php echo $initial <= $min ? 'disabled' : ''; ?>>&#8722;</button>
+					<?php if ( $footprint_img_url ) : ?>
+					<img src="<?php echo esc_url( $footprint_img_url ); ?>"
+						alt="footprint"
+						style="width:60px;height:60px;object-fit:contain;flex-shrink:0">
+					<?php endif; ?>
 					<div class="tnq-counter-value" aria-live="polite"><?php echo esc_html( $initial ); ?></div>
 					<button class="tnq-counter-btn" data-dir="+" type="button" aria-label="Increase"
 						style="width:64px;height:64px;font-size:28px"
