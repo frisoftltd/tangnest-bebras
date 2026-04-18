@@ -218,20 +218,20 @@ class TNQ_Renderer {
 
 		ob_start();
 		?>
-		<div class="tnq-drag-sequence" style="overflow-x:hidden;">
-			<!-- Drop-zone row -->
-			<div class="tnq-sequence-area" style="display:flex;flex-direction:row;flex-wrap:nowrap;gap:8px;padding:0 4px;box-sizing:border-box;width:100%;overflow:hidden;align-items:flex-start;">
+		<div class="tnq-drag-sequence">
+			<!-- Drop-zone row — styled by .tnq-sequence-area in quiz.css -->
+			<div class="tnq-sequence-area">
 				<?php foreach ( $answer as $pos => $id ) : ?>
-				<div class="tnq-sequence-slot" style="<?php echo $use_png ? 'width:calc(25% - 8px);padding-bottom:calc(25% - 8px);height:0;position:relative;overflow:hidden;border-radius:16px;flex-shrink:0;box-sizing:border-box;' : ''; ?>">
-					<span class="tnq-sequence-number"><?php echo esc_html( $pos + 1 ); ?></span>
+				<div class="tnq-sequence-slot">
+					<span class="tnq-slot-number"><?php echo esc_html( $pos + 1 ); ?></span>
 				</div>
 				<?php endforeach; ?>
 			</div>
-			<!-- Source card row -->
-			<div class="tnq-source-area" style="<?php echo $use_png ? 'display:flex;flex-direction:row;flex-wrap:nowrap;gap:8px;padding:0 4px;box-sizing:border-box;width:100%;overflow:hidden;margin-top:16px;' : ''; ?>">
+			<!-- Source card row — styled by .tnq-source-area in quiz.css -->
+			<div class="tnq-source-area">
 				<?php foreach ( $shuffled as $item ) : ?>
 					<?php if ( $use_png ) : ?>
-					<div class="tnq-drag-card" data-item-id="<?php echo esc_attr( $item['id'] ); ?>" draggable="true" tabindex="0" role="button" aria-label="<?php echo esc_attr( $item['label'] ?? '' ); ?>" style="width:calc(25% - 8px);padding-bottom:calc(25% - 8px);height:0;position:relative;overflow:hidden;border-radius:16px;flex-shrink:0;box-sizing:border-box;">
+					<div class="tnq-drag-card" data-item-id="<?php echo esc_attr( $item['id'] ); ?>" draggable="true" tabindex="0" role="button" aria-label="<?php echo esc_attr( $item['label'] ?? '' ); ?>">
 						<?php
 						$img_path  = TNQ_ASSETS_URL . $item['png'];
 						$file_path = TNQ_PLUGIN_DIR . 'public/assets/svg/' . $item['png'];
@@ -242,8 +242,7 @@ class TNQ_Renderer {
 						?>
 						<img src="<?php echo esc_url( $img_path ); ?>"
 							 alt="<?php echo esc_attr( $item['label'] ?? '' ); ?>"
-							 loading="lazy"
-							 style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:block;">
+							 loading="lazy">
 					</div>
 					<?php else : ?>
 					<div class="tnq-card" data-item-id="<?php echo esc_attr( $item['id'] ); ?>" draggable="true" tabindex="0">

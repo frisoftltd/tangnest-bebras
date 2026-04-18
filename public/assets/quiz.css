@@ -237,41 +237,43 @@
 .tnq-shake { animation: tnq-shake 0.4s ease; }
 
 /* ── Drag-sequence ─────────────────────────────────────────── */
-.tnq-drag-sequence .tnq-sequence-area {
+.tnq-sequence-area {
   display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  padding: 16px;
-  background: var(--tnq-bg);
-  border: 2px dashed var(--tnq-border);
-  border-radius: 12px;
-  min-height: 90px;
-  transition: border-color 0.15s, background 0.15s;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 8px;
+  padding: 0 4px;
+  box-sizing: border-box;
+  width: 100%;
+  overflow: hidden;
 }
 
-.tnq-drag-sequence .tnq-sequence-area.drag-over {
-  border-color: var(--tnq-primary);
-  background: rgba(26, 86, 160, 0.04);
-}
-
-.tnq-drag-sequence .tnq-source-area {
+.tnq-source-area {
   display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  padding: 16px;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 8px;
+  padding: 0 4px;
+  box-sizing: border-box;
+  width: 100%;
+  overflow: hidden;
   margin-top: 12px;
 }
 
 .tnq-sequence-slot {
-  width: 80px;
-  min-height: 90px;
-  border: 2px dashed var(--tnq-border);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #fff;
+  flex: 1 1 0;
+  min-width: 0;
   position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 2px dashed #b0c4de;
+  background: #f0f4ff;
+}
+
+.tnq-sequence-slot::before {
+  content: '';
+  display: block;
+  padding-top: 100%;
 }
 
 .tnq-sequence-slot.drag-over {
@@ -279,14 +281,13 @@
   background: rgba(26, 86, 160, 0.06);
 }
 
-.tnq-sequence-number {
+.tnq-slot-number {
   position: absolute;
-  top: 4px;
+  top: 6px;
   left: 8px;
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--tnq-primary);
-  opacity: 0.5;
+  font-size: 13px;
+  color: #aaa;
+  z-index: 2;
 }
 
 /* ── Loop-count ────────────────────────────────────────────── */
@@ -884,24 +885,34 @@
 
 /* ── Practice Q1/Q2: drag card layout ─────────────────────────── */
 .tnq-drag-card {
-  width: 160px;
-  min-height: 220px;
-  border-radius: 14px;
-  border: 2px solid var(--tnq-border);
+  flex: 1 1 0;
+  min-width: 0;
+  position: relative;
+  border-radius: 16px;
   overflow: hidden;
-  background: var(--tnq-card-bg);
-  display: inline-flex;
-  flex-direction: column;
   cursor: grab;
   user-select: none;
   -webkit-user-select: none;
   touch-action: none;
   transition: opacity 0.2s, box-shadow 0.15s, transform 0.1s;
   box-shadow: var(--tnq-shadow);
-  flex-shrink: 0;
+}
+.tnq-drag-card::before {
+  content: '';
+  display: block;
+  padding-top: 100%;
+}
+.tnq-drag-card img,
+.tnq-sequence-slot img {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
 }
 .tnq-drag-card:hover {
-  border-color: var(--tnq-primary);
   box-shadow: 0 0 0 3px rgba(26,86,160,0.15);
 }
 .tnq-drag-card.is-placed {
@@ -915,34 +926,9 @@
   transform: scale(1.05);
   box-shadow: 0 8px 24px rgba(26,86,160,0.25);
 }
-.tnq-drag-card .tnq-drag-card-image {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 160px;
-  padding: 10px;
-  background: #f8faff;
-}
-.tnq-drag-card .tnq-drag-card-footer {
-  background: var(--tnq-primary);
-  color: #fff;
-  font-weight: 700;
-  font-size: 18px;
-  text-align: center;
-  padding: 10px 8px;
-  line-height: 1.2;
-}
 .tnq-slot-card {
   pointer-events: none;
   cursor: default !important;
-}
-.tnq-drag-sequence .tnq-source-area {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  padding: 16px;
-  margin-top: 12px;
 }
 
 /* ── Practice Q3: loop-count dynamic tiles ───────────────────── */
