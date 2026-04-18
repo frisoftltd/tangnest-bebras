@@ -20,9 +20,12 @@ TNQInteractions.dragSequence = (function () {
 
     function init(el) {
         console.log('drag-sequence init', el);
-        var slots       = Array.from(el.querySelectorAll('.tnq-sequence-slot'));
-        var sourceArea  = el.querySelector('.tnq-source-area');
-        var sourceCards = Array.from(el.querySelectorAll('.tnq-source-area [data-item-id]'));
+        // Scope all queries to the .tnq-drag-sequence child so cards from
+        // sibling questions (also hidden in the DOM) can never leak in.
+        var root        = el.querySelector('.tnq-drag-sequence') || el;
+        var slots       = Array.from(root.querySelectorAll('.tnq-sequence-slot'));
+        var sourceArea  = root.querySelector('.tnq-source-area');
+        var sourceCards = Array.from(root.querySelectorAll('.tnq-source-area [data-item-id]'));
 
         // slotContents[i] = itemId | null
         var slotContents = slots.map(function () { return null; });
@@ -100,9 +103,16 @@ TNQInteractions.dragSequence = (function () {
                     clone.classList.remove('is-placed', 'is-dragging');
                     clone.classList.add('tnq-slot-card');
                     clone.setAttribute('draggable', 'false');
-                    clone.style.cursor  = 'default';
-                    clone.style.pointerEvents = 'none';
                     clone.removeAttribute('tabindex');
+                    // Position absolute so it overlays the slot's ::before spacer
+                    // rather than flowing after it (which would be clipped by overflow:hidden)
+                    clone.style.position     = 'absolute';
+                    clone.style.top          = '0';
+                    clone.style.left         = '0';
+                    clone.style.width        = '100%';
+                    clone.style.height       = '100%';
+                    clone.style.cursor       = 'default';
+                    clone.style.pointerEvents = 'none';
                     slot.appendChild(clone);
                 }
             }
