@@ -218,27 +218,32 @@ class TNQ_Renderer {
 
 		ob_start();
 		?>
-		<div class="tnq-drag-sequence">
+		<!-- overflow-x:hidden prevents cards overflowing viewport on narrow screens -->
+		<div class="tnq-drag-sequence" style="overflow-x:hidden;">
 			<p style="font-size:14px;color:#666;margin-bottom:10px;">Drag the cards into the right order:</p>
-			<!-- BUG 2 fix: single horizontal row of slots, each exactly 160×200px -->
+			<!-- Drop-zone row: single horizontal row, each slot calc(25% - 10px) wide -->
 			<div class="tnq-sequence-area" style="display:flex;flex-direction:row;flex-wrap:nowrap;gap:12px;align-items:flex-start;min-height:<?php echo $use_png ? '200px' : '90px'; ?>;">
 				<?php foreach ( $answer as $pos => $id ) : ?>
-				<div class="tnq-sequence-slot" style="<?php echo $use_png ? 'width:160px;height:200px;flex-shrink:0;' : ''; ?>">
+				<div class="tnq-sequence-slot" style="<?php echo $use_png ? 'width:calc(25% - 10px);height:200px;' : ''; ?>">
 					<span class="tnq-sequence-number"><?php echo esc_html( $pos + 1 ); ?></span>
 				</div>
 				<?php endforeach; ?>
 			</div>
-			<!-- BUG 2 fix: source cards also in a single horizontal row -->
+			<!-- Source card row: single horizontal row, each card calc(25% - 10px) wide -->
 			<div class="tnq-source-area" style="<?php echo $use_png ? 'display:flex;flex-direction:row;flex-wrap:nowrap;gap:12px;margin-top:16px;' : ''; ?>">
 				<?php foreach ( $shuffled as $item ) : ?>
 					<?php if ( $use_png ) : ?>
-					<!-- BUG 3 fix: image-only card, no footer label -->
-					<div class="tnq-drag-card" data-item-id="<?php echo esc_attr( $item['id'] ); ?>" draggable="true" tabindex="0" role="button" aria-label="<?php echo esc_attr( $item['label'] ?? '' ); ?>">
-						<!-- BUG 1 fix: use plugins_url() for correct asset URL -->
-						<img src="<?php echo esc_url( plugins_url( 'public/assets/svg/' . $item['png'], TNQ_PLUGIN_FILE ) ); ?>"
+					<div class="tnq-drag-card" data-item-id="<?php echo esc_attr( $item['id'] ); ?>" draggable="true" tabindex="0" role="button" aria-label="<?php echo esc_attr( $item['label'] ?? '' ); ?>" style="width:calc(25% - 10px);">
+						<?php
+						// BUG 1 fix: TNQ_ASSETS_URL defined in tangnest-bebras.php via
+						// plugin_dir_url(__FILE__) — authoritative URL for SVG/PNG assets.
+						$img_path = TNQ_ASSETS_URL . $item['png'];
+						error_log( 'TNQ img path: ' . $img_path );
+						?>
+						<img src="<?php echo esc_url( $img_path ); ?>"
 							 alt="<?php echo esc_attr( $item['label'] ?? '' ); ?>"
 							 loading="lazy"
-							 style="width:160px;height:200px;object-fit:cover;border-radius:14px;display:block;">
+							 style="width:100%;height:200px;object-fit:cover;border-radius:14px;display:block;">
 					</div>
 					<?php else : ?>
 					<div class="tnq-card" data-item-id="<?php echo esc_attr( $item['id'] ); ?>" draggable="true" tabindex="0">

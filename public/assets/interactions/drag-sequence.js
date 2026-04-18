@@ -18,6 +18,7 @@ TNQInteractions.dragSequence = (function () {
     }
 
     function init(el) {
+        console.log('drag-sequence init', el);
         var slots       = Array.from(el.querySelectorAll('.tnq-sequence-slot'));
         var sourceArea  = el.querySelector('.tnq-source-area');
         var sourceCards = Array.from(el.querySelectorAll('.tnq-source-area [data-item-id]'));
