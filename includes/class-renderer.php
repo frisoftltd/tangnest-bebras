@@ -221,19 +221,19 @@ class TNQ_Renderer {
 		<!-- overflow-x:hidden prevents cards overflowing viewport on narrow screens -->
 		<div class="tnq-drag-sequence" style="overflow-x:hidden;">
 			<p style="font-size:14px;color:#666;margin-bottom:10px;">Drag the cards into the right order:</p>
-			<!-- Drop-zone row: single horizontal row, each slot calc(25% - 10px) wide -->
+			<!-- Drop-zone row: single horizontal row, each slot calc(25% - 12px) square -->
 			<div class="tnq-sequence-area" style="display:flex;flex-direction:row;flex-wrap:nowrap;gap:12px;align-items:flex-start;">
 				<?php foreach ( $answer as $pos => $id ) : ?>
-				<div class="tnq-sequence-slot" style="<?php echo $use_png ? 'width:calc(25% - 10px);aspect-ratio:1/1;' : ''; ?>">
+				<div class="tnq-sequence-slot" style="<?php echo $use_png ? 'width:calc(25% - 12px);aspect-ratio:1/1;border-radius:16px;' : ''; ?>">
 					<span class="tnq-sequence-number"><?php echo esc_html( $pos + 1 ); ?></span>
 				</div>
 				<?php endforeach; ?>
 			</div>
-			<!-- Source card row: single horizontal row, each card calc(25% - 10px) wide -->
+			<!-- Source card row: single horizontal row, each card calc(25% - 12px) square -->
 			<div class="tnq-source-area" style="<?php echo $use_png ? 'display:flex;flex-direction:row;flex-wrap:nowrap;gap:12px;margin-top:16px;' : ''; ?>">
 				<?php foreach ( $shuffled as $item ) : ?>
 					<?php if ( $use_png ) : ?>
-					<div class="tnq-drag-card" data-item-id="<?php echo esc_attr( $item['id'] ); ?>" draggable="true" tabindex="0" role="button" aria-label="<?php echo esc_attr( $item['label'] ?? '' ); ?>" style="width:calc(25% - 10px);">
+					<div class="tnq-drag-card" data-item-id="<?php echo esc_attr( $item['id'] ); ?>" draggable="true" tabindex="0" role="button" aria-label="<?php echo esc_attr( $item['label'] ?? '' ); ?>" style="width:calc(25% - 12px);aspect-ratio:1/1;border-radius:16px;overflow:hidden;flex-shrink:0;">
 						<?php
 						$img_path  = TNQ_ASSETS_URL . $item['png'];
 						$file_path = TNQ_PLUGIN_DIR . 'public/assets/svg/' . $item['png'];
@@ -245,7 +245,7 @@ class TNQ_Renderer {
 						<img src="<?php echo esc_url( $img_path ); ?>"
 							 alt="<?php echo esc_attr( $item['label'] ?? '' ); ?>"
 							 loading="lazy"
-							 style="width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:14px;display:block;">
+							 style="width:100%;height:100%;object-fit:cover;border-radius:16px;display:block;">
 					</div>
 					<?php else : ?>
 					<div class="tnq-card" data-item-id="<?php echo esc_attr( $item['id'] ); ?>" draggable="true" tabindex="0">

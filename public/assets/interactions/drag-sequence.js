@@ -121,6 +121,15 @@ TNQInteractions.dragSequence = (function () {
                 e.dataTransfer.effectAllowed = 'move';
                 e.dataTransfer.setData('text/plain', dragItemId);
                 card.classList.add('is-dragging');
+                // Use a full-size clone as the drag ghost so it matches the card
+                var ghost = e.target.cloneNode(true);
+                ghost.style.width    = e.target.offsetWidth  + 'px';
+                ghost.style.height   = e.target.offsetHeight + 'px';
+                ghost.style.position = 'absolute';
+                ghost.style.top      = '-9999px';
+                document.body.appendChild(ghost);
+                e.dataTransfer.setDragImage(ghost, e.target.offsetWidth / 2, e.target.offsetHeight / 2);
+                setTimeout(function () { document.body.removeChild(ghost); }, 0);
             });
 
             card.addEventListener('dragend', function () {
