@@ -323,7 +323,13 @@
 
 	TNQQuiz.prototype._onHint = function () {
 		var hintBox = this.container.querySelector('.tnq-hint-box');
-		if (hintBox) hintBox.classList.add('is-visible');
+		if (!hintBox) return;
+		// BUG 4 fix: read hint text from current question's data-hint attribute
+		var q = this.questions[this.currentIdx];
+		var hintText = q ? (q.dataset.hint || '') : '';
+		var hintSpan = hintBox.querySelector('.tnq-hint-text');
+		if (hintSpan) hintSpan.textContent = hintText;
+		hintBox.classList.add('is-visible');
 	};
 
 	TNQQuiz.prototype._showFeedback = function (correct) {

@@ -220,24 +220,25 @@ class TNQ_Renderer {
 		?>
 		<div class="tnq-drag-sequence">
 			<p style="font-size:14px;color:#666;margin-bottom:10px;">Drag the cards into the right order:</p>
-			<div class="tnq-sequence-area" style="min-height:<?php echo $use_png ? '280px' : '90px'; ?>">
+			<!-- BUG 2 fix: single horizontal row of slots, each exactly 160×200px -->
+			<div class="tnq-sequence-area" style="display:flex;flex-direction:row;flex-wrap:nowrap;gap:12px;align-items:flex-start;min-height:<?php echo $use_png ? '200px' : '90px'; ?>;">
 				<?php foreach ( $answer as $pos => $id ) : ?>
-				<div class="tnq-sequence-slot" style="<?php echo $use_png ? 'width:200px;min-height:270px;' : ''; ?>">
+				<div class="tnq-sequence-slot" style="<?php echo $use_png ? 'width:160px;height:200px;flex-shrink:0;' : ''; ?>">
 					<span class="tnq-sequence-number"><?php echo esc_html( $pos + 1 ); ?></span>
 				</div>
 				<?php endforeach; ?>
 			</div>
-			<div class="tnq-source-area">
+			<!-- BUG 2 fix: source cards also in a single horizontal row -->
+			<div class="tnq-source-area" style="<?php echo $use_png ? 'display:flex;flex-direction:row;flex-wrap:nowrap;gap:12px;margin-top:16px;' : ''; ?>">
 				<?php foreach ( $shuffled as $item ) : ?>
 					<?php if ( $use_png ) : ?>
+					<!-- BUG 3 fix: image-only card, no footer label -->
 					<div class="tnq-drag-card" data-item-id="<?php echo esc_attr( $item['id'] ); ?>" draggable="true" tabindex="0" role="button" aria-label="<?php echo esc_attr( $item['label'] ?? '' ); ?>">
-						<div class="tnq-drag-card-image">
-							<img src="<?php echo esc_url( TNQ_PLUGIN_URL . 'public/assets/svg/' . $item['png'] ); ?>"
-								 alt="<?php echo esc_attr( $item['label'] ?? '' ); ?>"
-								 loading="lazy"
-								 style="width:180px;height:180px;object-fit:contain">
-						</div>
-						<div class="tnq-drag-card-footer"><?php echo esc_html( $item['label'] ?? '' ); ?></div>
+						<!-- BUG 1 fix: use plugins_url() for correct asset URL -->
+						<img src="<?php echo esc_url( plugins_url( 'public/assets/svg/' . $item['png'], TNQ_PLUGIN_FILE ) ); ?>"
+							 alt="<?php echo esc_attr( $item['label'] ?? '' ); ?>"
+							 loading="lazy"
+							 style="width:160px;height:200px;object-fit:cover;border-radius:14px;display:block;">
 					</div>
 					<?php else : ?>
 					<div class="tnq-card" data-item-id="<?php echo esc_attr( $item['id'] ); ?>" draggable="true" tabindex="0">
