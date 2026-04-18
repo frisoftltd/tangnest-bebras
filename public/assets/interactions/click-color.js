@@ -17,6 +17,7 @@
  *           .tnq-color-btn[data-color="red"]   ← PNG palette button
  *           OR .tnq-color-swatch[data-color="#hex"] ← legacy hex swatch
  */
+window.TNQInteractions = window.TNQInteractions || {};
 TNQInteractions.clickColor = (function () {
 
     function fireInteracted(el) {

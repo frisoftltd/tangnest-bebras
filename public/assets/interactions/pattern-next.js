@@ -12,6 +12,7 @@
  *       .tnq-choice-card[data-choice-id][data-png?][data-active-png?] ...
  *       OR .tnq-card[data-choice-id] ...
  */
+window.TNQInteractions = window.TNQInteractions || {};
 TNQInteractions.patternNext = (function () {
 
     function fireInteracted(el) {

@@ -13,6 +13,7 @@
  *       .tnq-counter-value
  *       .tnq-counter-btn[data-dir="+"]
  */
+window.TNQInteractions = window.TNQInteractions || {};
 TNQInteractions.loopCount = (function () {
 
     function fireInteracted(el) {

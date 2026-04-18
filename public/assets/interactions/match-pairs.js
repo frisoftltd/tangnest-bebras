@@ -25,6 +25,7 @@
  *           img.tnq-pair-img  |  tnq-icon
  *           span (label)
  */
+window.TNQInteractions = window.TNQInteractions || {};
 TNQInteractions.matchPairs = (function () {
 
     function fireInteracted(el) {

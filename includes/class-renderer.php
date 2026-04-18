@@ -222,9 +222,9 @@ class TNQ_Renderer {
 		<div class="tnq-drag-sequence" style="overflow-x:hidden;">
 			<p style="font-size:14px;color:#666;margin-bottom:10px;">Drag the cards into the right order:</p>
 			<!-- Drop-zone row: single horizontal row, each slot calc(25% - 10px) wide -->
-			<div class="tnq-sequence-area" style="display:flex;flex-direction:row;flex-wrap:nowrap;gap:12px;align-items:flex-start;min-height:<?php echo $use_png ? '200px' : '90px'; ?>;">
+			<div class="tnq-sequence-area" style="display:flex;flex-direction:row;flex-wrap:nowrap;gap:12px;align-items:flex-start;">
 				<?php foreach ( $answer as $pos => $id ) : ?>
-				<div class="tnq-sequence-slot" style="<?php echo $use_png ? 'width:calc(25% - 10px);height:200px;' : ''; ?>">
+				<div class="tnq-sequence-slot" style="<?php echo $use_png ? 'width:calc(25% - 10px);aspect-ratio:1/1;' : ''; ?>">
 					<span class="tnq-sequence-number"><?php echo esc_html( $pos + 1 ); ?></span>
 				</div>
 				<?php endforeach; ?>
@@ -235,15 +235,17 @@ class TNQ_Renderer {
 					<?php if ( $use_png ) : ?>
 					<div class="tnq-drag-card" data-item-id="<?php echo esc_attr( $item['id'] ); ?>" draggable="true" tabindex="0" role="button" aria-label="<?php echo esc_attr( $item['label'] ?? '' ); ?>" style="width:calc(25% - 10px);">
 						<?php
-						// BUG 1 fix: TNQ_ASSETS_URL defined in tangnest-bebras.php via
-						// plugin_dir_url(__FILE__) — authoritative URL for SVG/PNG assets.
-						$img_path = TNQ_ASSETS_URL . $item['png'];
-						error_log( 'TNQ img path: ' . $img_path );
+						$img_path  = TNQ_ASSETS_URL . $item['png'];
+						$file_path = TNQ_PLUGIN_DIR . 'public/assets/svg/' . $item['png'];
+						error_log( 'TNQ img URL: ' . $img_path );
+						if ( ! file_exists( $file_path ) ) {
+							error_log( 'TNQ MISSING FILE: ' . $file_path );
+						}
 						?>
 						<img src="<?php echo esc_url( $img_path ); ?>"
 							 alt="<?php echo esc_attr( $item['label'] ?? '' ); ?>"
 							 loading="lazy"
-							 style="width:100%;height:200px;object-fit:cover;border-radius:14px;display:block;">
+							 style="width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:14px;display:block;">
 					</div>
 					<?php else : ?>
 					<div class="tnq-card" data-item-id="<?php echo esc_attr( $item['id'] ); ?>" draggable="true" tabindex="0">

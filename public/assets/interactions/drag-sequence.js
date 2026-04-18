@@ -11,6 +11,7 @@
  *     .tnq-source-area
  *       .tnq-drag-card[data-item-id] | .tnq-card[data-item-id]
  */
+window.TNQInteractions = window.TNQInteractions || {};
 TNQInteractions.dragSequence = (function () {
 
     function fireInteracted(el) {

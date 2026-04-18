@@ -14,6 +14,7 @@
  *         .tnq-bin-items
  *       .tnq-bin[data-bin-index="1"] ...
  */
+window.TNQInteractions = window.TNQInteractions || {};
 TNQInteractions.dragSort = (function () {
 
 	function init(el) {
