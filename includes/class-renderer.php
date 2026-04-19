@@ -611,7 +611,26 @@ class TNQ_Renderer {
 	}
 
 	/**
-	 * Render the [tnq_results] shortcode output.
+	 * Render a single completed-assessment result card (used by already_completed_screen).
+	 * Shows only the result for the given type — never stacks baseline + endline.
+	 */
+	public static function render_single_result( object $result, string $type ): string {
+		$label = 'endline' === $type ? 'Endline' : 'Baseline';
+		ob_start();
+		?>
+		<div class="tnq-quiz">
+			<div class="tnq-results-screen" style="text-align:left">
+				<h2 style="color:var(--tnq-primary);margin-bottom:20px">Your <?php echo esc_html( $label ); ?> Results</h2>
+				<?php echo self::render_result_row( $result ); ?>
+				<p style="margin-top:16px;font-size:15px;color:#555">You have already completed this assessment. Ask your teacher to see your progress.</p>
+			</div>
+		</div>
+		<?php
+		return ob_get_clean();
+	}
+
+	/**
+	 * Render the [tnq_results] shortcode output (shows ALL completed assessments).
 	 */
 	public static function render_results( int $student_id ): string {
 		$rows = TNQ_Storage::get_all_results( $student_id );

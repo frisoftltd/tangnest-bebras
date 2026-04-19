@@ -131,8 +131,9 @@ class TNQ_Shortcodes {
 	}
 
 	private function already_completed_screen( object $result, string $type, string $age ): string {
-		$student_id = get_current_user_id();
-		return $this->enqueue_style() . TNQ_Renderer::render_results( $student_id );
+		// Show only the result for THIS mode — never call render_results() here as it
+		// outputs ALL modes (baseline + endline) stacked, causing the double-card bug.
+		return $this->enqueue_style() . TNQ_Renderer::render_single_result( $result, $type );
 	}
 
 	/**

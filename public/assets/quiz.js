@@ -15,7 +15,7 @@
 (function () {
 	'use strict';
 
-	window.TNQ_VERSION = '2.3.4';
+	window.TNQ_VERSION = '2.3.5';
 
 	/** Namespace for interaction modules loaded from interactions/*.js */
 	window.TNQInteractions = window.TNQInteractions || {};
@@ -530,6 +530,10 @@
 	};
 
 	TNQQuiz.prototype._showResults = function (data) {
+		// Diagnostic: confirm which instance is rendering and which container it owns.
+		// Container selector used: document.querySelectorAll('.tnq-quiz') in boot().
+		console.log('[TNQ] _showResults called — mode:', this.mode, '| container:', this.container);
+
 		var self     = this;
 		var total    = data.score_total       || 0;
 		var algScore = data.score_algorithmic || 0;
@@ -628,7 +632,9 @@
 	// ── Boot ────────────────────────────────────────────────────
 
 	function boot() {
-		document.querySelectorAll('.tnq-quiz').forEach(function (container) {
+		var containers = Array.from(document.querySelectorAll('.tnq-quiz'));
+		console.log('[TNQ] boot() found', containers.length, 'container(s):', containers.map(function (c) { return c.dataset.mode || 'no-mode'; }));
+		containers.forEach(function (container) {
 			var quiz = new TNQQuiz(container);
 			quiz.init();
 		});
