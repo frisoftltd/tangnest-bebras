@@ -780,6 +780,29 @@
   margin-bottom: 16px;
 }
 
+/* ── Results: score colour by band ─────────────────────────── */
+.tnq-score-display.tnq-score-green { color: #27ae60; }
+.tnq-score-display.tnq-score-amber { color: #f39c12; }
+.tnq-score-display.tnq-score-red   { color: #e74c3c; }
+
+/* ── Results: back-to-last-question button ──────────────────── */
+.tnq-results-back-btn {
+  display: block;
+  margin: 16px auto 0;
+  background: white;
+  color: #1A56A0;
+  border: 2px solid #1A56A0;
+  border-radius: 10px;
+  padding: 12px 32px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  min-height: 48px;
+}
+.tnq-results-back-btn:hover {
+  background: #f0f4ff;
+}
+
 .tnq-growth-line {
   font-size: 18px;
   font-weight: 700;

@@ -535,6 +535,9 @@
 		var interp  = data.interpretation  || '';
 		var growth  = data.growth;
 
+		// Score colour: 0-2 red, 3-4 amber, 5+ green
+		var scoreColorClass = total >= 5 ? 'tnq-score-green' : (total >= 3 ? 'tnq-score-amber' : 'tnq-score-red');
+
 		var growthHtml = '';
 		if (typeof growth === 'number') {
 			if (growth > 0) {
@@ -551,11 +554,12 @@
 		              this._skillBarHtml('Logical',     logScore);
 
 		var html = '<div class="tnq-results-screen">' +
-			'<div class="tnq-score-display">You got ' + total + ' / 9</div>' +
+			'<div class="tnq-score-display ' + scoreColorClass + '">You got ' + total + ' / 9</div>' +
 			'<div class="tnq-score-label">Well done for completing the assessment!</div>' +
 			'<div class="tnq-skill-bars">' + barHtml + '</div>' +
 			growthHtml +
 			'<div class="tnq-interpretation">' + this._esc(interp) + '</div>' +
+			'<button class="tnq-results-back-btn" type="button">\u2190 Back to last question</button>' +
 			'</div>';
 
 		var questionsWrap = this.container.querySelector('.tnq-questions');
@@ -570,6 +574,19 @@
 		var resultDiv = document.createElement('div');
 		resultDiv.innerHTML = html;
 		this.container.appendChild(resultDiv);
+
+		// Wire back button: remove results, restore quiz chrome, show last question
+		var self = this;
+		var backBtn = resultDiv.querySelector('.tnq-results-back-btn');
+		if (backBtn) {
+			backBtn.addEventListener('click', function () {
+				resultDiv.remove();
+				if (questionsWrap) questionsWrap.style.display = '';
+				if (navEl)         navEl.style.display         = '';
+				if (progressEl)    progressEl.style.display    = '';
+				self._showQuestion(self.questions.length - 1);
+			});
+		}
 	};
 
 	TNQQuiz.prototype._skillBarHtml = function (label, score) {
