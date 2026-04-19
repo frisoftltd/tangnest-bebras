@@ -15,7 +15,7 @@
 (function () {
 	'use strict';
 
-	window.TNQ_VERSION = '2.3.3';
+	window.TNQ_VERSION = '2.3.4';
 
 	/** Namespace for interaction modules loaded from interactions/*.js */
 	window.TNQInteractions = window.TNQInteractions || {};
@@ -569,7 +569,6 @@
 			'<div class="tnq-skill-bars">' + barHtml + '</div>' +
 			growthHtml +
 			'<div class="tnq-interpretation">' + this._esc(interp) + '</div>' +
-			'<button class="tnq-results-back-btn" type="button">&#8592; Back to questions</button>' +
 			'</div>';
 
 		// 4. Hide quiz chrome
@@ -578,22 +577,30 @@
 		if (progressEl)    progressEl.style.display    = 'none';
 		if (timerEl)       timerEl.style.display       = 'none';
 
-		// 5. Append results to DOM first
+		// 5. Append results to DOM
 		var resultDiv = document.createElement('div');
 		resultDiv.innerHTML = html;
 		this.container.appendChild(resultDiv);
 
-		// 6. Wire back button AFTER append so querySelector is guaranteed to find it
-		var backBtn = resultDiv.querySelector('.tnq-results-back-btn');
-		if (backBtn) {
-			backBtn.addEventListener('click', function () {
-				resultDiv.remove();
-				if (questionsWrap) questionsWrap.style.display = '';
-				if (navEl)         navEl.style.display         = '';
-				if (progressEl)    progressEl.style.display    = '';
-				self._showQuestion(self.questions.length - 1);
-			});
+		// 6. Add back button programmatically (avoids template string encoding issues)
+		var backBtn = document.createElement('button');
+		backBtn.className   = 'tnq-results-back-btn';
+		backBtn.textContent = '\u2190 Back to questions';
+
+		var interpretation = resultDiv.querySelector('.tnq-interpretation');
+		if (interpretation) {
+			interpretation.after(backBtn);
+		} else {
+			resultDiv.appendChild(backBtn);
 		}
+
+		backBtn.addEventListener('click', function () {
+			resultDiv.remove();
+			if (questionsWrap) questionsWrap.style.display = '';
+			if (navEl)         navEl.style.display         = '';
+			if (progressEl)    progressEl.style.display    = '';
+			self._showQuestion(self.questions.length - 1);
+		});
 	};
 
 	TNQQuiz.prototype._skillBarHtml = function (label, score) {
