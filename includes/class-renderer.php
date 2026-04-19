@@ -390,8 +390,19 @@ class TNQ_Renderer {
 		?>
 		<div class="tnq-click-color" data-adjacency="<?php echo esc_attr( wp_json_encode( $adjacency ) ); ?>">
 			<div class="tnq-color-workspace">
-				<div class="tnq-svg-canvas" style="width:200px;height:160px">
-					<?php echo TNQ_Icons::icon( $svg_key, [ 'class' => 'tnq-colorable-svg', 'style' => 'width:200px;height:160px' ] ); ?>
+				<div class="tnq-svg-canvas" style="width:100%;max-width:400px;margin:0 auto">
+					<?php
+					$svg  = '<svg class="tnq-icon tnq-icon--flag-colorable tnq-colorable-svg"';
+					$svg .= ' viewBox="0 0 120 80"';
+					$svg .= ' style="width:100%;max-width:400px;height:auto;display:block;margin:0 auto;cursor:pointer;position:relative;z-index:10;"';
+					$svg .= ' xmlns="http://www.w3.org/2000/svg">';
+					$svg .= '<polygon data-region="top"    points="0,0 120,0 60,40"    fill="#d4d4d4" stroke="#bbb" stroke-width="0.75" pointer-events="all" style="cursor:pointer;"/>';
+					$svg .= '<polygon data-region="right"  points="120,0 120,80 60,40" fill="#b8b8b8" stroke="#bbb" stroke-width="0.75" pointer-events="all" style="cursor:pointer;"/>';
+					$svg .= '<polygon data-region="bottom" points="120,80 0,80 60,40"  fill="#c8c8c8" stroke="#bbb" stroke-width="0.75" pointer-events="all" style="cursor:pointer;"/>';
+					$svg .= '<polygon data-region="left"   points="0,80 0,0 60,40"     fill="#e0e0e0" stroke="#bbb" stroke-width="0.75" pointer-events="all" style="cursor:pointer;"/>';
+					$svg .= '</svg>';
+					echo $svg;
+					?>
 				</div>
 				<div class="tnq-color-palette">
 					<?php foreach ( $palette_pngs as $pal ) : ?>
@@ -459,7 +470,7 @@ class TNQ_Renderer {
 		$pairs = $q['pairs'] ?? [];
 
 		// Row colours for left-item dots (practice mode line drawing)
-		$dot_colors = [ '#F39C12', '#1A56A0', '#1E8449' ];
+		$dot_colors = [ '#9b59b6', '#f39c12', '#27ae60' ];
 
 		// Shuffle right side
 		$right_shuffled = $right;

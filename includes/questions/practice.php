@@ -119,9 +119,9 @@ return [
 			[ 'bottom', 'right' ],
 		],
 		'palette_pngs'         => [
-			[ 'png' => 'ui/q5-red.png',    'label' => 'Red',    'value' => 'red'    ],
-			[ 'png' => 'ui/q5-yellow.png', 'label' => 'Yellow', 'value' => 'yellow' ],
-			[ 'png' => 'ui/q5-green.png',  'label' => 'Green',  'value' => 'green'  ],
+			[ 'png' => 'ui/q5-red.png',    'label' => 'Red',    'value' => '#e74c3c' ],
+			[ 'png' => 'ui/q5-yellow.png', 'label' => 'Yellow', 'value' => '#f1c40f' ],
+			[ 'png' => 'ui/q5-green.png',  'label' => 'Green',  'value' => '#27ae60' ],
 		],
 	],
 

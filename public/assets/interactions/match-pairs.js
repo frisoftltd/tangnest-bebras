@@ -43,8 +43,8 @@ TNQInteractions.matchPairs = (function () {
 
         // Build SVG overlay spanning the whole workspace
         var lineSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        lineSvg.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none';
-        if (connDiv) connDiv.appendChild(lineSvg);
+        lineSvg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:100';
+        if (workspace) workspace.appendChild(lineSvg);
 
         // State
         var activeLeft  = null;  // leftId of currently selected left card

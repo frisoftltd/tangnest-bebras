@@ -26,6 +26,8 @@ TNQInteractions.loopCount = (function () {
         var btnPlus  = el.querySelector('.tnq-counter-btn[data-dir="+"]');
         var tilesEl  = el.querySelector('.tnq-dynamic-tiles');
 
+        if (!valueEl && !btnMinus && !btnPlus) return;
+
         var min     = parseInt(el.dataset.min,     10) || 1;
         var max     = parseInt(el.dataset.max,     10) || 30;
         var initial = parseInt(el.dataset.initial, 10) || min;
