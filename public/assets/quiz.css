@@ -444,16 +444,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
-  color: var(--tnq-primary);
+  font-size: 32px !important;
+  color: #1A56A0;
   font-weight: 700;
 }
 
 .tnq-pattern-next .tnq-choices {
   display: flex;
-  gap: 12px;
   flex-wrap: wrap;
-  justify-content: center;
+  gap: 12px;
+  padding: 8px 0;
 }
 
 /* ── Match-pairs ───────────────────────────────────────────── */
@@ -947,31 +947,50 @@
   object-fit: contain;
 }
 
-/* ── Practice Q4: PNG choice cards ──────────────────────────── */
-.tnq-choice-card {
-  width: 160px;
-  min-height: 190px;
-  border-radius: 14px;
-  border: 3px solid var(--tnq-border);
-  background: var(--tnq-card-bg);
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 8px;
+/* ── Practice Q4: PNG choice cards (square, aspect-ratio trick) ── */
+.tnq-pattern-next .tnq-choice-card {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: calc(50% - 8px);
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 3px solid #e0e0e0;
+  background: white;
   cursor: pointer;
-  user-select: none;
-  -webkit-user-select: none;
-  transition: border-color 0.15s, box-shadow 0.15s;
-  box-shadow: var(--tnq-shadow);
+  box-sizing: border-box;
 }
-.tnq-choice-card:hover {
-  border-color: var(--tnq-primary);
-  box-shadow: 0 0 0 3px rgba(26,86,160,0.12);
+
+.tnq-pattern-next .tnq-choice-card::before {
+  content: '';
+  display: block;
+  padding-top: 100%;
 }
-.tnq-choice-card.is-selected {
-  border-color: var(--tnq-primary);
-  box-shadow: 0 0 0 4px rgba(26,86,160,0.22);
+
+.tnq-pattern-next .tnq-choice-card img {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 70% !important;
+  height: 70% !important;
+  object-fit: contain !important;
+}
+
+.tnq-pattern-next .tnq-choice-card .tnq-choice-label {
+  position: absolute;
+  bottom: 8px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-weight: bold;
+  font-size: 16px;
+  color: #1A56A0;
+}
+
+.tnq-pattern-next .tnq-choice-card.is-selected {
+  border: 3px solid #1A56A0;
+  background: #f0f4ff;
 }
 
 /* ── Practice Q5: PNG colour palette buttons ─────────────────── */

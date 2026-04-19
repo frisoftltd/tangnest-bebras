@@ -83,7 +83,8 @@ TNQInteractions.patternNext = (function () {
                 var img = c.querySelector('img');
                 if (img && c.dataset.png) { img.src = c.dataset.png; }
             });
-            if (blank) blank.innerHTML = '';
+            // Restore the "?" placeholder — do NOT leave blank empty
+            if (blank) blank.textContent = '?';
             interacted = false;
         };
     }
