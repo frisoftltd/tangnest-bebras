@@ -102,17 +102,114 @@ TNQInteractions.dragSequence = (function () {
                     var clone = srcCard.cloneNode(true);
                     clone.classList.remove('is-placed', 'is-dragging');
                     clone.classList.add('tnq-slot-card');
-                    clone.setAttribute('draggable', 'false');
+                    clone.setAttribute('draggable', 'true');
                     clone.removeAttribute('tabindex');
                     // Position absolute so it overlays the slot's ::before spacer
-                    // rather than flowing after it (which would be clipped by overflow:hidden)
                     clone.style.position     = 'absolute';
                     clone.style.top          = '0';
                     clone.style.left         = '0';
                     clone.style.width        = '100%';
                     clone.style.height       = '100%';
-                    clone.style.cursor       = 'default';
-                    clone.style.pointerEvents = 'none';
+                    clone.style.cursor       = 'grab';
+                    clone.style.pointerEvents = 'auto';
+
+                    // ── Mouse drag from slot ──────────────────────────
+                    clone.addEventListener('dragstart', function (e) {
+                        dragItemId = itemId;
+                        e.dataTransfer.effectAllowed = 'move';
+                        e.dataTransfer.setData('text/plain', itemId);
+                        // Clear slot state immediately
+                        slotContents[slotIdx] = null;
+                        itemInSlot[itemId]    = null;
+                        clone.classList.add('is-dragging');
+                        // Defer DOM cleanup so drag ghost is captured first
+                        setTimeout(function () {
+                            renderSlot(slotIdx);
+                            refreshSourceCard(itemId);
+                        }, 0);
+                    });
+
+                    clone.addEventListener('dragend', function () {
+                        dragItemId = null;
+                        el.querySelectorAll('.drag-over').forEach(function (z) {
+                            z.classList.remove('drag-over');
+                        });
+                    });
+
+                    // ── Touch / pointer drag from slot ────────────────
+                    clone.addEventListener('pointerdown', function (e) {
+                        if (e.pointerType === 'mouse') return;
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        // Capture slot state before clearing
+                        var draggedId  = itemId;
+                        var fromSlot   = slotIdx;
+
+                        // Clear slot state
+                        slotContents[fromSlot] = null;
+                        itemInSlot[draggedId]  = null;
+                        touchCardId = draggedId;
+                        touchId     = e.pointerId;
+
+                        // Create floating ghost from clone
+                        var rect = clone.getBoundingClientRect();
+                        ghost = clone.cloneNode(true);
+                        ghost.classList.remove('is-dragging');
+                        ghost.style.position     = 'fixed';
+                        ghost.style.left         = (e.clientX - rect.width / 2) + 'px';
+                        ghost.style.top          = (e.clientY - rect.height / 2) + 'px';
+                        ghost.style.width        = rect.width + 'px';
+                        ghost.style.pointerEvents = 'none';
+                        ghost.style.opacity      = '0.85';
+                        ghost.style.zIndex       = '99999';
+                        ghost.style.transform    = 'scale(1.06)';
+                        ghost.style.boxShadow    = '0 8px 28px rgba(0,0,0,0.28)';
+                        ghost.style.borderRadius = '14px';
+                        document.body.appendChild(ghost);
+
+                        // Defer slot DOM cleanup so pointerdown completes normally
+                        setTimeout(function () {
+                            renderSlot(fromSlot);
+                            refreshSourceCard(draggedId);
+                        }, 0);
+
+                        touchMoveHandler = function (ev) {
+                            if (ev.pointerId !== touchId) return;
+                            ghost.style.left = (ev.clientX - rect.width / 2) + 'px';
+                            ghost.style.top  = (ev.clientY - rect.height / 2) + 'px';
+                        };
+
+                        touchUpHandler = function (ev) {
+                            if (ev.pointerId !== touchId) return;
+
+                            ghost.style.display = 'none';
+                            var target = document.elementFromPoint(ev.clientX, ev.clientY);
+                            ghost.style.display = '';
+
+                            if (target) {
+                                var targetSlot = target.closest('.tnq-sequence-slot');
+                                if (targetSlot) {
+                                    var targetIdx = slots.indexOf(targetSlot);
+                                    if (targetIdx >= 0) placeItem(touchCardId, targetIdx);
+                                }
+                            }
+
+                            document.body.removeChild(ghost);
+                            ghost = null;
+                            touchCardId = null;
+                            touchId     = null;
+
+                            document.removeEventListener('pointermove', touchMoveHandler);
+                            document.removeEventListener('pointerup',   touchUpHandler);
+                            touchMoveHandler = null;
+                            touchUpHandler   = null;
+                        };
+
+                        document.addEventListener('pointermove', touchMoveHandler);
+                        document.addEventListener('pointerup',   touchUpHandler);
+                    }, { passive: false });
+
                     slot.appendChild(clone);
                 }
             }

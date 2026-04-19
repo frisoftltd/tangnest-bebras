@@ -287,69 +287,32 @@ class TNQ_Renderer {
 
 		// ── Path illustration (house → footprints → tap) ─────────
 		if ( $path_svg === 'house-to-tap' ) :
+			$_house_url    = esc_url( TNQ_ASSETS_URL . 'places/q3-house.png' );
+			$_tap_url      = esc_url( TNQ_ASSETS_URL . 'places/q3-tap.png' );
+			$_footstep_url = esc_url( TNQ_ASSETS_URL . 'ui/q3-footstep.png' );
 		?>
-		<svg viewBox="0 0 500 120" xmlns="http://www.w3.org/2000/svg"
-			style="width:100%;height:120px;display:block;margin-bottom:8px"
+		<svg viewBox="0 0 500 160" xmlns="http://www.w3.org/2000/svg"
+			style="width:100%;height:160px;display:block;margin-bottom:12px"
 			aria-label="Mugisha walks from his house to the water tap — count the footprints"
 			role="img">
 
-			<!-- House (left) -->
-			<polygon points="5,65 88,65 47,22" fill="#1A56A0"/>
-			<rect x="10" y="65" width="74" height="45" fill="#1A56A0"/>
-			<rect x="32" y="82" width="18" height="28" fill="white"/>
+			<!-- House (80×80, left) -->
+			<image href="<?php echo $_house_url; ?>" x="0" y="40" width="80" height="80"/>
 
-			<!-- Dashed path line -->
-			<line x1="92" y1="90" x2="415" y2="90"
+			<!-- Dashed path line house→tap -->
+			<line x1="80" y1="80" x2="420" y2="80"
 				stroke="#b0c4de" stroke-width="3" stroke-dasharray="6 4"/>
 
-			<!-- Footprint 1 — x=148 -->
-			<g transform="translate(148,72)" fill="#F39C12">
-				<ellipse cx="0" cy="5" rx="7" ry="9"/>
-				<circle cx="-6" cy="-7"  r="3"/>
-				<circle cx="-2" cy="-11" r="2.5"/>
-				<circle cx="3"  cy="-11" r="2.5"/>
-				<circle cx="7"  cy="-7"  r="3"/>
-			</g>
-			<!-- Footprint 2 — x=203 -->
-			<g transform="translate(203,72)" fill="#F39C12">
-				<ellipse cx="0" cy="5" rx="7" ry="9"/>
-				<circle cx="-6" cy="-7"  r="3"/>
-				<circle cx="-2" cy="-11" r="2.5"/>
-				<circle cx="3"  cy="-11" r="2.5"/>
-				<circle cx="7"  cy="-7"  r="3"/>
-			</g>
-			<!-- Footprint 3 — x=253 -->
-			<g transform="translate(253,72)" fill="#F39C12">
-				<ellipse cx="0" cy="5" rx="7" ry="9"/>
-				<circle cx="-6" cy="-7"  r="3"/>
-				<circle cx="-2" cy="-11" r="2.5"/>
-				<circle cx="3"  cy="-11" r="2.5"/>
-				<circle cx="7"  cy="-7"  r="3"/>
-			</g>
-			<!-- Footprint 4 — x=308 -->
-			<g transform="translate(308,72)" fill="#F39C12">
-				<ellipse cx="0" cy="5" rx="7" ry="9"/>
-				<circle cx="-6" cy="-7"  r="3"/>
-				<circle cx="-2" cy="-11" r="2.5"/>
-				<circle cx="3"  cy="-11" r="2.5"/>
-				<circle cx="7"  cy="-7"  r="3"/>
-			</g>
-			<!-- Footprint 5 — x=358 -->
-			<g transform="translate(358,72)" fill="#F39C12">
-				<ellipse cx="0" cy="5" rx="7" ry="9"/>
-				<circle cx="-6" cy="-7"  r="3"/>
-				<circle cx="-2" cy="-11" r="2.5"/>
-				<circle cx="3"  cy="-11" r="2.5"/>
-				<circle cx="7"  cy="-7"  r="3"/>
-			</g>
+			<!-- 5 footsteps (50×50) evenly spaced between x=80 and x=420 -->
+			<!-- gap = (340 − 5×50) / 6 = 15; positions: 95, 160, 225, 290, 355 -->
+			<image href="<?php echo $_footstep_url; ?>" x="95"  y="55" width="50" height="50"/>
+			<image href="<?php echo $_footstep_url; ?>" x="160" y="55" width="50" height="50"/>
+			<image href="<?php echo $_footstep_url; ?>" x="225" y="55" width="50" height="50"/>
+			<image href="<?php echo $_footstep_url; ?>" x="290" y="55" width="50" height="50"/>
+			<image href="<?php echo $_footstep_url; ?>" x="355" y="55" width="50" height="50"/>
 
-			<!-- Tap (right) -->
-			<rect x="430" y="22" width="10" height="44" fill="#1A56A0" rx="3"/>
-			<rect x="418" y="30" width="34" height="8"  fill="#1A56A0" rx="4"/>
-			<rect x="422" y="64" width="28" height="27" fill="#1A56A0" rx="4"/>
-			<rect x="450" y="72" width="32" height="8"  fill="#1A56A0" rx="3"/>
-			<ellipse cx="485" cy="93"  rx="4"   ry="6"   fill="#1A56A0" opacity="0.5"/>
-			<ellipse cx="479" cy="104" rx="3"   ry="4.5" fill="#1A56A0" opacity="0.35"/>
+			<!-- Tap (80×80, right) -->
+			<image href="<?php echo $_tap_url; ?>" x="420" y="40" width="80" height="80"/>
 		</svg>
 		<?php endif; ?>
 
