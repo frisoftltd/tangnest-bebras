@@ -394,26 +394,15 @@ class TNQ_Renderer {
 					<?php echo TNQ_Icons::icon( $svg_key, [ 'class' => 'tnq-colorable-svg', 'style' => 'width:200px;height:160px' ] ); ?>
 				</div>
 				<div class="tnq-color-palette">
-					<?php if ( ! empty( $palette_pngs ) ) : ?>
-						<?php foreach ( $palette_pngs as $pal ) : ?>
-						<div class="tnq-color-item">
-							<button class="tnq-color-btn" type="button"
-								data-color="<?php echo esc_attr( $pal['value'] ); ?>"
-								aria-label="Select colour: <?php echo esc_attr( $pal['label'] ); ?>">
-								<img src="<?php echo esc_url( TNQ_ASSETS_URL . $pal['png'] ); ?>"
-									 alt="<?php echo esc_attr( $pal['label'] ); ?>"
-									 style="width:80px;height:80px;object-fit:contain;border-radius:50%">
-							</button>
-						</div>
-						<?php endforeach; ?>
-					<?php else : ?>
-						<?php foreach ( $colors as $idx => $hex ) : ?>
-						<div class="tnq-color-item">
-							<div class="tnq-color-swatch" data-color="<?php echo esc_attr( $hex ); ?>" style="background:<?php echo esc_attr( $hex ); ?>" title="<?php echo esc_attr( $color_labels[ $idx ] ?? '' ); ?>" role="button" tabindex="0" aria-label="Select color: <?php echo esc_attr( $color_labels[ $idx ] ?? $hex ); ?>"></div>
-							<div class="tnq-color-swatch-label"><?php echo esc_html( $color_labels[ $idx ] ?? '' ); ?></div>
-						</div>
-						<?php endforeach; ?>
-					<?php endif; ?>
+					<?php foreach ( $palette_pngs as $pal ) : ?>
+					<button class="tnq-color-btn" type="button"
+						data-color="<?php echo esc_attr( $pal['value'] ); ?>"
+						aria-label="Select colour: <?php echo esc_attr( $pal['label'] ); ?>">
+						<img src="<?php echo esc_url( TNQ_ASSETS_URL . $pal['png'] ); ?>"
+							 alt="<?php echo esc_attr( $pal['label'] ); ?>"
+							 style="width:80px;height:80px;object-fit:cover">
+					</button>
+					<?php endforeach; ?>
 				</div>
 			</div>
 		</div>

@@ -4,9 +4,4 @@
   <polygon data-region="right"  points="120,0 120,80 60,40" fill="#b8b8b8" stroke="#bbb" stroke-width="0.75"/>
   <polygon data-region="bottom" points="120,80 0,80 60,40"  fill="#c8c8c8" stroke="#bbb" stroke-width="0.75"/>
   <polygon data-region="left"   points="0,80 0,0 60,40"     fill="#e0e0e0" stroke="#bbb" stroke-width="0.75"/>
-  <!-- Labels (optional, helps visual orientation) -->
-  <text x="60" y="16"  text-anchor="middle" font-size="9" fill="#666" font-family="sans-serif">Top</text>
-  <text x="60" y="72"  text-anchor="middle" font-size="9" fill="#666" font-family="sans-serif">Bottom</text>
-  <text x="10" y="43"  text-anchor="middle" font-size="9" fill="#666" font-family="sans-serif">Left</text>
-  <text x="110" y="43" text-anchor="middle" font-size="9" fill="#666" font-family="sans-serif">Right</text>
 </svg>
