@@ -179,9 +179,9 @@
 		var btnNext  = this.container.querySelector('.tnq-btn-next');
 		var btnHint  = this.container.querySelector('.tnq-btn-hint');
 
-		// Back button: visible from Q2 onwards (practice only)
+		// Back button: visible from Q2 onwards in all modes
 		if (btnBack) {
-			btnBack.style.display = (this.mode === 'practice' && idx > 0) ? '' : 'none';
+			btnBack.style.display = idx > 0 ? '' : 'none';
 		}
 
 		// Always clear feedback/hint first; restored below if navigating back to a

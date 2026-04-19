@@ -701,8 +701,15 @@
   box-shadow: var(--tnq-shadow);
 }
 
+.tnq-results-screen h2 {
+  font-size: 24px;
+  font-weight: bold;
+  color: #1A56A0;
+  margin-bottom: 8px;
+}
+
 .tnq-score-display {
-  font-size: 56px;
+  font-size: 32px;
   font-weight: 800;
   color: var(--tnq-primary);
   line-height: 1;
@@ -731,7 +738,7 @@
 
 .tnq-skill-name {
   width: 110px;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 600;
   color: #333;
   flex-shrink: 0;
@@ -739,23 +746,23 @@
 
 .tnq-skill-bar-track {
   flex: 1;
-  height: 20px;
+  height: 12px;
   background: var(--tnq-bg);
-  border-radius: 10px;
+  border-radius: 6px;
   overflow: hidden;
   border: 1px solid var(--tnq-border);
 }
 
 .tnq-skill-bar-fill {
   height: 100%;
-  background: var(--tnq-primary);
-  border-radius: 10px;
+  background: #1A56A0;
+  border-radius: 6px;
   transition: width 0.6s ease;
 }
 
 .tnq-skill-fraction {
   width: 36px;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
   color: var(--tnq-primary);
   text-align: right;
@@ -763,11 +770,11 @@
 }
 
 .tnq-interpretation {
-  background: var(--tnq-bg);
+  background: #f0f4ff;
   border-radius: 12px;
-  padding: 16px 20px;
-  font-size: 16px;
-  color: #333;
+  padding: 16px;
+  font-size: 15px;
+  color: #444;
   line-height: 1.6;
   font-style: italic;
   margin-bottom: 16px;

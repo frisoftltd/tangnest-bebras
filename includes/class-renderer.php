@@ -84,10 +84,10 @@ class TNQ_Renderer {
 
 			<!-- Navigation -->
 			<div class="tnq-nav">
-				<?php if ( $is_practice ) : ?>
 				<button class="tnq-btn tnq-btn-back" type="button" style="display:none;background:white;color:#1A56A0;border:2px solid #1A56A0;border-radius:10px;padding:12px 24px;font-size:16px;font-weight:bold;cursor:pointer;min-height:48px;">
 					&larr; Back
 				</button>
+				<?php if ( $is_practice ) : ?>
 				<button class="tnq-btn tnq-btn-ghost tnq-btn-hint" type="button">
 					<?php echo TNQ_Icons::icon( 'hint-bulb' ); ?>
 					Hint
