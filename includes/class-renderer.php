@@ -30,6 +30,7 @@ class TNQ_Renderer {
 		}
 
 		$preview      = ! empty( $options['preview'] );
+		$review       = ! empty( $options['review'] );
 		$assess_type  = in_array( $mode, [ 'baseline', 'endline' ], true ) ? $mode : '';
 		$total        = count( $questions );
 		$is_practice  = 'practice' === $mode;
@@ -39,7 +40,8 @@ class TNQ_Renderer {
 		<div class="tnq-quiz"
 			data-mode="<?php echo esc_attr( $mode ); ?>"
 			data-age="<?php echo esc_attr( $age_band ); ?>"
-			data-assess-type="<?php echo esc_attr( $assess_type ); ?>">
+			data-assess-type="<?php echo esc_attr( $assess_type ); ?>"
+			<?php if ( $review ) : ?>data-review="true"<?php endif; ?>>
 
 			<!-- Progress bar -->
 			<div class="tnq-progress">
@@ -615,7 +617,8 @@ class TNQ_Renderer {
 	 * Shows only the result for the given type — never stacks baseline + endline.
 	 */
 	public static function render_single_result( object $result, string $type ): string {
-		$label = 'endline' === $type ? 'Endline' : 'Baseline';
+		$label      = 'endline' === $type ? 'Endline' : 'Baseline';
+		$review_url = esc_url( add_query_arg( 'review', '1', get_permalink() ) );
 		ob_start();
 		?>
 		<div class="tnq-quiz">
@@ -623,6 +626,9 @@ class TNQ_Renderer {
 				<h2 style="color:var(--tnq-primary);margin-bottom:20px">Your <?php echo esc_html( $label ); ?> Results</h2>
 				<?php echo self::render_result_row( $result ); ?>
 				<p style="margin-top:16px;font-size:15px;color:#555">You have already completed this assessment. Ask your teacher to see your progress.</p>
+				<a href="<?php echo $review_url; ?>" class="tnq-results-back-btn" style="display:inline-block;margin-top:16px;text-decoration:none">
+					Re-read questions &#8594;
+				</a>
 			</div>
 		</div>
 		<?php

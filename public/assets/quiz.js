@@ -15,7 +15,7 @@
 (function () {
 	'use strict';
 
-	window.TNQ_VERSION = '2.3.7';
+	window.TNQ_VERSION = '2.3.8';
 
 	/** Namespace for interaction modules loaded from interactions/*.js */
 	window.TNQInteractions = window.TNQInteractions || {};
@@ -94,6 +94,7 @@
 		this.mode         = container.dataset.mode || 'practice';
 		this.ageBand      = container.dataset.age  || '7-8';
 		this.assessType   = container.dataset.assessType || '';
+		this.reviewMode   = container.dataset.review === 'true';
 		this.questions    = Array.from(container.querySelectorAll('.tnq-question'));
 		this.currentIdx   = 0;
 		this.answers      = {};
@@ -108,6 +109,19 @@
 
 	TNQQuiz.prototype.init = function () {
 		if (this.questions.length === 0) return;
+
+		// Review mode: inject banner into first question card and hide Check button
+		if (this.reviewMode) {
+			var firstQ = this.questions[0];
+			if (firstQ) {
+				var banner = document.createElement('div');
+				banner.className   = 'tnq-review-banner';
+				banner.textContent = 'Your score is saved \u2014 you can re-read the questions below';
+				firstQ.insertBefore(banner, firstQ.firstChild);
+			}
+			var checkBtn = this.container.querySelector('.tnq-btn-check');
+			if (checkBtn) checkBtn.style.display = 'none';
+		}
 
 		// Show first question
 		this._showQuestion(0);
@@ -589,7 +603,7 @@
 		// 6. Add back button programmatically (avoids template string encoding issues)
 		var backBtn = document.createElement('button');
 		backBtn.className   = 'tnq-results-back-btn';
-		backBtn.textContent = '\u2190 Back to questions';
+		backBtn.textContent = '\u2190 Review my answers';
 
 		var interpretation = resultDiv.querySelector('.tnq-interpretation');
 		if (interpretation) {

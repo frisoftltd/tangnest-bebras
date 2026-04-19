@@ -82,11 +82,12 @@ class TNQ_Shortcodes {
 			return $this->login_prompt();
 		}
 
-		$student_id = get_current_user_id();
+		$student_id  = get_current_user_id();
+		$review_mode = isset( $_GET['review'] ) && '1' === $_GET['review'];
 
 		// Check if already completed
 		$existing = TNQ_Storage::get_result( $student_id, $type, $age );
-		if ( $existing ) {
+		if ( $existing && ! $review_mode ) {
 			// Show their results summary instead of the assessment
 			return $this->already_completed_screen( $existing, $type, $age );
 		}
@@ -96,7 +97,7 @@ class TNQ_Shortcodes {
 			return '<div class="tnq-quiz"><div class="tnq-message">This assessment is not yet available. Please check with your teacher.</div></div>';
 		}
 
-		return $this->enqueue_and_render( TNQ_Renderer::render_quiz( $questions, $type, $age ) );
+		return $this->enqueue_and_render( TNQ_Renderer::render_quiz( $questions, $type, $age, [ 'review' => $review_mode ] ) );
 	}
 
 	/** [tnq_results user_id="current"] */

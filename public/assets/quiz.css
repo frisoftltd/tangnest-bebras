@@ -920,6 +920,22 @@
   background: #fff;
 }
 
+/* ── Review mode ────────────────────────────────────────────────── */
+.tnq-review-banner {
+  background: #f0f4ff;
+  border-left: 4px solid #1A56A0;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 15px;
+  color: #1A56A0;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.tnq-quiz[data-review="true"] .tnq-btn-check {
+  display: none !important;
+}
+
 /* ── Practice Q1/Q2: drag card layout ─────────────────────────── */
 .tnq-drag-card {
   flex: 1 1 0;
