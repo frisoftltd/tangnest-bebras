@@ -85,6 +85,9 @@ class TNQ_Renderer {
 			<!-- Navigation -->
 			<div class="tnq-nav">
 				<?php if ( $is_practice ) : ?>
+				<button class="tnq-btn tnq-btn-back" type="button" style="display:none;background:white;color:#1A56A0;border:2px solid #1A56A0;border-radius:10px;padding:12px 24px;font-size:16px;font-weight:bold;cursor:pointer;min-height:48px;">
+					&larr; Back
+				</button>
 				<button class="tnq-btn tnq-btn-ghost tnq-btn-hint" type="button">
 					<?php echo TNQ_Icons::icon( 'hint-bulb' ); ?>
 					Hint
@@ -134,7 +137,13 @@ class TNQ_Renderer {
 
 			<!-- Question header -->
 			<div class="tnq-question-header">
-				<?php if ( ! empty( $q['title_icon'] ) ) : ?>
+				<?php if ( ! empty( $q['title_icon_png'] ) ) : ?>
+				<div class="tnq-question-title-icon" style="width:72px;height:72px;flex-shrink:0;display:flex;align-items:center;justify-content:center">
+					<img src="<?php echo esc_url( TNQ_ASSETS_URL . $q['title_icon_png'] ); ?>"
+						alt="<?php echo esc_attr( $title ); ?>"
+						style="width:64px;height:64px;object-fit:contain">
+				</div>
+				<?php elseif ( ! empty( $q['title_icon'] ) ) : ?>
 				<div class="tnq-question-title-icon" style="width:72px;height:72px;flex-shrink:0">
 					<?php echo TNQ_Icons::icon( $q['title_icon'], [ 'style' => 'width:72px;height:72px' ] ); ?>
 				</div>

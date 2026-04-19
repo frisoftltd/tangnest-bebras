@@ -88,17 +88,20 @@
 	// ── TNQ_Quiz ────────────────────────────────────────────────
 
 	function TNQQuiz(container) {
-		this.container   = container;
-		this.mode        = container.dataset.mode || 'practice';
-		this.ageBand     = container.dataset.age  || '7-8';
-		this.assessType  = container.dataset.assessType || '';
-		this.questions   = Array.from(container.querySelectorAll('.tnq-question'));
-		this.currentIdx  = 0;
-		this.answers     = {};
-		this.durations   = {};
+		this.container    = container;
+		this.mode         = container.dataset.mode || 'practice';
+		this.ageBand      = container.dataset.age  || '7-8';
+		this.assessType   = container.dataset.assessType || '';
+		this.questions    = Array.from(container.querySelectorAll('.tnq-question'));
+		this.currentIdx   = 0;
+		this.answers      = {};
+		this.durations    = {};
 		this.itemStartTime = null;
-		this.timer       = null;
-		this.totalElapsed = 0;
+		this.timer         = null;
+		this.totalElapsed  = 0;
+		this._initialized   = {};  // idx -> true once interaction init() has run
+		this._checkedState  = {};  // idx -> { correct: bool } once Check was pressed
+		this._hasInteracted = {};  // idx -> true once tnq:interacted fired for that question
 	}
 
 	TNQQuiz.prototype.init = function () {
@@ -110,10 +113,16 @@
 		// Wire nav buttons
 		var self = this;
 
+		var btnBack  = this.container.querySelector('.tnq-btn-back');
 		var btnCheck = this.container.querySelector('.tnq-btn-check');
 		var btnNext  = this.container.querySelector('.tnq-btn-next');
 		var btnHint  = this.container.querySelector('.tnq-btn-hint');
 
+		if (btnBack) {
+			btnBack.addEventListener('click', function () {
+				self._onBack();
+			});
+		}
 		if (btnCheck) {
 			btnCheck.addEventListener('click', function () {
 				self._onCheck();
@@ -132,7 +141,9 @@
 
 		// Enable "Check my answer" only after the child makes an interaction.
 		// Each interaction module fires 'tnq:interacted' when the first action happens.
+		// Track per-question so going Back restores the enabled state correctly.
 		this.container.addEventListener('tnq:interacted', function () {
+			self._hasInteracted[self.currentIdx] = true;
 			var btn = self.container.querySelector('.tnq-btn-check');
 			if (btn) {
 				btn.disabled = false;
@@ -149,26 +160,63 @@
 		this.currentIdx = idx;
 		this.itemStartTime = Date.now();
 		this._updateProgress();
-		this._initCurrentInteraction();
+
+		// Only initialise the interaction widget the first time a question is shown.
+		// Re-calling init() would reset state and duplicate event listeners.
+		if (!this._initialized[idx]) {
+			this._initialized[idx] = true;
+			this._initCurrentInteraction();
+		}
 
 		// Reset timer for this question
 		if (this.mode !== 'practice') {
 			this._startTimer();
 		}
 
-		// Reset nav buttons state
+		// Locate nav buttons
+		var btnBack  = this.container.querySelector('.tnq-btn-back');
 		var btnCheck = this.container.querySelector('.tnq-btn-check');
 		var btnNext  = this.container.querySelector('.tnq-btn-next');
 		var btnHint  = this.container.querySelector('.tnq-btn-hint');
 
+		// Back button: visible from Q2 onwards (practice only)
+		if (btnBack) {
+			btnBack.style.display = (this.mode === 'practice' && idx > 0) ? '' : 'none';
+		}
+
+		// Always clear feedback/hint first; restored below if navigating back to a
+		// previously checked question.
+		var feedbackEl    = this.container.querySelector('.tnq-feedback');
+		var explanationEl = this.container.querySelector('.tnq-explanation');
+		var hintBox       = this.container.querySelector('.tnq-hint-box');
+
+		if (feedbackEl)    { feedbackEl.classList.remove('is-visible'); }
+		if (explanationEl) { explanationEl.classList.remove('is-visible'); }
+		if (hintBox)       { hintBox.classList.remove('is-visible'); }
+
 		if (this.mode === 'practice') {
-			if (btnCheck) {
-				btnCheck.style.display = '';
-				btnCheck.textContent   = 'Check my answer';
-				btnCheck.disabled      = true;  // re-disable until child interacts
+			var prevState = this._checkedState[idx];
+			if (prevState) {
+				// Restore completed state: Check was already pressed for this question.
+				// Do NOT re-enable Check; show Next and the original feedback.
+				if (btnCheck) { btnCheck.style.display = 'none'; }
+				if (btnHint)  { btnHint.style.display  = ''; }
+				if (btnNext)  {
+					btnNext.style.display = '';
+					btnNext.textContent   = idx < this.questions.length - 1 ? 'Next question \u2192' : 'Finish practice';
+				}
+				this._showFeedback(prevState.correct);
+			} else {
+				// Fresh / retried state
+				if (btnCheck) {
+					btnCheck.style.display = '';
+					btnCheck.textContent   = 'Check my answer';
+					// Re-enable if the child had already interacted with this question
+					btnCheck.disabled = !this._hasInteracted[idx];
+				}
+				if (btnNext)  { btnNext.style.display  = 'none'; }
+				if (btnHint)  { btnHint.style.display  = ''; }
 			}
-			if (btnNext)  { btnNext.style.display  = 'none'; }
-			if (btnHint)  { btnHint.style.display  = ''; }
 		} else {
 			if (btnCheck) {
 				btnCheck.style.display = '';
@@ -178,15 +226,6 @@
 			if (btnNext)  { btnNext.style.display  = 'none'; }
 			if (btnHint)  { btnHint.style.display  = 'none'; }
 		}
-
-		// Hide feedback from previous question
-		var feedbackEl   = this.container.querySelector('.tnq-feedback');
-		var explanationEl = this.container.querySelector('.tnq-explanation');
-		var hintBox      = this.container.querySelector('.tnq-hint-box');
-
-		if (feedbackEl)    { feedbackEl.classList.remove('is-visible'); }
-		if (explanationEl) { explanationEl.classList.remove('is-visible'); }
-		if (hintBox)       { hintBox.classList.remove('is-visible'); }
 	};
 
 	TNQQuiz.prototype._initCurrentInteraction = function () {
@@ -293,6 +332,8 @@
 		if (this.mode === 'practice') {
 			this._recordAnswer();
 			var correct = this._isAnswerCorrect();
+			// Record that Check was pressed so Back navigation can restore this state
+			this._checkedState[this.currentIdx] = { correct: correct };
 			this._showFeedback(correct);
 
 			var btnCheck = this.container.querySelector('.tnq-btn-check');
@@ -311,6 +352,11 @@
 
 	TNQQuiz.prototype._onNext = function () {
 		this._advance();
+	};
+
+	TNQQuiz.prototype._onBack = function () {
+		if (this.currentIdx <= 0) return;
+		this._showQuestion(this.currentIdx - 1);
 	};
 
 	TNQQuiz.prototype._advance = function () {
@@ -376,6 +422,10 @@
 		var hintBox       = this.container.querySelector('.tnq-hint-box');
 		var btnCheck      = this.container.querySelector('.tnq-btn-check');
 		var btnNext       = this.container.querySelector('.tnq-btn-next');
+
+		// Clear the checked and interacted state so Back shows a fresh question
+		delete this._checkedState[this.currentIdx];
+		delete this._hasInteracted[this.currentIdx];
 
 		// Hide feedback, explanation, hint
 		if (feedbackEl)    feedbackEl.classList.remove('is-visible');
