@@ -19,6 +19,36 @@ class TNQ_Shortcodes {
 		add_shortcode( 'tnq_assess',        [ $this, 'render_assess' ] );
 		add_shortcode( 'tnq_results',       [ $this, 'render_results' ] );
 		add_shortcode( 'tnq_admin_results', [ $this, 'render_admin_results' ] );
+
+		// Proactively enqueue on TutorLMS pages (shortcode detection won't fire there)
+		add_action( 'wp_enqueue_scripts', [ $this, 'maybe_enqueue_assets' ] );
+	}
+
+	public function maybe_enqueue_assets(): void {
+		if ( ! $this->should_enqueue() ) return;
+		$this->enqueue_quiz_assets();
+	}
+
+	private function should_enqueue(): bool {
+		// Always load on TutorLMS lesson/course pages
+		if ( function_exists( 'tutor' ) ) {
+			if ( is_singular( 'lesson' ) || is_singular( 'courses' ) ) {
+				return true;
+			}
+			if ( function_exists( 'tutor_utils' ) && tutor_utils()->is_tutor_page() ) {
+				return true;
+			}
+		}
+		// Also load if any tnq shortcode is present (for non-Tutor pages)
+		global $post;
+		if ( $post && (
+			has_shortcode( $post->post_content, 'tnq_practice' ) ||
+			has_shortcode( $post->post_content, 'tnq_assess'   ) ||
+			has_shortcode( $post->post_content, 'tnq_results'  )
+		) ) {
+			return true;
+		}
+		return false;
 	}
 
 	/** [tnq_practice age="7-8"] */
