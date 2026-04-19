@@ -998,21 +998,21 @@
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  border: 3px solid transparent;
+  border: none;
   cursor: pointer;
   background: transparent;
-  padding: 4px;
-  transition: border-color 0.15s, box-shadow 0.15s;
+  padding: 0;
+  overflow: hidden;
+  transition: box-shadow 0.15s;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 .tnq-color-btn:hover {
-  border-color: rgba(26,86,160,0.4);
+  box-shadow: 0 0 0 3px rgba(26,86,160,0.4);
 }
 .tnq-color-btn.is-active {
-  border-color: #1A56A0;
-  box-shadow: 0 0 0 3px rgba(26,86,160,0.22);
+  box-shadow: 0 0 0 4px #1A56A0;
 }
 
 /* ── Practice Q5: palette shake animation ────────────────────── */
