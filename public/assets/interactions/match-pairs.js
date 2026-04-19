@@ -71,15 +71,19 @@ TNQInteractions.matchPairs = (function () {
             var rightCard = rightCards.find(function (c) { return c.dataset.pairId === rightId; });
             if (!leftCard || !rightCard || !lineSvg || !workspace) return;
 
-            var wRect  = workspace.getBoundingClientRect();
-            var lRect  = leftCard.getBoundingClientRect();
-            var rRect  = rightCard.getBoundingClientRect();
-            var color  = dotColorFor(leftId);
+            var leftDot  = leftDotOf(leftId);   // .tnq-pair-dot-right (on right edge of left card)
+            var rightDot = rightDotOf(rightId);  // .tnq-pair-dot-left  (on left edge of right card)
+            if (!leftDot || !rightDot) return;
 
-            var x1 = lRect.right  - wRect.left;
-            var y1 = lRect.top    - wRect.top  + lRect.height / 2;
-            var x2 = rRect.left   - wRect.left;
-            var y2 = rRect.top    - wRect.top  + rRect.height / 2;
+            var containerRect = workspace.getBoundingClientRect();
+            var leftDotRect   = leftDot.getBoundingClientRect();
+            var rightDotRect  = rightDot.getBoundingClientRect();
+            var color         = dotColorFor(leftId);
+
+            var x1 = leftDotRect.left  + leftDotRect.width  / 2 - containerRect.left;
+            var y1 = leftDotRect.top   + leftDotRect.height / 2 - containerRect.top;
+            var x2 = rightDotRect.left + rightDotRect.width  / 2 - containerRect.left;
+            var y2 = rightDotRect.top  + rightDotRect.height / 2 - containerRect.top;
 
             var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
             line.setAttribute('x1', x1);
