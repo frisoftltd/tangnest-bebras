@@ -623,8 +623,6 @@ class TNQ_Renderer {
 				<h2 style="color:var(--tnq-primary);margin-bottom:20px">Your <?php echo esc_html( $label ); ?> Results</h2>
 				<?php echo self::render_result_row( $result ); ?>
 				<p style="margin-top:16px;font-size:15px;color:#555">You have already completed this assessment. Ask your teacher to see your progress.</p>
-				<!-- Back button added directly in PHP: _showResults never fires on the already-completed path -->
-				<button class="tnq-results-back-btn" type="button" onclick="window.history.back()">&#8592; Back to questions</button>
 			</div>
 		</div>
 		<?php
