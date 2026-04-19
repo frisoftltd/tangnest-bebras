@@ -15,7 +15,7 @@
 (function () {
 	'use strict';
 
-	window.TNQ_VERSION = '2.3.8';
+	window.TNQ_VERSION = '2.3.9';
 
 	/** Namespace for interaction modules loaded from interactions/*.js */
 	window.TNQInteractions = window.TNQInteractions || {};
@@ -110,7 +110,7 @@
 	TNQQuiz.prototype.init = function () {
 		if (this.questions.length === 0) return;
 
-		// Review mode: inject banner into first question card and hide Check button
+		// Review mode: inject banner, hide Check, add Next review button to nav
 		if (this.reviewMode) {
 			var firstQ = this.questions[0];
 			if (firstQ) {
@@ -121,6 +121,23 @@
 			}
 			var checkBtn = this.container.querySelector('.tnq-btn-check');
 			if (checkBtn) checkBtn.style.display = 'none';
+
+			// Add a dedicated Next button for review navigation
+			var navEl = this.container.querySelector('.tnq-nav');
+			if (navEl) {
+				var reviewNextBtn = document.createElement('button');
+				reviewNextBtn.className   = 'tnq-btn-next-review';
+				reviewNextBtn.textContent = 'Next \u2192';
+				reviewNextBtn.type        = 'button';
+				navEl.appendChild(reviewNextBtn);
+				this._reviewNextBtn = reviewNextBtn;
+				var self2 = this;
+				reviewNextBtn.addEventListener('click', function () {
+					if (self2.currentIdx < self2.questions.length - 1) {
+						self2._showQuestion(self2.currentIdx + 1);
+					}
+				});
+			}
 		}
 
 		// Show first question
@@ -184,8 +201,8 @@
 			this._initCurrentInteraction();
 		}
 
-		// Reset timer for this question
-		if (this.mode !== 'practice') {
+		// Reset timer for this question (suppressed in review mode)
+		if (this.mode !== 'practice' && !this.reviewMode) {
 			this._startTimer();
 		}
 
@@ -195,9 +212,17 @@
 		var btnNext  = this.container.querySelector('.tnq-btn-next');
 		var btnHint  = this.container.querySelector('.tnq-btn-hint');
 
-		// Back button: visible from Q2 onwards in all modes
+		// Back button visibility
 		if (btnBack) {
-			btnBack.style.display = idx > 0 ? '' : 'none';
+			if (this.reviewMode) {
+				// Review: always visible, disabled on Q1
+				btnBack.style.display = '';
+				btnBack.disabled = idx <= 0;
+			} else {
+				// Normal: hidden on Q1, shown from Q2
+				btnBack.style.display = idx > 0 ? '' : 'none';
+				btnBack.disabled = false;
+			}
 		}
 
 		// Always clear feedback/hint first; restored below if navigating back to a
@@ -234,13 +259,23 @@
 				if (btnHint)  { btnHint.style.display  = ''; }
 			}
 		} else {
-			if (btnCheck) {
-				btnCheck.style.display = '';
-				btnCheck.textContent   = idx < this.questions.length - 1 ? 'Next question \u2192' : 'Finish';
-				btnCheck.disabled      = false; // assessment mode: always enabled
+			if (this.reviewMode) {
+				// Review mode: Check hidden, hint hidden, Next review button handles navigation
+				if (btnCheck) { btnCheck.style.display = 'none'; }
+				if (btnHint)  { btnHint.style.display  = 'none'; }
+				if (btnNext)  { btnNext.style.display   = 'none'; }
+				if (this._reviewNextBtn) {
+					this._reviewNextBtn.disabled = idx >= this.questions.length - 1;
+				}
+			} else {
+				if (btnCheck) {
+					btnCheck.style.display = '';
+					btnCheck.textContent   = idx < this.questions.length - 1 ? 'Next question \u2192' : 'Finish';
+					btnCheck.disabled      = false; // assessment mode: always enabled
+				}
+				if (btnNext)  { btnNext.style.display  = 'none'; }
+				if (btnHint)  { btnHint.style.display  = 'none'; }
 			}
-			if (btnNext)  { btnNext.style.display  = 'none'; }
-			if (btnHint)  { btnHint.style.display  = 'none'; }
 		}
 	};
 

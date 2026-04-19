@@ -936,6 +936,22 @@
   display: none !important;
 }
 
+.tnq-btn-next-review {
+  background: white;
+  color: #1A56A0;
+  border: 2px solid #1A56A0;
+  border-radius: 10px;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  min-height: 48px;
+}
+.tnq-btn-next-review:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
 /* ── Practice Q1/Q2: drag card layout ─────────────────────────── */
 .tnq-drag-card {
   flex: 1 1 0;
