@@ -528,16 +528,24 @@
 	};
 
 	TNQQuiz.prototype._showResults = function (data) {
-		var total   = data.score_total    || 0;
+		var self     = this;
+		var total    = data.score_total       || 0;
 		var algScore = data.score_algorithmic || 0;
 		var patScore = data.score_pattern     || 0;
 		var logScore = data.score_logical     || 0;
-		var interp  = data.interpretation  || '';
-		var growth  = data.growth;
+		var interp   = data.interpretation   || '';
+		var growth   = data.growth;
 
-		// Score colour: 0-2 red, 3-4 amber, 5+ green
+		// 1. Capture DOM references BEFORE hiding anything
+		var questionsWrap = this.container.querySelector('.tnq-questions');
+		var navEl         = this.container.querySelector('.tnq-nav');
+		var progressEl    = this.container.querySelector('.tnq-progress');
+		var timerEl       = this.container.querySelector('.tnq-timer');
+
+		// 2. Score colour: 0-2 red, 3-4 amber, 5+ green
 		var scoreColorClass = total >= 5 ? 'tnq-score-green' : (total >= 3 ? 'tnq-score-amber' : 'tnq-score-red');
 
+		// 3. Build HTML — button is last child inside .tnq-results-screen
 		var growthHtml = '';
 		if (typeof growth === 'number') {
 			if (growth > 0) {
@@ -559,24 +567,21 @@
 			'<div class="tnq-skill-bars">' + barHtml + '</div>' +
 			growthHtml +
 			'<div class="tnq-interpretation">' + this._esc(interp) + '</div>' +
-			'<button class="tnq-results-back-btn" type="button">\u2190 Back to last question</button>' +
+			'<button class="tnq-results-back-btn" type="button">\u2190 Back to questions</button>' +
 			'</div>';
 
-		var questionsWrap = this.container.querySelector('.tnq-questions');
+		// 4. Hide quiz chrome
 		if (questionsWrap) questionsWrap.style.display = 'none';
-		var navEl = this.container.querySelector('.tnq-nav');
-		if (navEl) navEl.style.display = 'none';
-		var progressEl = this.container.querySelector('.tnq-progress');
-		if (progressEl) progressEl.style.display = 'none';
-		var timerEl = this.container.querySelector('.tnq-timer');
-		if (timerEl) timerEl.style.display = 'none';
+		if (navEl)         navEl.style.display         = 'none';
+		if (progressEl)    progressEl.style.display    = 'none';
+		if (timerEl)       timerEl.style.display       = 'none';
 
+		// 5. Append results to DOM first
 		var resultDiv = document.createElement('div');
 		resultDiv.innerHTML = html;
 		this.container.appendChild(resultDiv);
 
-		// Wire back button: remove results, restore quiz chrome, show last question
-		var self = this;
+		// 6. Wire back button AFTER append so querySelector is guaranteed to find it
 		var backBtn = resultDiv.querySelector('.tnq-results-back-btn');
 		if (backBtn) {
 			backBtn.addEventListener('click', function () {
