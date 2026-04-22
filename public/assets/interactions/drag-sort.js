@@ -17,12 +17,17 @@
 window.TNQInteractions = window.TNQInteractions || {};
 TNQInteractions.dragSort = (function () {
 
+	function fireInteracted(el) {
+		el.dispatchEvent(new CustomEvent('tnq:interacted', { bubbles: true }));
+	}
+
 	function init(el) {
 		const source   = el.querySelector('.tnq-sort-source');
 		const bins     = el.querySelectorAll('.tnq-bin');
 		let dragSrc    = null;
 		let selected   = null;
 		let hasDragged = false;
+		let interacted = false;
 
 		function getDropZones() {
 			return Array.from(bins).map(function (b) { return b.querySelector('.tnq-bin-items'); }).concat(source);
@@ -56,6 +61,7 @@ TNQInteractions.dragSort = (function () {
 			e.currentTarget.classList.remove('drag-over');
 			if (dragSrc) {
 				e.currentTarget.appendChild(dragSrc);
+				if (!interacted) { interacted = true; fireInteracted(el); }
 			}
 		}
 
@@ -99,6 +105,7 @@ TNQInteractions.dragSort = (function () {
 				selected.classList.remove('is-selected');
 				selected = null;
 				showDragHint(el, false);
+				if (!interacted) { interacted = true; fireInteracted(el); }
 			});
 		});
 

@@ -338,7 +338,8 @@ TNQInteractions.matchPairs = (function () {
     // ─────────────────────────────────────────────────────────────
 
     function init(el) {
-        var mode = el.dataset.mode || 'practice';
+        var inner = el.querySelector('.tnq-match-pairs');
+        var mode  = (inner && inner.dataset.mode) || el.dataset.mode || 'practice';
         if (mode === 'practice') {
             initPractice(el);
         } else {
