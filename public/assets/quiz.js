@@ -15,7 +15,7 @@
 (function () {
 	'use strict';
 
-	window.TNQ_VERSION = '2.4.0';
+	window.TNQ_VERSION = '2.4.1';
 
 	/** Namespace for interaction modules loaded from interactions/*.js */
 	window.TNQInteractions = window.TNQInteractions || {};
@@ -274,7 +274,12 @@
 					btnCheck.disabled      = false; // assessment mode: always enabled
 				}
 				if (btnNext)  { btnNext.style.display  = 'none'; }
-				if (btnHint)  { btnHint.style.display  = 'none'; }
+				// Show hint button only if this question has hint text
+				if (btnHint) {
+					var q        = this.questions[idx];
+					var hintText = q ? (q.dataset.hint || '') : '';
+					btnHint.style.display = hintText ? '' : 'none';
+				}
 			}
 		}
 	};

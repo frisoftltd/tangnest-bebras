@@ -67,13 +67,11 @@ class TNQ_Renderer {
 				<?php endforeach; ?>
 			</div>
 
-			<!-- Hint box (practice only) -->
-			<?php if ( $is_practice ) : ?>
+			<!-- Hint box -->
 			<div class="tnq-hint-box">
 				<strong>Hint:</strong>
 				<span class="tnq-hint-text"></span>
 			</div>
-			<?php endif; ?>
 
 			<!-- Practice feedback area -->
 			<?php if ( $is_practice ) : ?>
@@ -89,12 +87,10 @@ class TNQ_Renderer {
 				<button class="tnq-btn tnq-btn-back" type="button" style="display:none;background:white;color:#1A56A0;border:2px solid #1A56A0;border-radius:10px;padding:12px 24px;font-size:16px;font-weight:bold;cursor:pointer;min-height:48px;">
 					&larr; Back
 				</button>
-				<?php if ( $is_practice ) : ?>
 				<button class="tnq-btn tnq-btn-ghost tnq-btn-hint" type="button">
 					<?php echo TNQ_Icons::icon( 'hint-bulb' ); ?>
 					Hint
 				</button>
-				<?php endif; ?>
 
 				<button class="tnq-btn tnq-btn-primary tnq-btn-check" type="button" disabled>
 					<?php echo $is_practice ? 'Check my answer' : 'Next question &rarr;'; ?>
