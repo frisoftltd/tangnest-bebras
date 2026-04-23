@@ -15,7 +15,7 @@
 (function () {
 	'use strict';
 
-	window.TNQ_VERSION = '2.4.1';
+	window.TNQ_VERSION = '2.4.2';
 
 	/** Namespace for interaction modules loaded from interactions/*.js */
 	window.TNQInteractions = window.TNQInteractions || {};
@@ -268,17 +268,28 @@
 					this._reviewNextBtn.disabled = idx >= this.questions.length - 1;
 				}
 			} else {
-				if (btnCheck) {
-					btnCheck.style.display = '';
-					btnCheck.textContent   = idx < this.questions.length - 1 ? 'Next question \u2192' : 'Finish';
-					btnCheck.disabled      = false; // assessment mode: always enabled
-				}
-				if (btnNext)  { btnNext.style.display  = 'none'; }
-				// Show hint button only if this question has hint text
-				if (btnHint) {
-					var q        = this.questions[idx];
-					var hintText = q ? (q.dataset.hint || '') : '';
-					btnHint.style.display = hintText ? '' : 'none';
+				var prevState = this._checkedState[idx];
+				var q         = this.questions[idx];
+				var hintText  = q ? (q.dataset.hint || '') : '';
+
+				if (prevState) {
+					// Already checked — restore locked state (supports Back navigation)
+					if (btnCheck) { btnCheck.style.display = 'none'; }
+					if (btnNext) {
+						btnNext.style.display = '';
+						btnNext.textContent   = idx < this.questions.length - 1 ? 'Next question \u2192' : 'Finish';
+					}
+					if (btnHint) { btnHint.style.display = hintText ? '' : 'none'; }
+					this._showFeedback(prevState.correct, false);
+				} else {
+					// Fresh — show Check (disabled until interaction), hide Next
+					if (btnCheck) {
+						btnCheck.style.display = '';
+						btnCheck.textContent   = 'Check my answer';
+						btnCheck.disabled      = !this._hasInteracted[idx];
+					}
+					if (btnNext)  { btnNext.style.display  = 'none'; }
+					if (btnHint)  { btnHint.style.display  = hintText ? '' : 'none'; }
 				}
 			}
 		}
@@ -400,9 +411,21 @@
 				btnNext.textContent   = this.currentIdx < this.questions.length - 1 ? 'Next question \u2192' : 'Finish practice';
 			}
 		} else {
-			// Assessment mode: "Check" is actually Next/Submit
+			// Assessment mode: Check → show feedback (no retry) → reveal Next button
 			this._recordAnswer();
-			this._advance();
+			var correct = this._isAnswerCorrect();
+			this._checkedState[this.currentIdx] = { correct: correct };
+			this._showFeedback(correct, false);  // false = no Try Again button
+
+			var btnCheck = this.container.querySelector('.tnq-btn-check');
+			var btnNext  = this.container.querySelector('.tnq-btn-next');
+			if (btnCheck) btnCheck.style.display = 'none';
+			if (btnNext) {
+				btnNext.style.display = '';
+				btnNext.textContent   = this.currentIdx < this.questions.length - 1
+					? 'Next question \u2192'
+					: 'Finish';
+			}
 		}
 	};
 
@@ -434,7 +457,7 @@
 		hintBox.classList.add('is-visible');
 	};
 
-	TNQQuiz.prototype._showFeedback = function (correct) {
+	TNQQuiz.prototype._showFeedback = function (correct, allowRetry) {
 		var feedbackEl    = this.container.querySelector('.tnq-feedback');
 		var explanationEl = this.container.querySelector('.tnq-explanation');
 
@@ -443,7 +466,9 @@
 			feedbackEl.classList.add('is-visible', correct ? 'is-correct' : 'is-wrong');
 
 			var icon = correct ? '\u2714' : '\u2718';
-			var msg  = correct ? 'Correct! Well done.' : 'Not quite right. Try again or see the explanation below.';
+			var msg  = correct
+				? 'Correct! Well done.'
+				: ( allowRetry !== false ? 'Not quite right. Try again or see the explanation below.' : 'Not quite \u2014 but keep going!' );
 			var iconEl = feedbackEl.querySelector('.tnq-feedback-icon');
 			var msgEl  = feedbackEl.querySelector('.tnq-feedback-msg');
 			if (iconEl) iconEl.textContent = icon;
@@ -453,8 +478,8 @@
 			var oldRetry = feedbackEl.querySelector('.tnq-btn-retry');
 			if (oldRetry) oldRetry.remove();
 
-			// Inject Retry button on wrong answer
-			if (!correct) {
+			// Inject Retry button on wrong answer (practice only)
+			if (!correct && allowRetry !== false) {
 				var self = this;
 				var retryBtn = document.createElement('button');
 				retryBtn.className   = 'tnq-btn-retry';

@@ -73,12 +73,14 @@ class TNQ_Renderer {
 				<span class="tnq-hint-text"></span>
 			</div>
 
-			<!-- Practice feedback area -->
-			<?php if ( $is_practice ) : ?>
+			<!-- Feedback area (all modes) -->
 			<div class="tnq-feedback" role="alert">
 				<span class="tnq-feedback-icon"></span>
 				<span class="tnq-feedback-msg"></span>
 			</div>
+
+			<!-- Explanation (practice only) -->
+			<?php if ( $is_practice ) : ?>
 			<div class="tnq-explanation"></div>
 			<?php endif; ?>
 
@@ -93,14 +95,12 @@ class TNQ_Renderer {
 				</button>
 
 				<button class="tnq-btn tnq-btn-primary tnq-btn-check" type="button" disabled>
-					<?php echo $is_practice ? 'Check my answer' : 'Next question &rarr;'; ?>
+					Check my answer
 				</button>
 
-				<?php if ( $is_practice ) : ?>
 				<button class="tnq-btn tnq-btn-secondary tnq-btn-next" type="button" style="display:none">
 					Next question &rarr;
 				</button>
-				<?php endif; ?>
 			</div>
 		</div>
 		<?php
