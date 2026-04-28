@@ -149,30 +149,33 @@ return [
 	// ══ LOGICAL (3) ══════════════════════════════════════════════
 
 	// ── B-78-LR-01 · Logical · match-pairs · Easy ────────────────
-	// Explicitly shown in M2 briefing data structure example.
 	[
-		'id'         => 'B-78-LR-01',
-		'skill'      => 'logical',
-		'type'       => 'match-pairs',
-		'difficulty' => 'easy',
-		'title'      => 'What Opens It?',
-		'title_icon' => 'door',
-		'instruction'=> 'Match each thing on the left to what you use to open or work it.',
-		'hint'       => 'A door needs something you put in a lock. A torch needs something with power inside it. What do you turn to get water out of a tap?',
-		'left'       => [
-			[ 'id' => 'door',  'icon' => 'door',  'label' => 'Door'  ],
-			[ 'id' => 'torch', 'icon' => 'torch', 'label' => 'Torch' ],
-			[ 'id' => 'tap',   'icon' => 'tap',   'label' => 'Tap'   ],
+		'id'               => 'B-78-LR-01',
+		'skill'            => 'logical',
+		'type'             => 'match-pairs',
+		'difficulty'       => 'easy',
+		'title'            => 'Help Nyiramajyambere at Home!',
+		'title_icon_png'   => 'people/help_Nyiramajyambere_at_home.png',
+		'char_image'       => 'people/Nyiramajyambere_at_home.png',
+		'instruction'      => 'Nyiramajyambere wants to use these things.',
+		'instruction_q'    => 'Match each thing with the right tool.',
+		'col_left_label'   => 'Things at Home',
+		'col_right_label'  => 'Tools',
+		'hint'             => 'A door needs something you put in a lock. To turn on a light you use a switch on the wall. What do you turn to get water out of a tap?',
+		'left'             => [
+			[ 'id' => 'door',  'png' => 'objects/door_is_closed.png', 'label' => 'Door is closed' ],
+			[ 'id' => 'light', 'png' => 'objects/light_is_off.png',   'label' => 'Light is off'   ],
+			[ 'id' => 'tap',   'png' => 'objects/tap_is_closed.png',  'label' => 'Tap is closed'  ],
 		],
-		'right'      => [
-			[ 'id' => 'battery', 'icon' => 'battery', 'label' => 'Battery'         ],
-			[ 'id' => 'key',     'icon' => 'key',     'label' => 'Key'             ],
-			[ 'id' => 'handle',  'icon' => 'handle',  'label' => 'Turn the handle' ],
+		'right'            => [
+			[ 'id' => 'key',    'png' => 'objects/key.png',    'label' => 'Key'    ],
+			[ 'id' => 'switch', 'png' => 'objects/switch.png', 'label' => 'Switch' ],
+			[ 'id' => 'handle', 'png' => 'objects/handle.png', 'label' => 'Handle' ],
 		],
-		'pairs'      => [
-			[ 'door',  'key'     ],
-			[ 'torch', 'battery' ],
-			[ 'tap',   'handle'  ],
+		'pairs'            => [
+			[ 'door',  'key'    ],
+			[ 'light', 'switch' ],
+			[ 'tap',   'handle' ],
 		],
 	],
 

@@ -475,9 +475,13 @@ class TNQ_Renderer {
 
 	// ── match-pairs ──────────────────────────────────────────────
 	private static function render_match_pairs( array $q, string $mode ): string {
-		$left  = $q['left']  ?? [];
-		$right = $q['right'] ?? [];
-		$pairs = $q['pairs'] ?? [];
+		$left            = $q['left']             ?? [];
+		$right           = $q['right']            ?? [];
+		$pairs           = $q['pairs']            ?? [];
+		$char_image      = $q['char_image']        ?? '';
+		$col_left_label  = $q['col_left_label']    ?? '';
+		$col_right_label = $q['col_right_label']   ?? '';
+		$instr_q         = $q['instruction_q']     ?? '';
 
 		// Row colours for left-item dots (practice mode line drawing)
 		$dot_colors = [ '#9b59b6', '#f39c12', '#27ae60' ];
@@ -491,6 +495,31 @@ class TNQ_Renderer {
 
 		ob_start();
 		?>
+		<?php if ( $instr_q ) : ?>
+		<p class="tnq-instruction-q"><?php echo esc_html( $instr_q ); ?></p>
+		<?php endif; ?>
+
+		<?php if ( $char_image ) : ?>
+		<div class="tnq-pairs-with-char">
+			<div class="tnq-pairs-char-col">
+				<img src="<?php echo esc_url( TNQ_ASSETS_URL . $char_image ); ?>"
+					 alt="" loading="lazy" class="tnq-char-image">
+			</div>
+			<div class="tnq-pairs-main-col">
+		<?php endif; ?>
+
+		<?php if ( $col_left_label || $col_right_label ) : ?>
+		<div class="tnq-pairs-col-headers">
+			<div class="tnq-pairs-col-header tnq-pairs-col-header--left">
+				<?php echo esc_html( $col_left_label ); ?>
+			</div>
+			<div class="tnq-pairs-col-header-spacer"></div>
+			<div class="tnq-pairs-col-header tnq-pairs-col-header--right">
+				<?php echo esc_html( $col_right_label ); ?>
+			</div>
+		</div>
+		<?php endif; ?>
+
 		<div class="tnq-match-pairs" data-pairs="<?php echo esc_attr( wp_json_encode( $pairs ) ); ?>" data-mode="<?php echo esc_attr( $mode ); ?>">
 			<div class="tnq-pairs-workspace" style="position:relative;display:flex;gap:16px;align-items:flex-start">
 				<div class="tnq-pairs-col tnq-pairs-left" style="flex:1;display:flex;flex-direction:column;gap:12px">
@@ -503,9 +532,14 @@ class TNQ_Renderer {
 						data-dot-color="<?php echo esc_attr( $dot_color ); ?>"
 						tabindex="0" role="button"
 						style="min-height:100px;min-width:0;border-radius:12px;border:2px solid var(--tnq-border);background:#fff;display:flex;align-items:center;justify-content:center;gap:8px;padding:8px;cursor:pointer;position:relative;user-select:none">
-						<img src="<?php echo esc_url( TNQ_ASSETS_URL . $item['png'] ); ?>"
-							 alt="<?php echo esc_attr( $item['label'] ?? '' ); ?>"
-							 style="width:100px;height:100px;object-fit:contain;flex-shrink:0">
+						<div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex:1">
+							<img src="<?php echo esc_url( TNQ_ASSETS_URL . $item['png'] ); ?>"
+								 alt="<?php echo esc_attr( $item['label'] ?? '' ); ?>"
+								 style="width:80px;height:80px;object-fit:contain">
+							<span style="font-size:13px;font-weight:600;text-align:center;line-height:1.2">
+								<?php echo esc_html( $item['label'] ?? '' ); ?>
+							</span>
+						</div>
 						<span class="tnq-pair-dot tnq-pair-dot-right"
 							style="width:18px;height:18px;border-radius:50%;background:<?php echo esc_attr( $dot_color ); ?>;border:2px solid rgba(0,0,0,0.15);flex-shrink:0;display:block"
 							aria-hidden="true"></span>
@@ -531,9 +565,14 @@ class TNQ_Renderer {
 						<span class="tnq-pair-dot tnq-pair-dot-left"
 							style="width:18px;height:18px;border-radius:50%;background:#ccc;border:2px solid rgba(0,0,0,0.15);flex-shrink:0;display:block"
 							aria-hidden="true"></span>
-						<img src="<?php echo esc_url( TNQ_ASSETS_URL . $item['png'] ); ?>"
-							 alt="<?php echo esc_attr( $item['label'] ?? '' ); ?>"
-							 style="width:100px;height:100px;object-fit:contain;flex-shrink:0">
+						<div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex:1">
+							<img src="<?php echo esc_url( TNQ_ASSETS_URL . $item['png'] ); ?>"
+								 alt="<?php echo esc_attr( $item['label'] ?? '' ); ?>"
+								 style="width:80px;height:80px;object-fit:contain">
+							<span style="font-size:13px;font-weight:600;text-align:center;line-height:1.2">
+								<?php echo esc_html( $item['label'] ?? '' ); ?>
+							</span>
+						</div>
 					</div>
 					<?php else : ?>
 					<div class="tnq-card tnq-pair-item tnq-pairs-right-item"
@@ -546,6 +585,11 @@ class TNQ_Renderer {
 				</div>
 			</div>
 		</div>
+
+		<?php if ( $char_image ) : ?>
+			</div><!-- .tnq-pairs-main-col -->
+		</div><!-- .tnq-pairs-with-char -->
+		<?php endif; ?>
 		<?php
 		return ob_get_clean();
 	}
