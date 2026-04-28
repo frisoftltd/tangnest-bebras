@@ -964,7 +964,9 @@
   -webkit-user-select: none;
   touch-action: none;
   transition: opacity 0.2s, box-shadow 0.15s, transform 0.1s;
-  box-shadow: var(--tnq-shadow);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15), 0 1px 4px rgba(0,0,0,0.08);
+  border: 2px solid rgba(26, 86, 160, 0.15);
+  background: #fff;
 }
 .tnq-drag-card::before {
   content: '';

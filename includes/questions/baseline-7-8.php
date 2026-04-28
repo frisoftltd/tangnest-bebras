@@ -36,7 +36,7 @@ return [
 			[ 'id' => 'c', 'png' => 'people/stir_the_tea.png',              'label' => 'Stir the tea'          ],
 			[ 'id' => 'd', 'png' => 'people/drink_the_tea.png',             'label' => 'Drink the tea'         ],
 		],
-		'answer'      => [ 'a', 'b', 'c', 'd' ],
+		'answer'      => [ 'b', 'a', 'c', 'd' ],
 	],
 
 	// ── B-78-AT-02 · Algorithmic · drag-sequence · Medium ────────
