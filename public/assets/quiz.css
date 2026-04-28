@@ -380,7 +380,7 @@
 
 .tnq-click-color .tnq-svg-canvas {
   width: 100%;
-  max-width: 400px;
+  max-width: 560px;
   cursor: pointer;
 }
 
@@ -593,10 +593,10 @@
   color: #5a4500;
   line-height: 1.5;
   margin-top: 12px;
-  display: none;
+  display: none !important;
 }
 
-.tnq-hint-box.is-visible { display: block; }
+.tnq-hint-box.is-visible { display: block !important; }
 
 /* ── Fallback hint (tap-to-select) ─────────────────────────── */
 .tnq-drag-hint {
@@ -619,9 +619,9 @@
   border-radius: 12px;
   font-size: 15px;
   line-height: 1.5;
-  display: none;
+  display: none !important;
 }
-.tnq-feedback.is-visible { display: block; }
+.tnq-feedback.is-visible { display: block !important; }
 
 .tnq-feedback.is-correct {
   background: rgba(30, 132, 73, 0.09);

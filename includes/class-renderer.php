@@ -400,7 +400,7 @@ class TNQ_Renderer {
 		?>
 		<div class="tnq-click-color" data-adjacency="<?php echo esc_attr( wp_json_encode( $adjacency ) ); ?>">
 			<div class="tnq-color-workspace">
-				<div class="tnq-svg-canvas" style="width:100%;max-width:400px;margin:0 auto">
+				<div class="tnq-svg-canvas" style="width:100%;max-width:560px;margin:0 auto">
 					<?php
 					// Load SVG file from disk based on svg_key.
 					// Supported keys: 'flag-colorable', 'leaf-colorable', 'crane-colorable'
@@ -417,7 +417,7 @@ class TNQ_Renderer {
 						// Inject inline style for sizing and interactivity
 						$svg_content = preg_replace(
 							'/<svg([^>]*)>/',
-							'<svg$1 class="tnq-colorable-svg" style="width:100%;max-width:400px;height:auto;display:block;margin:0 auto;cursor:pointer;">',
+							'<svg$1 class="tnq-colorable-svg" style="width:100%;max-width:560px;height:auto;display:block;margin:0 auto;cursor:pointer;">',
 							$svg_content,
 							1
 						);
@@ -425,7 +425,7 @@ class TNQ_Renderer {
 					} else {
 						// Fallback: flag polygons (original hardcoded SVG)
 						$svg  = '<svg class="tnq-colorable-svg" viewBox="0 0 120 80"';
-						$svg .= ' style="width:100%;max-width:400px;height:auto;display:block;margin:0 auto;cursor:pointer;"';
+						$svg .= ' style="width:100%;max-width:560px;height:auto;display:block;margin:0 auto;cursor:pointer;"';
 						$svg .= ' xmlns="http://www.w3.org/2000/svg">';
 						$svg .= '<polygon data-region="top"    points="0,0 120,0 60,40"    fill="#d4d4d4" stroke="#bbb" stroke-width="0.75" pointer-events="all" style="cursor:pointer;"/>';
 						$svg .= '<polygon data-region="right"  points="120,0 120,80 60,40" fill="#b8b8b8" stroke="#bbb" stroke-width="0.75" pointer-events="all" style="cursor:pointer;"/>';

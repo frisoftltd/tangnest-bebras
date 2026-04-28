@@ -3,7 +3,7 @@
  * Plugin Name:  Tangnest Bebras Interactive Quiz
  * Plugin URI:   https://lms.tangnest.rw
  * Description:  Computational Thinking assessment plugin for Tangnest STEM Academy. Bebras-style visual interactive tasks for ages 7–12, integrated with Tutor LMS. Includes legacy Bebras pre/post quizzes and the new CT Assessment system.
- * Version:      2.5.9
+ * Version:      2.6.0
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * Author:       Tangnest Ltd
@@ -17,7 +17,7 @@
 defined( 'ABSPATH' ) || exit;
 
 // ── Constants ────────────────────────────────────────────────────────────────
-define( 'TNQ_VERSION',     '2.5.9' );
+define( 'TNQ_VERSION',     '2.6.0' );
 define( 'TNQ_PLUGIN_FILE',  __FILE__ );
 define( 'TNQ_PLUGIN_DIR',   plugin_dir_path( __FILE__ ) );
 define( 'TNQ_PLUGIN_URL',   plugin_dir_url( __FILE__ ) );
