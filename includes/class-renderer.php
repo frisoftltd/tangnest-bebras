@@ -554,9 +554,8 @@ class TNQ_Renderer {
 	private static function render_drag_sort( array $q ): string {
 		$items       = $q['items']         ?? [];
 		$bins        = $q['bins']          ?? [];
-		$side_image  = $q['side_image']    ?? '';
-		$pattern_seq = $q['pattern_seq']   ?? '';
-		$instr_q     = $q['instruction_q'] ?? '';
+		$side_image  = $q['side_image']  ?? '';
+		$pattern_seq = $q['pattern_seq'] ?? '';
 
 		// All items start in source
 		$shuffled = $items;
@@ -566,9 +565,6 @@ class TNQ_Renderer {
 		?>
 		<?php if ( $pattern_seq ) : ?>
 		<p class="tnq-pattern-seq"><?php echo esc_html( $pattern_seq ); ?></p>
-		<?php endif; ?>
-		<?php if ( $instr_q ) : ?>
-		<p class="tnq-instruction-q"><?php echo esc_html( $instr_q ); ?></p>
 		<?php endif; ?>
 
 		<?php if ( $side_image ) : ?>
