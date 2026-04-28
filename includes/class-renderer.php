@@ -552,8 +552,11 @@ class TNQ_Renderer {
 
 	// ── drag-sort ────────────────────────────────────────────────
 	private static function render_drag_sort( array $q ): string {
-		$items = $q['items'] ?? [];
-		$bins  = $q['bins']  ?? [];
+		$items       = $q['items']         ?? [];
+		$bins        = $q['bins']          ?? [];
+		$side_image  = $q['side_image']    ?? '';
+		$pattern_seq = $q['pattern_seq']   ?? '';
+		$instr_q     = $q['instruction_q'] ?? '';
 
 		// All items start in source
 		$shuffled = $items;
@@ -561,12 +564,28 @@ class TNQ_Renderer {
 
 		ob_start();
 		?>
+		<?php if ( $pattern_seq ) : ?>
+		<p class="tnq-pattern-seq"><?php echo esc_html( $pattern_seq ); ?></p>
+		<?php endif; ?>
+		<?php if ( $instr_q ) : ?>
+		<p class="tnq-instruction-q"><?php echo esc_html( $instr_q ); ?></p>
+		<?php endif; ?>
+
+		<?php if ( $side_image ) : ?>
+		<div class="tnq-sort-with-image">
+			<div class="tnq-sort-content">
+		<?php endif; ?>
+
 		<div class="tnq-drag-sort">
 			<div class="tnq-sort-layout">
 				<div class="tnq-sort-source">
 					<?php foreach ( $shuffled as $item ) : ?>
-					<div class="tnq-card" data-item-id="<?php echo esc_attr( $item['id'] ); ?>" tabindex="0" role="button">
-						<?php if ( ! empty( $item['icon'] ) ) : ?>
+					<div class="tnq-card tnq-card--portrait" data-item-id="<?php echo esc_attr( $item['id'] ); ?>" tabindex="0" role="button">
+						<?php if ( ! empty( $item['png'] ) ) : ?>
+						<img src="<?php echo esc_url( TNQ_ASSETS_URL . $item['png'] ); ?>"
+							 alt="<?php echo esc_attr( $item['label'] ); ?>"
+							 loading="lazy">
+						<?php elseif ( ! empty( $item['icon'] ) ) : ?>
 						<?php echo TNQ_Icons::icon( $item['icon'] ); ?>
 						<?php endif; ?>
 						<span class="tnq-card-label"><?php echo esc_html( $item['label'] ); ?></span>
@@ -583,6 +602,15 @@ class TNQ_Renderer {
 				</div>
 			</div>
 		</div>
+
+		<?php if ( $side_image ) : ?>
+			</div><!-- .tnq-sort-content -->
+			<div class="tnq-loop-side-image">
+				<img src="<?php echo esc_url( TNQ_ASSETS_URL . $side_image ); ?>"
+					 alt="" loading="lazy">
+			</div>
+		</div><!-- .tnq-sort-with-image -->
+		<?php endif; ?>
 		<?php
 		return ob_get_clean();
 	}

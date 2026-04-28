@@ -1139,3 +1139,54 @@
     margin: 0 auto;
   }
 }
+
+/* ── Pattern sequence line ──────────────────────────────────── */
+.tnq-pattern-seq {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--tnq-primary);
+  margin: 4px 0 8px;
+  letter-spacing: 0.01em;
+}
+
+/* ── Drag-sort with side image layout ───────────────────────── */
+.tnq-sort-with-image {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.tnq-sort-content {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+/* ── Portrait card (drag-sort with PNG characters) ──────────── */
+.tnq-card--portrait {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  min-width: 110px;
+}
+
+.tnq-card--portrait img {
+  width: 90px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 12px;
+  display: block;
+}
+
+.tnq-card--portrait .tnq-card-label {
+  font-size: 15px;
+  font-weight: 700;
+  text-align: center;
+}
+
+@media (max-width: 560px) {
+  .tnq-sort-with-image {
+    flex-direction: column;
+  }
+}

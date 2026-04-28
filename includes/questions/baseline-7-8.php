@@ -128,19 +128,22 @@ return [
 
 	// ── B-78-PR-03 · Pattern · drag-sort · Hard ──────────────────
 	[
-		'id'         => 'B-78-PR-03',
-		'skill'      => 'pattern',
-		'type'       => 'drag-sort',
-		'difficulty' => 'hard',
-		'title'      => 'Pass the Ball',
-		'title_icon' => 'ball-soccer',
-		'instruction'=> 'Look at how the ball is passed: Ange → Bella → Ange → Bella → ? Sort these two names: who gets the ball next?',
-		'hint'       => 'Watch the pattern: Ange, Bella, Ange, Bella... who comes next in this sequence?',
-		'items'      => [
-			[ 'id' => 'ange',  'icon' => 'clap-hand', 'label' => 'Ange',  'bin' => 0 ],
-			[ 'id' => 'bella', 'icon' => 'clap-hand', 'label' => 'Bella', 'bin' => 1 ],
+		'id'            => 'B-78-PR-03',
+		'skill'         => 'pattern',
+		'type'          => 'drag-sort',
+		'difficulty'    => 'hard',
+		'title'         => 'Pass the Ball',
+		'title_icon'    => 'ball-soccer',
+		'side_image'    => 'people/pass_the_ball.png',
+		'instruction'   => 'Look at how the ball is passed:',
+		'pattern_seq'   => 'Akimana → Mugisha → Akimana → Mugisha → ?',
+		'instruction_q' => 'Sort these two names: who gets the ball next?',
+		'hint'          => 'Watch the pattern: Akimana, Mugisha, Akimana, Mugisha… who comes next?',
+		'items'         => [
+			[ 'id' => 'akimana', 'png' => 'people/akimana.png', 'label' => 'Akimana', 'bin' => 0 ],
+			[ 'id' => 'mugisha', 'png' => 'people/mugisha.png', 'label' => 'Mugisha', 'bin' => 1 ],
 		],
-		'bins'       => [ 'Gets the ball NEXT', 'Does NOT get the ball next' ],
+		'bins'          => [ 'Gets the ball NEXT', 'Does NOT get the ball next' ],
 	],
 
 	// ══ LOGICAL (3) ══════════════════════════════════════════════
