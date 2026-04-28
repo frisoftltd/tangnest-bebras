@@ -481,7 +481,6 @@ class TNQ_Renderer {
 		$char_image      = $q['char_image']        ?? '';
 		$col_left_label  = $q['col_left_label']    ?? '';
 		$col_right_label = $q['col_right_label']   ?? '';
-		$instr_q         = $q['instruction_q']     ?? '';
 
 		// Row colours for left-item dots (practice mode line drawing)
 		$dot_colors = [ '#9b59b6', '#f39c12', '#27ae60' ];
@@ -495,10 +494,6 @@ class TNQ_Renderer {
 
 		ob_start();
 		?>
-		<?php if ( $instr_q ) : ?>
-		<p class="tnq-instruction-q"><?php echo esc_html( $instr_q ); ?></p>
-		<?php endif; ?>
-
 		<?php if ( $char_image ) : ?>
 		<div class="tnq-pairs-with-char">
 			<div class="tnq-pairs-char-col">
@@ -520,7 +515,7 @@ class TNQ_Renderer {
 		</div>
 		<?php endif; ?>
 
-		<div class="tnq-match-pairs" data-pairs="<?php echo esc_attr( wp_json_encode( $pairs ) ); ?>" data-mode="<?php echo esc_attr( $mode ); ?>">
+		<div class="tnq-match-pairs" data-pairs="<?php echo esc_attr( wp_json_encode( $pairs ) ); ?>" data-mode="practice">
 			<div class="tnq-pairs-workspace" style="position:relative;display:flex;gap:16px;align-items:flex-start">
 				<div class="tnq-pairs-col tnq-pairs-left" style="flex:1;display:flex;flex-direction:column;gap:12px">
 					<?php foreach ( $left as $row_idx => $item ) :
