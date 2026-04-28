@@ -116,8 +116,9 @@ class TNQ_Renderer {
 		$skill    = $q['skill']      ?? '';
 		$diff     = $q['difficulty'] ?? '';
 		$title    = $q['title']      ?? '';
-		$instr    = $q['instruction'] ?? '';
-		$hint     = $q['hint']       ?? '';
+		$instr    = $q['instruction']   ?? '';
+		$instr_q  = $q['instruction_q'] ?? '';
+		$hint     = $q['hint']          ?? '';
 		$expl     = $q['practice_explanation'] ?? '';
 
 		// Compute correct answer for data-answer attribute (JSON)
@@ -151,6 +152,9 @@ class TNQ_Renderer {
 
 			<!-- Instruction -->
 			<p class="tnq-instruction"><?php echo esc_html( $instr ); ?></p>
+			<?php if ( $instr_q ) : ?>
+			<p class="tnq-instruction-q"><?php echo esc_html( $instr_q ); ?></p>
+			<?php endif; ?>
 
 			<!-- Interaction widget -->
 			<div class="tnq-interaction tnq-<?php echo esc_attr( str_replace( '_', '-', $type ) ); ?>">

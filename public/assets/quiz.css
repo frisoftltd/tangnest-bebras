@@ -146,6 +146,13 @@
   line-height: 1.5;
 }
 
+.tnq-instruction-q {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--tnq-primary);
+  margin: 4px 0 16px;
+}
+
 /* ── Icons ─────────────────────────────────────────────────── */
 .tnq-icon {
   display: inline-block;
