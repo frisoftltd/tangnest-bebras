@@ -1308,3 +1308,58 @@
 .tnq-quiz:has(.tnq-click-color) .tnq-question-header {
   margin-bottom: 8px;
 }
+
+/* ════════════════════════════════════════════════════════════
+   CLICK-COLOR: Force compact layout so everything fits on screen
+   ════════════════════════════════════════════════════════════ */
+
+/* Cap the SVG height */
+.tnq-click-color .tnq-svg-canvas svg,
+.tnq-colorable-svg {
+  max-height: 240px !important;
+  width: auto !important;
+  display: block;
+  margin: 0 auto;
+}
+
+.tnq-click-color .tnq-svg-canvas {
+  max-height: 240px;
+  overflow: hidden;
+  max-width: none;
+}
+
+/* Shrink question card padding for click-color */
+.tnq-click-color {
+  /* targets the interaction div — walk up to the question card via adjacent CSS */
+}
+
+/* Reduce outer quiz container padding */
+.tnq-quiz {
+  padding: 12px;
+}
+
+/* Reduce question card padding */
+.tnq-question {
+  padding: 12px;
+  margin-bottom: 8px;
+}
+
+/* Tighten instruction spacing */
+.tnq-instruction {
+  margin-bottom: 10px;
+}
+
+/* Tighten question header */
+.tnq-question-header {
+  margin-bottom: 8px;
+}
+
+/* Tighten nav */
+.tnq-nav {
+  margin-top: 10px;
+}
+
+/* Tighten progress bar */
+.tnq-progress {
+  margin-bottom: 8px;
+}
