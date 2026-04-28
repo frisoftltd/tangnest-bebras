@@ -1249,3 +1249,62 @@
     margin: 0 auto;
   }
 }
+
+/* ════════════════════════════════════════════════════════════
+   CLICK-COLOR: Compact layout — fits in one screen on desktop
+   ════════════════════════════════════════════════════════════ */
+
+/* Shrink outer quiz padding when a click-color question is active */
+.tnq-quiz:has(.tnq-click-color) {
+  padding: 16px;
+}
+
+/* Shrink the question card padding */
+.tnq-quiz:has(.tnq-click-color) .tnq-question {
+  padding: 16px;
+  margin-bottom: 10px;
+}
+
+/* Tighten instruction margin */
+.tnq-quiz:has(.tnq-click-color) .tnq-instruction {
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+/* Cap SVG canvas height so it can't overflow */
+.tnq-color-workspace--side .tnq-svg-canvas {
+  max-height: 280px;
+  overflow: hidden;
+}
+
+.tnq-color-workspace--side .tnq-svg-canvas svg {
+  max-height: 280px;
+  width: auto;
+  max-width: 100%;
+}
+
+/* Shrink palette swatch size on compact screens */
+.tnq-color-palette--vertical .tnq-color-btn img {
+  width: 56px;
+  height: 56px;
+}
+
+/* Tighten nav margin */
+.tnq-quiz:has(.tnq-click-color) .tnq-nav {
+  margin-top: 10px;
+}
+
+/* Tighten progress bar margin */
+.tnq-quiz:has(.tnq-click-color) .tnq-progress {
+  margin-bottom: 10px;
+}
+
+/* Tighten timer margin */
+.tnq-quiz:has(.tnq-click-color) .tnq-timer {
+  margin-bottom: 8px;
+}
+
+/* Question header tighter */
+.tnq-quiz:has(.tnq-click-color) .tnq-question-header {
+  margin-bottom: 8px;
+}
