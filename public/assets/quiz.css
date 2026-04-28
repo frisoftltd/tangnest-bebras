@@ -1096,3 +1096,39 @@
   80%       { transform: translateX(3px); }
 }
 .tnq-palette-shake { animation: tnq-palette-shake 0.4s ease; }
+
+/* ── Loop-count with side image layout ─────────────────────── */
+.tnq-loop-with-image {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.tnq-loop-content {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.tnq-loop-side-image {
+  flex: 0 0 220px;
+  width: 220px;
+}
+
+.tnq-loop-side-image img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 16px;
+}
+
+@media (max-width: 560px) {
+  .tnq-loop-with-image {
+    flex-direction: column;
+  }
+  .tnq-loop-side-image {
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: 280px;
+    margin: 0 auto;
+  }
+}

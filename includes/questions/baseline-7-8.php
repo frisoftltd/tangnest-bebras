@@ -66,6 +66,7 @@ return [
 		'difficulty' => 'hard',
 		'title'      => 'Carry Water Cans',
 		'title_icon' => 'jerrycan',
+		'side_image' => 'people/carry_water_cans.png',
 		'instruction'=> 'Habimana carries one jerrycan each trip. He needs to move 4 cans. How many trips does he make?',
 		'hint'       => 'Habimana carries ONE can at a time. Count the cans on the screen — one trip for each can!',
 		'tiles'      => 4,

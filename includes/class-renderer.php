@@ -265,6 +265,7 @@ class TNQ_Renderer {
 		$tile_icon_png = $q['tile_icon_png']          ?? '';
 		$group_size   = (int) ( $q['tile_group_size'] ?? 0 );
 		$path_svg     = $q['path_svg']                ?? '';
+		$side_image   = $q['side_image']              ?? '';
 
 		// When a path illustration is used, dynamic tiles are suppressed —
 		// children count from the fixed SVG visual above the counter.
@@ -284,7 +285,12 @@ class TNQ_Renderer {
 
 		ob_start();
 
-		// ── Path illustration (house → footprints → tap) ─────────
+		if ( $side_image ) : ?>
+		<div class="tnq-loop-with-image">
+			<div class="tnq-loop-content">
+		<?php endif; ?>
+
+		<?php // ── Path illustration (house → footprints → tap) ─────────
 		if ( $path_svg === 'house-to-tap' ) :
 			$_house_url    = esc_url( TNQ_ASSETS_URL . 'places/q3-house.png' );
 			$_tap_url      = esc_url( TNQ_ASSETS_URL . 'places/q3-tap.png' );
@@ -364,6 +370,16 @@ class TNQ_Renderer {
 				</div>
 			</div>
 		</div>
+
+		<?php if ( $side_image ) : ?>
+			</div><!-- .tnq-loop-content -->
+			<div class="tnq-loop-side-image">
+				<img src="<?php echo esc_url( TNQ_ASSETS_URL . $side_image ); ?>"
+					 alt=""
+					 loading="lazy">
+			</div>
+		</div><!-- .tnq-loop-with-image -->
+		<?php endif; ?>
 		<?php
 		return ob_get_clean();
 	}
