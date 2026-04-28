@@ -15,7 +15,7 @@
 (function () {
 	'use strict';
 
-	window.TNQ_VERSION = '2.4.4';
+	window.TNQ_VERSION = '2.4.5';
 
 	/** Namespace for interaction modules loaded from interactions/*.js */
 	window.TNQInteractions = window.TNQInteractions || {};
@@ -105,6 +105,7 @@
 		this._initialized   = {};  // idx -> true once interaction init() has run
 		this._checkedState  = {};  // idx -> { correct: bool } once Check was pressed
 		this._hasInteracted = {};  // idx -> true once tnq:interacted fired for that question
+		this._attemptCount  = {};  // idx -> number of Check presses (assessment only)
 	}
 
 	TNQQuiz.prototype.init = function () {
@@ -273,7 +274,7 @@
 				var hintText  = q ? (q.dataset.hint || '') : '';
 
 				if (prevState) {
-					// Already checked — restore locked state (supports Back navigation)
+					// Already locked — restore state
 					if (btnCheck) { btnCheck.style.display = 'none'; }
 					if (btnNext) {
 						btnNext.style.display = '';
@@ -281,8 +282,17 @@
 					}
 					if (btnHint) { btnHint.style.display = hintText ? '' : 'none'; }
 					this._showFeedback(prevState.correct, false);
+				} else if (this._attemptCount[idx] >= 1) {
+					// Had one wrong attempt, currently on retry — show fresh Check (enabled)
+					if (btnCheck) {
+						btnCheck.style.display = '';
+						btnCheck.textContent   = 'Check my answer';
+						btnCheck.disabled      = false;
+					}
+					if (btnNext)  { btnNext.style.display  = 'none'; }
+					if (btnHint)  { btnHint.style.display  = hintText ? '' : 'none'; }
 				} else {
-					// Fresh — show Check (disabled until interaction), hide Next
+					// Fresh question
 					if (btnCheck) {
 						btnCheck.style.display = '';
 						btnCheck.textContent   = 'Check my answer';
@@ -411,20 +421,46 @@
 				btnNext.textContent   = this.currentIdx < this.questions.length - 1 ? 'Next question \u2192' : 'Finish practice';
 			}
 		} else {
-			// Assessment mode: Check → show feedback (no retry) → reveal Next button
+			// Assessment mode: one retry allowed, hint auto-shows on first wrong attempt.
 			this._recordAnswer();
-			var correct = this._isAnswerCorrect();
-			this._checkedState[this.currentIdx] = { correct: correct };
-			this._showFeedback(correct, false);  // false = no Try Again button
+			var correct  = this._isAnswerCorrect();
+			var idx      = this.currentIdx;
+			var attempts = (this._attemptCount[idx] || 0) + 1;
+			this._attemptCount[idx] = attempts;
 
 			var btnCheck = this.container.querySelector('.tnq-btn-check');
 			var btnNext  = this.container.querySelector('.tnq-btn-next');
-			if (btnCheck) btnCheck.style.display = 'none';
-			if (btnNext) {
-				btnNext.style.display = '';
-				btnNext.textContent   = this.currentIdx < this.questions.length - 1
-					? 'Next question \u2192'
-					: 'Finish';
+
+			if (correct || attempts >= 2) {
+				// Final state: lock and show Next
+				this._checkedState[idx] = { correct: correct };
+				this._showFeedback(correct, false);
+				if (btnCheck) btnCheck.style.display = 'none';
+				if (btnNext) {
+					btnNext.style.display = '';
+					btnNext.textContent   = idx < this.questions.length - 1
+						? 'Next question \u2192'
+						: 'Finish';
+				}
+			} else {
+				// First wrong attempt: show hint + retry button, keep Check hidden
+				this._showAssessmentRetryFeedback();
+				this._onHint();  // auto-show hint
+				if (btnCheck) btnCheck.style.display = 'none';
+
+				// Inject a one-use "Try once more" button into the feedback box
+				var feedbackEl = this.container.querySelector('.tnq-feedback');
+				if (feedbackEl) {
+					var self = this;
+					var retryBtn = document.createElement('button');
+					retryBtn.className = 'tnq-btn-retry';
+					retryBtn.textContent = 'Try once more \u2192';
+					retryBtn.style.cssText = 'background:#F39C12;color:white;border:none;border-radius:10px;' +
+						'padding:12px 24px;font-size:16px;font-weight:bold;cursor:pointer;' +
+						'margin-top:12px;min-height:48px;display:block;';
+					retryBtn.addEventListener('click', function () { self._onAssessmentRetry(); });
+					feedbackEl.appendChild(retryBtn);
+				}
 			}
 		}
 	};
@@ -497,6 +533,22 @@
 		}
 	};
 
+	TNQQuiz.prototype._showAssessmentRetryFeedback = function () {
+		var feedbackEl = this.container.querySelector('.tnq-feedback');
+		if (!feedbackEl) return;
+		feedbackEl.classList.remove('is-correct', 'is-wrong');
+		feedbackEl.classList.add('is-visible', 'is-wrong');
+
+		// Remove any previous retry button
+		var oldRetry = feedbackEl.querySelector('.tnq-btn-retry');
+		if (oldRetry) oldRetry.remove();
+
+		var iconEl = feedbackEl.querySelector('.tnq-feedback-icon');
+		var msgEl  = feedbackEl.querySelector('.tnq-feedback-msg');
+		if (iconEl) iconEl.textContent = '\u2718';
+		if (msgEl)  msgEl.textContent  = 'Not quite \u2014 here\u2019s a hint!';
+	};
+
 	TNQQuiz.prototype._onRetry = function () {
 		var feedbackEl    = this.container.querySelector('.tnq-feedback');
 		var explanationEl = this.container.querySelector('.tnq-explanation');
@@ -531,6 +583,37 @@
 				module.reset(interactionEl);
 			}
 		}
+	};
+
+	TNQQuiz.prototype._onAssessmentRetry = function () {
+		var feedbackEl = this.container.querySelector('.tnq-feedback');
+		var hintBox    = this.container.querySelector('.tnq-hint-box');
+		var btnCheck   = this.container.querySelector('.tnq-btn-check');
+
+		// Hide feedback and hint
+		if (feedbackEl) feedbackEl.classList.remove('is-visible');
+		if (hintBox)    hintBox.classList.remove('is-visible');
+
+		// Re-show Check button (always enabled on retry — child has already interacted)
+		if (btnCheck) {
+			btnCheck.style.display = '';
+			btnCheck.textContent   = 'Check my answer';
+			btnCheck.disabled      = false;
+		}
+
+		// Reset the interaction widget so the child can change their answer
+		var q             = this.questions[this.currentIdx];
+		var type          = q ? q.dataset.type : null;
+		var interactionEl = q ? q.querySelector('.tnq-interaction') : null;
+		if (interactionEl && type) {
+			var module = this._getModule(type);
+			if (module && module.reset) {
+				module.reset(interactionEl);
+			}
+		}
+
+		// Reset hasInteracted so button is immediately enabled (retry = already interacted)
+		this._hasInteracted[this.currentIdx] = true;
 	};
 
 	TNQQuiz.prototype._onComplete = function () {
