@@ -1,15 +1,51 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
-  <!-- Background region (clickable) -->
-  <rect data-region="bg" x="0" y="0" width="64" height="64" fill="transparent"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 240" width="200" height="240" fill="none">
+
+  <!-- Upper-left region -->
+  <path data-region="left"
+    d="M 100,22 C 65,18 32,55 35,100 L 100,100 Z"
+    fill="#d0d0d0" stroke="#2d6a2d" stroke-width="3" stroke-linejoin="round"
+    pointer-events="all" style="cursor:pointer;"/>
+
+  <!-- Upper-right region -->
+  <path data-region="right"
+    d="M 100,22 L 100,100 L 165,100 C 168,55 135,18 100,22 Z"
+    fill="#c0c0c0" stroke="#2d6a2d" stroke-width="3" stroke-linejoin="round"
+    pointer-events="all" style="cursor:pointer;"/>
+
+  <!-- Lower region -->
+  <path data-region="bottom"
+    d="M 35,100 C 35,138 62,160 100,162 C 138,160 165,138 165,100 L 35,100 Z"
+    fill="#b0b0b0" stroke="#2d6a2d" stroke-width="3" stroke-linejoin="round"
+    pointer-events="all" style="cursor:pointer;"/>
+
   <!-- Stem -->
-  <path data-region="stem" d="M32 58 Q28 50 30 44" stroke="#795548" stroke-width="6" stroke-linecap="round" fill="#795548"/>
-  <!-- Leaf body -->
-  <path data-region="body" d="M30 44 Q10 36 12 18 Q14 6 32 8 Q50 6 52 18 Q54 36 34 44 Z" fill="#27ae60" stroke="#1e7e34" stroke-width="2"/>
-  <!-- Central vein -->
-  <line data-region="vein" x1="32" y1="10" x2="32" y2="44" stroke="#1e7e34" stroke-width="3" stroke-linecap="round"/>
-  <!-- Side veins (part of vein region) -->
-  <path data-region="vein" d="M32 20 Q40 22 46 28" stroke="#1e7e34" stroke-width="1.5" stroke-linecap="round" fill="none"/>
-  <path data-region="vein" d="M32 28 Q40 30 48 34" stroke="#1e7e34" stroke-width="1.5" stroke-linecap="round" fill="none"/>
-  <path data-region="vein" d="M32 20 Q24 22 18 28" stroke="#1e7e34" stroke-width="1.5" stroke-linecap="round" fill="none"/>
-  <path data-region="vein" d="M32 28 Q24 30 16 34" stroke="#1e7e34" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+  <path data-region="stem"
+    d="M 93,162 Q 84,196 87,226 Q 100,230 113,226 Q 116,196 107,162 Z"
+    fill="#8B5E3C" stroke="#5d3a1a" stroke-width="2" stroke-linejoin="round"
+    pointer-events="all" style="cursor:pointer;"/>
+
+  <!-- Central vein — decorative, not interactive -->
+  <line x1="100" y1="22" x2="100" y2="162"
+    stroke="#2d6a2d" stroke-width="3.5" stroke-linecap="round" pointer-events="none"/>
+
+  <!-- Horizontal mid-vein — decorative, not interactive -->
+  <line x1="35" y1="100" x2="165" y2="100"
+    stroke="#2d6a2d" stroke-width="2.5" stroke-linecap="round" pointer-events="none"/>
+
+  <!-- Side veins upper-left — decorative -->
+  <path d="M 100,60 Q 72,68 52,78"
+    stroke="#2d6a2d" stroke-width="1.8" fill="none" stroke-linecap="round" pointer-events="none"/>
+
+  <!-- Side veins upper-right — decorative -->
+  <path d="M 100,60 Q 128,68 148,78"
+    stroke="#2d6a2d" stroke-width="1.8" fill="none" stroke-linecap="round" pointer-events="none"/>
+
+  <!-- Side veins lower-left — decorative -->
+  <path d="M 100,128 Q 74,138 58,148"
+    stroke="#2d6a2d" stroke-width="1.8" fill="none" stroke-linecap="round" pointer-events="none"/>
+
+  <!-- Side veins lower-right — decorative -->
+  <path d="M 100,128 Q 126,138 142,148"
+    stroke="#2d6a2d" stroke-width="1.8" fill="none" stroke-linecap="round" pointer-events="none"/>
+
 </svg>
