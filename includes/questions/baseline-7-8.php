@@ -47,8 +47,8 @@ return [
 		'difficulty' => 'medium',
 		'title'      => 'Pack the School Bag',
 		'title_icon' => 'school-bag',
-		'instruction'=> 'Akimana packs her bag. What is the right order?',
-		'hint'       => 'Akimana has to open the bag before anything can go inside. What is the very last thing you do before you leave the house?',
+		'instruction'=> 'Nyiramajyambere packs her bag. What is the right order?',
+		'hint'       => 'Nyiramajyambere has to open the bag before anything can go inside. What is the very last thing you do before you leave the house?',
 		'items'      => [
 			[ 'id' => 'a', 'png' => 'people/put_in_books.png',  'label' => 'Put in books'  ],
 			[ 'id' => 'b', 'png' => 'people/open_the_bag.png',  'label' => 'Open the bag'  ],
