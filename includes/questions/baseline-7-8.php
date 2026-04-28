@@ -29,7 +29,7 @@ return [
 		'title'       => 'Making Tea',
 		'title_icon'  => 'tea-cup',
 		'instruction' => 'Put the pictures in the right order to make a cup of tea.',
-		'hint'        => 'Think about what you do first when you want to boil water — you need to put the water IN before you can heat it up!',
+		'hint'        => 'Think about what must be in the cup before you can add the tea bag — and what do you always do after mixing something?',
 		'items'       => [
 			[ 'id' => 'a', 'png' => 'people/put_tea_bug_in_cup.png',        'label' => 'Put tea bag in cup'    ],
 			[ 'id' => 'b', 'png' => 'people/Pour_the_hot_water_in_cup.png', 'label' => 'Pour hot water in cup' ],
