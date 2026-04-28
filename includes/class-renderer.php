@@ -239,15 +239,7 @@ class TNQ_Renderer {
 				<?php foreach ( $shuffled as $item ) : ?>
 					<?php if ( $use_png ) : ?>
 					<div class="tnq-drag-card" data-item-id="<?php echo esc_attr( $item['id'] ); ?>" draggable="true" tabindex="0" role="button" aria-label="<?php echo esc_attr( $item['label'] ?? '' ); ?>">
-						<?php
-						$img_path  = TNQ_ASSETS_URL . $item['png'];
-						$file_path = TNQ_PLUGIN_DIR . 'public/assets/svg/' . $item['png'];
-						error_log( 'TNQ img URL: ' . $img_path );
-						if ( ! file_exists( $file_path ) ) {
-							error_log( 'TNQ MISSING FILE: ' . $file_path );
-						}
-						?>
-						<img src="<?php echo esc_url( $img_path ); ?>"
+						<img src="<?php echo esc_url( TNQ_ASSETS_URL . $item['png'] ); ?>"
 							 alt="<?php echo esc_attr( $item['label'] ?? '' ); ?>"
 							 loading="lazy">
 					</div>

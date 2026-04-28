@@ -22,21 +22,21 @@ return [
 	// ── B-78-AT-01 · Algorithmic · drag-sequence · Easy ──────────
 	// Explicitly shown as B-78-AT-01 in M2 briefing data structure example.
 	[
-		'id'         => 'B-78-AT-01',
-		'skill'      => 'algorithmic',
-		'type'       => 'drag-sequence',
-		'difficulty' => 'easy',
-		'title'      => 'Making Tea',
-		'title_icon' => 'tea-cup',
-		'instruction'=> 'Put the pictures in the right order to make a cup of tea.',
-		'hint'       => 'Think about what you do first when you want to boil water — you need to put the water IN before you can heat it up!',
-		'items'      => [
-			[ 'id' => 'a', 'icon' => 'kettle-pour', 'label' => 'Pour water in kettle' ],
-			[ 'id' => 'b', 'icon' => 'fire',         'label' => 'Boil the water'      ],
-			[ 'id' => 'c', 'icon' => 'teabag',       'label' => 'Put tea bag in cup'  ],
-			[ 'id' => 'd', 'icon' => 'cup-pour',     'label' => 'Pour hot water in cup'],
+		'id'          => 'B-78-AT-01',
+		'skill'       => 'algorithmic',
+		'type'        => 'drag-sequence',
+		'difficulty'  => 'easy',
+		'title'       => 'Making Tea',
+		'title_icon'  => 'tea-cup',
+		'instruction' => 'Put the pictures in the right order to make a cup of tea.',
+		'hint'        => 'Think about what you do first when you want to boil water — you need to put the water IN before you can heat it up!',
+		'items'       => [
+			[ 'id' => 'a', 'png' => 'people/put_tea_bug_in_cup.png',        'label' => 'Put tea bag in cup'    ],
+			[ 'id' => 'b', 'png' => 'people/Pour_the_hot_water_in_cup.png', 'label' => 'Pour hot water in cup' ],
+			[ 'id' => 'c', 'png' => 'people/stir_the_tea.png',              'label' => 'Stir the tea'          ],
+			[ 'id' => 'd', 'png' => 'people/drink_the_tea.png',             'label' => 'Drink the tea'         ],
 		],
-		'answer'     => [ 'a', 'b', 'c', 'd' ],
+		'answer'      => [ 'a', 'b', 'c', 'd' ],
 	],
 
 	// ── B-78-AT-02 · Algorithmic · drag-sequence · Medium ────────
