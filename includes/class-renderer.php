@@ -532,14 +532,9 @@ class TNQ_Renderer {
 						data-dot-color="<?php echo esc_attr( $dot_color ); ?>"
 						tabindex="0" role="button"
 						style="min-height:100px;min-width:0;border-radius:12px;border:2px solid var(--tnq-border);background:#fff;display:flex;align-items:center;justify-content:center;gap:8px;padding:8px;cursor:pointer;position:relative;user-select:none">
-						<div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex:1">
-							<img src="<?php echo esc_url( TNQ_ASSETS_URL . $item['png'] ); ?>"
-								 alt="<?php echo esc_attr( $item['label'] ?? '' ); ?>"
-								 style="width:80px;height:80px;object-fit:contain">
-							<span style="font-size:13px;font-weight:600;text-align:center;line-height:1.2">
-								<?php echo esc_html( $item['label'] ?? '' ); ?>
-							</span>
-						</div>
+						<img src="<?php echo esc_url( TNQ_ASSETS_URL . $item['png'] ); ?>"
+							 alt="<?php echo esc_attr( $item['label'] ?? '' ); ?>"
+							 style="width:90px;height:90px;object-fit:contain;flex-shrink:0">
 						<span class="tnq-pair-dot tnq-pair-dot-right"
 							style="width:18px;height:18px;border-radius:50%;background:<?php echo esc_attr( $dot_color ); ?>;border:2px solid rgba(0,0,0,0.15);flex-shrink:0;display:block"
 							aria-hidden="true"></span>
@@ -565,14 +560,9 @@ class TNQ_Renderer {
 						<span class="tnq-pair-dot tnq-pair-dot-left"
 							style="width:18px;height:18px;border-radius:50%;background:#ccc;border:2px solid rgba(0,0,0,0.15);flex-shrink:0;display:block"
 							aria-hidden="true"></span>
-						<div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex:1">
-							<img src="<?php echo esc_url( TNQ_ASSETS_URL . $item['png'] ); ?>"
-								 alt="<?php echo esc_attr( $item['label'] ?? '' ); ?>"
-								 style="width:80px;height:80px;object-fit:contain">
-							<span style="font-size:13px;font-weight:600;text-align:center;line-height:1.2">
-								<?php echo esc_html( $item['label'] ?? '' ); ?>
-							</span>
-						</div>
+						<img src="<?php echo esc_url( TNQ_ASSETS_URL . $item['png'] ); ?>"
+							 alt="<?php echo esc_attr( $item['label'] ?? '' ); ?>"
+							 style="width:90px;height:90px;object-fit:contain;flex-shrink:0">
 					</div>
 					<?php else : ?>
 					<div class="tnq-card tnq-pair-item tnq-pairs-right-item"

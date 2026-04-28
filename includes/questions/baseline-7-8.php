@@ -155,7 +155,7 @@ return [
 		'type'             => 'match-pairs',
 		'difficulty'       => 'easy',
 		'title'            => 'Help Nyiramajyambere at Home!',
-		'title_icon_png'   => 'people/help_Nyiramajyambere_at_home.png',
+		'title_icon_png'   => 'people/Nyiramajyambere_at_home.png',
 		'char_image'       => 'people/Nyiramajyambere_at_home.png',
 		'instruction'      => 'Nyiramajyambere wants to use these things.',
 		'instruction_q'    => 'Match each thing with the right tool.',
