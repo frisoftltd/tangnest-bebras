@@ -402,16 +402,38 @@ class TNQ_Renderer {
 			<div class="tnq-color-workspace">
 				<div class="tnq-svg-canvas" style="width:100%;max-width:400px;margin:0 auto">
 					<?php
-					$svg  = '<svg class="tnq-icon tnq-icon--flag-colorable tnq-colorable-svg"';
-					$svg .= ' viewBox="0 0 120 80"';
-					$svg .= ' style="width:100%;max-width:400px;height:auto;display:block;margin:0 auto;cursor:pointer;position:relative;z-index:10;"';
-					$svg .= ' xmlns="http://www.w3.org/2000/svg">';
-					$svg .= '<polygon data-region="top"    points="0,0 120,0 60,40"    fill="#d4d4d4" stroke="#bbb" stroke-width="0.75" pointer-events="all" style="cursor:pointer;"/>';
-					$svg .= '<polygon data-region="right"  points="120,0 120,80 60,40" fill="#b8b8b8" stroke="#bbb" stroke-width="0.75" pointer-events="all" style="cursor:pointer;"/>';
-					$svg .= '<polygon data-region="bottom" points="120,80 0,80 60,40"  fill="#c8c8c8" stroke="#bbb" stroke-width="0.75" pointer-events="all" style="cursor:pointer;"/>';
-					$svg .= '<polygon data-region="left"   points="0,80 0,0 60,40"     fill="#e0e0e0" stroke="#bbb" stroke-width="0.75" pointer-events="all" style="cursor:pointer;"/>';
-					$svg .= '</svg>';
-					echo $svg;
+					// Load SVG file from disk based on svg_key.
+					// Supported keys: 'flag-colorable', 'leaf-colorable', 'crane-colorable'
+					// For backward compatibility, map old key 'leaf' → 'leaf-colorable'
+					$svg_file_key = $svg_key;
+					if ( $svg_key === 'leaf' )  { $svg_file_key = 'leaf-colorable'; }
+					if ( $svg_key === 'crane' ) { $svg_file_key = 'crane-colorable'; }
+					if ( $svg_key === 'flag' )  { $svg_file_key = 'flag-colorable'; }
+
+					$svg_path = TNQ_PLUGIN_DIR . 'public/assets/svg/objects/' . $svg_file_key . '.svg';
+
+					if ( file_exists( $svg_path ) ) {
+						$svg_content = file_get_contents( $svg_path );
+						// Inject inline style for sizing and interactivity
+						$svg_content = preg_replace(
+							'/<svg([^>]*)>/',
+							'<svg$1 class="tnq-colorable-svg" style="width:100%;max-width:400px;height:auto;display:block;margin:0 auto;cursor:pointer;">',
+							$svg_content,
+							1
+						);
+						echo $svg_content;
+					} else {
+						// Fallback: flag polygons (original hardcoded SVG)
+						$svg  = '<svg class="tnq-colorable-svg" viewBox="0 0 120 80"';
+						$svg .= ' style="width:100%;max-width:400px;height:auto;display:block;margin:0 auto;cursor:pointer;"';
+						$svg .= ' xmlns="http://www.w3.org/2000/svg">';
+						$svg .= '<polygon data-region="top"    points="0,0 120,0 60,40"    fill="#d4d4d4" stroke="#bbb" stroke-width="0.75" pointer-events="all" style="cursor:pointer;"/>';
+						$svg .= '<polygon data-region="right"  points="120,0 120,80 60,40" fill="#b8b8b8" stroke="#bbb" stroke-width="0.75" pointer-events="all" style="cursor:pointer;"/>';
+						$svg .= '<polygon data-region="bottom" points="120,80 0,80 60,40"  fill="#c8c8c8" stroke="#bbb" stroke-width="0.75" pointer-events="all" style="cursor:pointer;"/>';
+						$svg .= '<polygon data-region="left"   points="0,80 0,0 60,40"     fill="#e0e0e0" stroke="#bbb" stroke-width="0.75" pointer-events="all" style="cursor:pointer;"/>';
+						$svg .= '</svg>';
+						echo $svg;
+					}
 					?>
 				</div>
 				<div class="tnq-color-palette">

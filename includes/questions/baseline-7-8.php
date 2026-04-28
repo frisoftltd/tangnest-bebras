@@ -179,26 +179,28 @@ return [
 	],
 
 	// ── B-78-LR-02 · Logical · click-color · Medium ──────────────
-	// Explicitly shown in M2 briefing data structure example.
 	[
-		'id'         => 'B-78-LR-02',
-		'skill'      => 'logical',
-		'type'       => 'click-color',
-		'difficulty' => 'medium',
-		'title'      => 'Colour the Leaf',
-		'title_icon' => 'leaf',
-		'instruction'=> 'Colour the leaf so that no two parts that touch each other have the same colour. You have three colours to use.',
-		'hint'       => 'Two parts that are touching each other cannot be the same colour. Start with the big body of the leaf, then pick a different colour for anything it touches.',
-		'svg'        => 'leaf',
-		'regions'    => [ 'bg', 'body', 'vein', 'stem' ],
-		'adjacency'  => [
+		'id'           => 'B-78-LR-02',
+		'skill'        => 'logical',
+		'type'         => 'click-color',
+		'difficulty'   => 'medium',
+		'title'        => 'Colour the Leaf',
+		'title_icon'   => 'leaf',
+		'instruction'  => 'Colour the leaf so that no two parts that touch each other have the same colour. You have three colours to use.',
+		'hint'         => 'Two parts that are touching each other cannot be the same colour. Start with the big body of the leaf, then pick a different colour for anything it touches.',
+		'svg'          => 'leaf-colorable',
+		'regions'      => [ 'bg', 'body', 'vein', 'stem' ],
+		'adjacency'    => [
 			[ 'bg',   'body' ],
 			[ 'bg',   'stem' ],
 			[ 'body', 'vein' ],
 			[ 'body', 'stem' ],
 		],
-		'colors'      => [ '#27ae60', '#f1c40f', '#795548' ],
-		'color_labels'=> [ 'Green', 'Yellow', 'Brown' ],
+		'palette_pngs' => [
+			[ 'png' => 'ui/leaf_blue.png',   'label' => 'Blue',   'value' => '#3498db' ],
+			[ 'png' => 'ui/leaf_red.png',    'label' => 'Red',    'value' => '#e74c3c' ],
+			[ 'png' => 'ui/leaf_yellow.png', 'label' => 'Yellow', 'value' => '#f1c40f' ],
+		],
 	],
 
 	// ── B-78-LR-03 · Logical · pattern-next · Hard ───────────────
