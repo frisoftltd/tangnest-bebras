@@ -15,7 +15,7 @@
 (function () {
 	'use strict';
 
-	window.TNQ_VERSION = '2.7.4';
+	window.TNQ_VERSION = '2.7.5';
 
 	/** Namespace for interaction modules loaded from interactions/*.js */
 	window.TNQInteractions = window.TNQInteractions || {};
@@ -136,6 +136,9 @@
 				reviewNextBtn.addEventListener('click', function () {
 					if (self2.currentIdx < self2.questions.length - 1) {
 						self2._showQuestion(self2.currentIdx + 1);
+					} else {
+						// Last question in review — strip ?review=1 and return to results
+						window.location.href = window.location.pathname;
 					}
 				});
 			}
@@ -279,7 +282,9 @@
 				if (btnHint)  { btnHint.style.display  = 'none'; }
 				if (btnNext)  { btnNext.style.display   = 'none'; }
 				if (this._reviewNextBtn) {
-					this._reviewNextBtn.disabled = idx >= this.questions.length - 1;
+					var isLastReview = idx >= this.questions.length - 1;
+					this._reviewNextBtn.disabled  = false;
+					this._reviewNextBtn.textContent = isLastReview ? 'Back to Results' : 'Next \u2192';
 				}
 			} else {
 				// Baseline/endline: linear review-then-submit flow.
