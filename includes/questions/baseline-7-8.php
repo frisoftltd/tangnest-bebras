@@ -179,25 +179,28 @@ return [
 	],
 
 	// ── B-78-LR-02 · Logical · click-color · Medium ──────────────
+	// Flag SVG and adjacency copied from Practice Q5 (P-LR-01).
+	// Palette swapped to blue / pink / yellow per v2.7.1 briefing.
 	[
 		'id'           => 'B-78-LR-02',
 		'skill'        => 'logical',
 		'type'         => 'click-color',
 		'difficulty'   => 'medium',
-		'title'        => 'Colour the Leaf',
-		'title_icon'   => 'leaf',
-		'instruction'  => 'Colour the leaf so that no two parts that touch each other have the same colour. You have three colours to use.',
-		'hint'         => 'The left and right sides both touch each other at the middle. The bottom part touches both sides. You need all three colours!',
-		'svg'          => 'leaf-colorable',
-		'regions'      => [ 'left', 'right', 'bottom' ],
+		'title'        => 'Color the Flag',
+		'title_icon'   => 'flag-colorable',
+		'instruction'  => 'Color each part of the flag. Rule: Two touching parts cannot be the same color.',
+		'hint'         => 'The top and bottom sections do not touch each other, and the left and right sections do not touch each other. Every other pair does touch — so you need all three colours!',
+		'svg'          => 'flag-colorable',
+		'regions'      => [ 'top', 'bottom', 'left', 'right' ],
 		'adjacency'    => [
-			[ 'left',  'right'  ],
-			[ 'left',  'bottom' ],
-			[ 'right', 'bottom' ],
+			[ 'top',    'left'  ],
+			[ 'top',    'right' ],
+			[ 'bottom', 'left'  ],
+			[ 'bottom', 'right' ],
 		],
 		'palette_pngs' => [
 			[ 'png' => 'ui/leaf_blue.png',   'label' => 'Blue',   'value' => '#3498db' ],
-			[ 'png' => 'ui/leaf_red.png',    'label' => 'Red',    'value' => '#e74c3c' ],
+			[ 'png' => 'ui/leaf_pink.png',   'label' => 'Pink',   'value' => '#e91e8c' ],
 			[ 'png' => 'ui/leaf_yellow.png', 'label' => 'Yellow', 'value' => '#f1c40f' ],
 		],
 	],
