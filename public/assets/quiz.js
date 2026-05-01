@@ -15,7 +15,7 @@
 (function () {
 	'use strict';
 
-	window.TNQ_VERSION = '2.7.3';
+	window.TNQ_VERSION = '2.7.4';
 
 	/** Namespace for interaction modules loaded from interactions/*.js */
 	window.TNQInteractions = window.TNQInteractions || {};
@@ -298,10 +298,13 @@
 					}
 				}
 
-				// Hint and Check are not rendered for baseline/endline (see PHP nav), but
-				// guard in case they exist (e.g. review mode toggle edge case)
+				// Hint, Check, and the review-navigation button are not rendered for
+				// baseline/endline (see PHP nav). Explicitly hide all three to guard
+				// against any stale DOM state (e.g. switching modes in the same tab).
 				if (btnHint)  { btnHint.style.display  = 'none'; }
 				if (btnCheck) { btnCheck.style.display = 'none'; }
+				var btnNextReview = this.container.querySelector('.tnq-btn-next-review');
+				if (btnNextReview) { btnNextReview.style.display = 'none'; }
 
 				// Next button: always visible, disabled until child has interacted or question is already answered
 				if (btnNext) {
@@ -413,63 +416,22 @@
 	};
 
 	TNQQuiz.prototype._onCheck = function () {
-		// Practice mode: show feedback
-		if (this.mode === 'practice') {
-			this._recordAnswer();
-			var correct = this._isAnswerCorrect();
-			// Record that Check was pressed so Back navigation can restore this state
-			this._checkedState[this.currentIdx] = { correct: correct };
-			this._showFeedback(correct);
+		// Practice mode only — baseline/endline no longer renders a Check button,
+		// so this function is unreachable from those modes.
+		if (this.mode !== 'practice') { return; }
 
-			var btnCheck = this.container.querySelector('.tnq-btn-check');
-			var btnNext  = this.container.querySelector('.tnq-btn-next');
-			if (btnCheck) btnCheck.style.display = 'none';
-			if (btnNext)  {
-				btnNext.style.display = '';
-				btnNext.textContent   = this.currentIdx < this.questions.length - 1 ? 'Next question \u2192' : 'Finish practice';
-			}
-		} else {
-			// Assessment mode: one retry allowed, hint auto-shows on first wrong attempt.
-			this._recordAnswer();
-			var correct  = this._isAnswerCorrect();
-			var idx      = this.currentIdx;
-			var attempts = (this._attemptCount[idx] || 0) + 1;
-			this._attemptCount[idx] = attempts;
+		this._recordAnswer();
+		var correct = this._isAnswerCorrect();
+		// Record that Check was pressed so Back navigation can restore this state
+		this._checkedState[this.currentIdx] = { correct: correct };
+		this._showFeedback(correct);
 
-			var btnCheck = this.container.querySelector('.tnq-btn-check');
-			var btnNext  = this.container.querySelector('.tnq-btn-next');
-
-			if (correct || attempts >= 2) {
-				// Final state: lock and show Next
-				this._checkedState[idx] = { correct: correct };
-				this._showFeedback(correct, false);
-				if (btnCheck) btnCheck.style.display = 'none';
-				if (btnNext) {
-					btnNext.style.display = '';
-					btnNext.textContent   = idx < this.questions.length - 1
-						? 'Next question \u2192'
-						: 'Finish';
-				}
-			} else {
-				// First wrong attempt: show hint + retry button, keep Check hidden
-				this._showAssessmentRetryFeedback();
-				this._onHint();  // auto-show hint
-				if (btnCheck) btnCheck.style.display = 'none';
-
-				// Inject a one-use "Try once more" button into the feedback box
-				var feedbackEl = this.container.querySelector('.tnq-feedback');
-				if (feedbackEl) {
-					var self = this;
-					var retryBtn = document.createElement('button');
-					retryBtn.className = 'tnq-btn-retry';
-					retryBtn.textContent = 'Try once more \u2192';
-					retryBtn.style.cssText = 'background:#F39C12;color:white;border:none;border-radius:10px;' +
-						'padding:12px 24px;font-size:16px;font-weight:bold;cursor:pointer;' +
-						'margin-top:12px;min-height:48px;display:block;';
-					retryBtn.addEventListener('click', function () { self._onAssessmentRetry(); });
-					feedbackEl.appendChild(retryBtn);
-				}
-			}
+		var btnCheck = this.container.querySelector('.tnq-btn-check');
+		var btnNext  = this.container.querySelector('.tnq-btn-next');
+		if (btnCheck) btnCheck.style.display = 'none';
+		if (btnNext)  {
+			btnNext.style.display = '';
+			btnNext.textContent   = this.currentIdx < this.questions.length - 1 ? 'Next question \u2192' : 'Finish practice';
 		}
 	};
 
