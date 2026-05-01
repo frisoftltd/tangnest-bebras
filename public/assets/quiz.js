@@ -15,7 +15,7 @@
 (function () {
 	'use strict';
 
-	window.TNQ_VERSION = '2.7.1';
+	window.TNQ_VERSION = '2.7.2';
 
 	/** Namespace for interaction modules loaded from interactions/*.js */
 	window.TNQInteractions = window.TNQInteractions || {};
@@ -302,7 +302,7 @@
 				// Next button: always visible, disabled until child has interacted or question is already answered
 				if (btnNext) {
 					btnNext.style.display = '';
-					btnNext.textContent   = isLastQ ? 'Submit \u2192' : 'Next \u2192';
+					btnNext.textContent   = isLastQ ? 'View my results' : 'Next \u2192';
 					btnNext.disabled      = !isAnswered && !this._hasInteracted[idx];
 				}
 			}
