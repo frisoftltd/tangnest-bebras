@@ -89,18 +89,22 @@ class TNQ_Renderer {
 				<button class="tnq-btn tnq-btn-back" type="button" style="display:none;background:white;color:#1A56A0;border:2px solid #1A56A0;border-radius:10px;padding:12px 24px;font-size:16px;font-weight:bold;cursor:pointer;min-height:48px;">
 					&larr; Back
 				</button>
+				<?php if ( $is_practice ) : ?>
 				<button class="tnq-btn tnq-btn-ghost tnq-btn-hint" type="button">
 					<?php echo TNQ_Icons::icon( 'hint-bulb' ); ?>
 					Hint
 				</button>
-
 				<button class="tnq-btn tnq-btn-primary tnq-btn-check" type="button" disabled>
 					Check my answer
 				</button>
-
 				<button class="tnq-btn tnq-btn-secondary tnq-btn-next" type="button" style="display:none">
 					Next question &rarr;
 				</button>
+				<?php else : ?>
+				<button class="tnq-btn tnq-btn-primary tnq-btn-next" type="button" disabled>
+					Next &rarr;
+				</button>
+				<?php endif; ?>
 			</div>
 		</div>
 		<?php

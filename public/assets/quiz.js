@@ -15,7 +15,7 @@
 (function () {
 	'use strict';
 
-	window.TNQ_VERSION = '2.6.5';
+	window.TNQ_VERSION = '2.7.0';
 
 	/** Namespace for interaction modules loaded from interactions/*.js */
 	window.TNQInteractions = window.TNQInteractions || {};
@@ -173,15 +173,24 @@
 			});
 		}
 
-		// Enable "Check my answer" only after the child makes an interaction.
-		// Each interaction module fires 'tnq:interacted' when the first action happens.
+		// Enable the action button once the child makes an interaction.
+		// Practice mode: enables "Check my answer". Baseline/endline: enables "Next →".
 		// Track per-question so going Back restores the enabled state correctly.
 		this.container.addEventListener('tnq:interacted', function () {
 			self._hasInteracted[self.currentIdx] = true;
-			var btn = self.container.querySelector('.tnq-btn-check');
-			if (btn) {
-				btn.disabled = false;
-				btn.removeAttribute('aria-disabled');
+			if (self.mode === 'practice') {
+				var btn = self.container.querySelector('.tnq-btn-check');
+				if (btn) {
+					btn.disabled = false;
+					btn.removeAttribute('aria-disabled');
+				}
+			} else if (!self.reviewMode) {
+				// Baseline/endline linear flow: enable Next
+				var btn = self.container.querySelector('.tnq-btn-next');
+				if (btn) {
+					btn.disabled = false;
+					btn.removeAttribute('aria-disabled');
+				}
 			}
 		});
 	};
@@ -269,37 +278,32 @@
 					this._reviewNextBtn.disabled = idx >= this.questions.length - 1;
 				}
 			} else {
-				var prevState = this._checkedState[idx];
-				var q         = this.questions[idx];
-				var hintText  = q ? (q.dataset.hint || '') : '';
+				// Baseline/endline: linear review-then-submit flow.
+				// No Hint, no Check — just Back and Next.
+				var isAnswered = !!this._checkedState[idx];
+				var isLastQ    = idx === this.questions.length - 1;
+				var q          = this.questions[idx];
+				var interactionEl = q ? q.querySelector('.tnq-interaction') : null;
 
-				if (prevState) {
-					// Already locked — restore state
-					if (btnCheck) { btnCheck.style.display = 'none'; }
-					if (btnNext) {
-						btnNext.style.display = '';
-						btnNext.textContent   = idx < this.questions.length - 1 ? 'Next question \u2192' : 'Finish';
+				// Lock or unlock the interaction area visually
+				if (interactionEl) {
+					if (isAnswered) {
+						interactionEl.classList.add('is-locked');
+					} else {
+						interactionEl.classList.remove('is-locked');
 					}
-					if (btnHint) { btnHint.style.display = hintText ? '' : 'none'; }
-					this._showFeedback(prevState.correct, false);
-				} else if (this._attemptCount[idx] >= 1) {
-					// Had one wrong attempt, currently on retry — show fresh Check (enabled)
-					if (btnCheck) {
-						btnCheck.style.display = '';
-						btnCheck.textContent   = 'Check my answer';
-						btnCheck.disabled      = false;
-					}
-					if (btnNext)  { btnNext.style.display  = 'none'; }
-					if (btnHint)  { btnHint.style.display  = hintText ? '' : 'none'; }
-				} else {
-					// Fresh question
-					if (btnCheck) {
-						btnCheck.style.display = '';
-						btnCheck.textContent   = 'Check my answer';
-						btnCheck.disabled      = !this._hasInteracted[idx];
-					}
-					if (btnNext)  { btnNext.style.display  = 'none'; }
-					if (btnHint)  { btnHint.style.display  = hintText ? '' : 'none'; }
+				}
+
+				// Hint and Check are not rendered for baseline/endline (see PHP nav), but
+				// guard in case they exist (e.g. review mode toggle edge case)
+				if (btnHint)  { btnHint.style.display  = 'none'; }
+				if (btnCheck) { btnCheck.style.display = 'none'; }
+
+				// Next button: always visible, disabled until child has interacted or question is already answered
+				if (btnNext) {
+					btnNext.style.display = '';
+					btnNext.textContent   = isLastQ ? 'Submit \u2192' : 'Next \u2192';
+					btnNext.disabled      = !isAnswered && !this._hasInteracted[idx];
 				}
 			}
 		}
@@ -466,6 +470,18 @@
 	};
 
 	TNQQuiz.prototype._onNext = function () {
+		// Baseline/endline: record the answer and lock the question on first Next press.
+		// Skipped on subsequent presses (Back then Next again) since answer is already locked.
+		if (this.mode !== 'practice' && !this.reviewMode) {
+			if (!this._checkedState[this.currentIdx]) {
+				this._recordAnswer();
+				this._checkedState[this.currentIdx] = { answered: true };
+
+				var q             = this.questions[this.currentIdx];
+				var interactionEl = q ? q.querySelector('.tnq-interaction') : null;
+				if (interactionEl) { interactionEl.classList.add('is-locked'); }
+			}
+		}
 		this._advance();
 	};
 
@@ -623,9 +639,11 @@
 			return;
 		}
 
-		// Assessment: submit via AJAX
+		// Assessment: submit via AJAX.
+		// Baseline/endline uses .tnq-btn-next (no Check button rendered); practice uses .tnq-btn-check.
 		var self = this;
-		var submitBtn = this.container.querySelector('.tnq-btn-check');
+		var submitBtn = this.container.querySelector('.tnq-btn-check') ||
+		                this.container.querySelector('.tnq-btn-next');
 		if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Submitting\u2026'; }
 
 		var data = {

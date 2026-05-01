@@ -836,6 +836,29 @@
   background: rgba(26, 86, 160, 0.07);
 }
 
+/* ── Baseline/Endline: locked interaction (answer already submitted) ── */
+.tnq-interaction.is-locked {
+  pointer-events: none;
+  opacity: 0.60;
+  position: relative;
+  border-radius: 12px;
+}
+
+.tnq-interaction.is-locked::after {
+  content: 'Answer locked';
+  position: absolute;
+  bottom: 8px;
+  right: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #888;
+  background: rgba(255,255,255,0.85);
+  padding: 2px 8px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  pointer-events: none;
+}
+
 /* ── Login prompt / error states ────────────────────────────── */
 .tnq-message {
   background: var(--tnq-bg);
