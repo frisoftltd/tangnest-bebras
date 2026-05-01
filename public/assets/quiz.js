@@ -185,9 +185,13 @@
 					btn.removeAttribute('aria-disabled');
 				}
 			} else if (!self.reviewMode) {
-				// Baseline/endline linear flow: enable Next
+				// Baseline/endline linear flow: enable Next and ensure label is correct.
+				// Re-applying the label here guards against any race where _showQuestion
+				// ran but the button text was later clobbered before the child interacted.
 				var btn = self.container.querySelector('.tnq-btn-next');
 				if (btn) {
+					var onLast = self.currentIdx === self.questions.length - 1;
+					btn.textContent = onLast ? 'View my results' : 'Next \u2192';
 					btn.disabled = false;
 					btn.removeAttribute('aria-disabled');
 				}
