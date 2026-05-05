@@ -35,7 +35,15 @@ class TNQ_Tutor_Helper {
 			$args['author'] = get_current_user_id();
 		}
 
-		$ids    = get_posts( $args );
+		$ids = get_posts( $args );
+
+		// Only return courses that contain a TNQ shortcode.
+		$ids = array_filter( $ids, function ( $id ) {
+			$content = get_post_field( 'post_content', $id );
+			return strpos( $content, '[tnq_assess' ) !== false
+				|| strpos( $content, '[tnq_practice' ) !== false;
+		} );
+
 		$result = [];
 		foreach ( $ids as $id ) {
 			$result[] = [
