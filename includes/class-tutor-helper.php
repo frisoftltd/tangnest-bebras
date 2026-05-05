@@ -55,10 +55,6 @@ class TNQ_Tutor_Helper {
 	 * @return array [ ['user_id' => int, 'display_name' => string], ... ]
 	 */
 	public static function get_enrolled_students( int $course_id ): array {
-		if ( ! function_exists( 'tutor' ) ) {
-			return [];
-		}
-
 		global $wpdb;
 
 		// Use Tutor LMS function if available.
@@ -75,13 +71,13 @@ class TNQ_Tutor_Helper {
 			}, $students );
 		}
 
-		// Fallback: query wp_tutor_enrolled directly.
-		$table = $wpdb->prefix . 'tutor_enrolled';
-		$rows  = $wpdb->get_results( $wpdb->prepare(
-			"SELECT e.user_id, u.display_name
-			 FROM {$table} e
-			 JOIN {$wpdb->users} u ON u.ID = e.user_id
-			 WHERE e.course_id = %d AND e.status = 'approved'",
+		// Fallback: count distinct students from tnq_results for this course.
+		// Used when wp_tutor_enrolled does not exist on this installation.
+		$rows = $wpdb->get_results( $wpdb->prepare(
+			"SELECT DISTINCT r.student_id, u.display_name
+			 FROM {$wpdb->prefix}tnq_results r
+			 JOIN {$wpdb->users} u ON u.ID = r.student_id
+			 WHERE r.tutor_course_id = %d",
 			$course_id
 		) );
 
@@ -90,7 +86,7 @@ class TNQ_Tutor_Helper {
 		}
 		return array_map( function ( $r ) {
 			return [
-				'user_id'      => (int) $r->user_id,
+				'user_id'      => (int) $r->student_id,
 				'display_name' => $r->display_name,
 			];
 		}, $rows );

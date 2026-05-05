@@ -85,9 +85,19 @@ class TNQ_Assessment_Ajax {
 		}
 
 		// 7. Insert result
-		$duration         = (int) ( $_POST['duration_seconds']  ?? 0 );
-		$tutor_course_id  = (int) ( $_POST['tutor_course_id']   ?? 0 );
-		$tutor_lesson_id  = (int) ( $_POST['tutor_lesson_id']   ?? 0 );
+		$duration        = (int) ( $_POST['duration_seconds'] ?? 0 );
+		$tutor_lesson_id = (int) ( $_POST['tutor_lesson_id']  ?? 0 );
+
+		// Try to get course ID from current Tutor LMS context.
+		$course_id = 0;
+		if ( function_exists( 'tutor_utils' ) ) {
+			$course_id = (int) tutor_utils()->get_course_id_by_lesson( get_the_ID() );
+		}
+		// Fallback: read from POST if shortcode passes it.
+		if ( ! $course_id && ! empty( $_POST['course_id'] ) ) {
+			$course_id = absint( $_POST['course_id'] );
+		}
+		$tutor_course_id = $course_id;
 
 		$insert_data = [
 			'student_id'        => $student_id,

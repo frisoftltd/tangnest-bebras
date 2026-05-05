@@ -33,7 +33,6 @@ class TNQ_Plugin {
 		if ( is_admin() ) {
 			( new TNQ_Admin() )->init();
 			( new TNQ_Admin_Menu() )->init();
-			( new TNQ_Preview() )->init();
 		} else {
 			( new TNQ_Public() )->init();
 		}
