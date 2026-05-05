@@ -22,6 +22,8 @@ class TNQ_Plugin {
 	private function __construct() {}
 
 	public function run(): void {
+		require_once TNQ_PLUGIN_DIR . 'includes/class-tutor-helper.php';
+		require_once TNQ_PLUGIN_DIR . 'includes/class-student-meta.php';
 		( new TNQ_I18n() )->load();
 		( new TNQ_Updater() )->init();
 		( new TNQ_Legacy_Quiz() )->init();

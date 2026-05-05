@@ -27,6 +27,13 @@ class TNQ_Admin {
 			TNQ_VERSION
 		);
 
+		wp_enqueue_style(
+			'tnq-admin-dashboard',
+			TNQ_PLUGIN_URL . 'admin/assets/admin-dashboard.css',
+			[],
+			TNQ_VERSION
+		);
+
 		wp_enqueue_script(
 			'tnq-admin',
 			TNQ_PLUGIN_URL . 'admin/assets/admin.js',

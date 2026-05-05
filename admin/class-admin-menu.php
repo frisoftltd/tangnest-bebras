@@ -69,18 +69,10 @@ class TNQ_Admin_Menu {
 			[ $this, 'render_export' ]
 		);
 
-		add_submenu_page(
-			'tnq-overview',
-			__( 'Reset', 'tangnest-bebras' ),
-			__( 'Reset', 'tangnest-bebras' ),
-			'manage_options',
-			'tnq-reset',
-			[ $this, 'render_reset' ]
-		);
 	}
 
 	public function render_overview(): void {
-		require TNQ_PLUGIN_DIR . 'admin/views/overview.php';
+		( new TNQ_Admin_Overview() )->render();
 	}
 
 	public function render_results(): void {
@@ -99,7 +91,4 @@ class TNQ_Admin_Menu {
 		require TNQ_PLUGIN_DIR . 'admin/views/export.php';
 	}
 
-	public function render_reset(): void {
-		require TNQ_PLUGIN_DIR . 'admin/views/reset.php';
-	}
 }

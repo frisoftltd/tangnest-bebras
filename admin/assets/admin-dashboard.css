@@ -1,0 +1,164 @@
+/**
+ * CT Assessments admin dashboard styles.
+ * All rules scoped to .tnq-admin-wrap to avoid conflicts with WP core.
+ *
+ * @since 2.8.0
+ */
+
+:root {
+	--tnq-blue:        #1A56A0;
+	--tnq-amber:       #F39C12;
+	--tnq-green:       #1E8449;
+	--tnq-red:         #C0392B;
+	--tnq-bg:          #F8F9FF;
+	--tnq-card-radius: 16px;
+	--tnq-btn-radius:  10px;
+}
+
+/* ── Wrapper ──────────────────────────────────────────────────── */
+
+.tnq-admin-wrap {
+	background: var(--tnq-bg);
+	padding: 24px;
+	min-height: 100vh;
+	box-sizing: border-box;
+}
+
+/* ── Page header ──────────────────────────────────────────────── */
+
+.tnq-page-header {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	margin-bottom: 32px;
+}
+
+.tnq-page-header .tnq-mascot {
+	flex-shrink: 0;
+	width: 64px;
+	height: 64px;
+}
+
+.tnq-page-header h1 {
+	margin: 0 0 4px;
+	font-size: 24px;
+	font-weight: 700;
+	color: #1d2327;
+	line-height: 1.2;
+}
+
+.tnq-page-header p {
+	margin: 0;
+	color: #646970;
+	font-size: 14px;
+}
+
+/* ── Course card grid ─────────────────────────────────────────── */
+
+.tnq-course-grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 24px;
+}
+
+@media (max-width: 1200px) {
+	.tnq-course-grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+@media (max-width: 782px) {
+	.tnq-course-grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+/* ── Course card ──────────────────────────────────────────────── */
+
+.tnq-course-card {
+	background: #ffffff;
+	border-radius: var(--tnq-card-radius);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+	padding: 24px;
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+}
+
+.tnq-course-card h2 {
+	font-size: 17px;
+	font-weight: 600;
+	margin: 0 0 12px;
+	color: #1d2327;
+	line-height: 1.3;
+}
+
+.tnq-course-card hr {
+	border: none;
+	border-top: 1px solid #e2e4e7;
+	margin: 0 0 16px;
+}
+
+/* ── Stat rows ────────────────────────────────────────────────── */
+
+.tnq-stat {
+	font-size: 14px;
+	color: #3c434a;
+	margin-bottom: 8px;
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	line-height: 1.4;
+}
+
+.tnq-stat:last-of-type {
+	margin-bottom: 20px;
+}
+
+/* ── View Class button ────────────────────────────────────────── */
+
+.tnq-btn {
+	display: inline-block;
+	background: var(--tnq-blue);
+	color: #ffffff;
+	font-size: 14px;
+	font-weight: 600;
+	padding: 10px 18px;
+	border-radius: var(--tnq-btn-radius);
+	text-decoration: none;
+	align-self: flex-start;
+	margin-top: auto;
+	transition: background 0.15s ease;
+}
+
+.tnq-btn:hover,
+.tnq-btn:focus {
+	background: #154a8a;
+	color: #ffffff;
+	text-decoration: none;
+}
+
+/* ── Empty state ──────────────────────────────────────────────── */
+
+.tnq-empty-state {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+	padding: 64px 24px;
+	gap: 16px;
+}
+
+.tnq-empty-state .tnq-mascot-lg {
+	width: 96px;
+	height: 96px;
+	opacity: 0.6;
+}
+
+.tnq-empty-state p {
+	font-size: 15px;
+	color: #646970;
+	max-width: 360px;
+	margin: 0;
+	line-height: 1.6;
+}
