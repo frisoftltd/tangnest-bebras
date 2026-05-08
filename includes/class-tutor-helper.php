@@ -14,30 +14,14 @@ class TNQ_Tutor_Helper {
 	 * Get courses accessible to the current WP user.
 	 *
 	 * Scans all published posts/lessons for any CT Assessment shortcode and
-	 * resolves their parent course via the _tutor_course_id post meta.
+	 * resolves their parent course via the _tutor_course_id_for_lesson post meta.
 	 * This approach works even when the Tutor LMS API returns no results.
 	 *
-	 * @since  2.8.5
+	 * @since  2.8.7
 	 * @return array [ ['course_id' => int, 'title' => string], ... ]
 	 */
 	public static function get_accessible_courses(): array {
-		// ── TEMPORARY DIAGNOSTIC — remove after live investigation ──────────
 		global $wpdb;
-		$shortcodes = [ '[tnq_assess', '[tnq_practice', '[tnq_results', '[tangnest_quiz' ];
-		$conditions = implode( ' OR ', array_map(
-			fn( $sc ) => $wpdb->prepare( 'post_content LIKE %s', '%' . $wpdb->esc_like( $sc ) . '%' ),
-			$shortcodes
-		) );
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		$found = $wpdb->get_results(
-			"SELECT ID, post_title, post_type, post_status FROM {$wpdb->posts} WHERE {$conditions}"
-		);
-		error_log( 'TNQ SCAN: ' . print_r( $found, true ) );
-		foreach ( $found as $p ) {
-			$meta = get_post_meta( $p->ID );
-			error_log( 'TNQ META post ' . $p->ID . ': ' . print_r( $meta, true ) );
-		}
-		// ── END DIAGNOSTIC ───────────────────────────────────────────────────
 
 		/*
 		 * PREVIOUS IMPLEMENTATION (kept for reference):
@@ -88,10 +72,10 @@ class TNQ_Tutor_Helper {
 			return [];
 		}
 
-		// Resolve parent course for each lesson via _tutor_course_id meta.
+		// Resolve parent course for each lesson via _tutor_course_id_for_lesson meta.
 		$course_ids = [];
 		foreach ( $lesson_ids as $lesson_id ) {
-			$course_id = (int) get_post_meta( $lesson_id, '_tutor_course_id', true );
+			$course_id = (int) get_post_meta( $lesson_id, '_tutor_course_id_for_lesson', true );
 			if ( $course_id && ! in_array( $course_id, $course_ids, true ) ) {
 				$course_ids[] = $course_id;
 			}
