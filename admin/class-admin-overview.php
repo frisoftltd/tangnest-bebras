@@ -23,9 +23,8 @@ class TNQ_Admin_Overview {
 		// For each course, count distinct students with baseline and endline results.
 		$course_data = [];
 		foreach ( $courses as $course ) {
-			$cid      = $course['course_id'];
-			$enrolled = TNQ_Tutor_Helper::get_enrolled_students( $cid );
-			$total    = count( $enrolled );
+			$cid   = $course['course_id'];
+			$total = TNQ_Tutor_Helper::get_enrolled_count( $cid );
 
 			$baseline_count = (int) $wpdb->get_var( $wpdb->prepare(
 				"SELECT COUNT(DISTINCT student_id) FROM {$wpdb->prefix}tnq_results

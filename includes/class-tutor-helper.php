@@ -104,6 +104,27 @@ class TNQ_Tutor_Helper {
 	}
 
 	/**
+	 * Count enrolled (completed) students for a course.
+	 *
+	 * Queries wp_posts for the tutor_enrolled CPT introduced in Tutor LMS 4.0.
+	 * The legacy wp_tutor_enrolled table does not exist in current installations.
+	 *
+	 * @since  2.8.8
+	 * @param  int $course_id
+	 * @return int
+	 */
+	public static function get_enrolled_count( int $course_id ): int {
+		global $wpdb;
+		return (int) $wpdb->get_var( $wpdb->prepare(
+			"SELECT COUNT(*) FROM {$wpdb->posts}
+			 WHERE post_type = 'tutor_enrolled'
+			 AND post_parent = %d
+			 AND post_status = 'completed'",
+			$course_id
+		) );
+	}
+
+	/**
 	 * Get enrolled students for a course.
 	 * Returns [] if Tutor LMS is not active or course has no students.
 	 *
