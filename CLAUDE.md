@@ -147,17 +147,22 @@ tangnest-bebras/
 
 ## Shortcodes
 
-| Shortcode | Status |
-|---|---|
-| `[tangnest_quiz type="pre"]` | ✅ Live — DO NOT TOUCH |
-| `[tangnest_quiz type="post"]` | ✅ Live — DO NOT TOUCH |
-| `[tnq_practice age="7-8"]` | ✅ M2 |
-| `[tnq_assess type="baseline" age="7-8"]` | ✅ M2 |
-| `[tnq_assess type="endline" age="7-8"]` | ✅ M2 |
-| `[tnq_results]` | ✅ M2 |
-| `[tnq_practice age="9-10"]` | 🔜 Future |
-| `[tnq_assess type="baseline" age="9-10"]` | 🔜 Future |
-| `[tnq_assess type="baseline" age="11-12"]` | 🔜 Future |
+| Shortcode | Purpose | Status |
+|---|---|---|
+| `[tangnest_quiz type="pre"]` | Legacy pre-assessment (do not modify) | ✅ Live — DO NOT TOUCH |
+| `[tangnest_quiz type="post"]` | Legacy post-assessment (do not modify) | ✅ Live — DO NOT TOUCH |
+| `[tnq_practice age="7-8"]` | Practice quiz — 6 questions, age band 7–8 | ✅ M2 |
+| `[tnq_assess type="baseline" age="7-8"]` | Baseline assessment — 9 questions, age band 7–8 | ✅ M2 |
+| `[tnq_assess type="endline" age="7-8"]` | Endline assessment — 9 questions, age band 7–8 | ✅ M2 |
+| `[tnq_results]` | Shows student score summary | ✅ M2 |
+| `[tnq_practice age="9-10"]` | Practice quiz — age band 9–10 | 🔜 Future |
+| `[tnq_assess type="baseline" age="9-10"]` | Baseline assessment — age band 9–10 | 🔜 Future |
+| `[tnq_assess type="baseline" age="11-12"]` | Baseline assessment — age band 11–12 | 🔜 Future |
+
+### Shortcode Notes
+- `age` values: `7-8`, `9-10`, `11-12`
+- `type` values for `tnq_assess`: `baseline`, `endline`
+- The Overview admin page must scan for `tnq_assess` shortcode in lesson content to detect which courses have CT Assessments attached
 
 ---
 
