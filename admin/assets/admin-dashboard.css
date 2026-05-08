@@ -1,5 +1,5 @@
 /**
- * CT Assessments admin dashboard styles.
+ * CT Assessments admin dashboard styles — v2.9.0 redesign.
  * All rules scoped to .tnq-admin-wrap to avoid conflicts with WP core.
  *
  * @since 2.8.0
@@ -10,155 +10,659 @@
 	--tnq-amber:       #F39C12;
 	--tnq-green:       #1E8449;
 	--tnq-red:         #C0392B;
-	--tnq-bg:          #F8F9FF;
+	--tnq-navy:        #0F1B3D;
+	--tnq-bg:          #EEF2FF;
+	--tnq-card-bg:     #ffffff;
 	--tnq-card-radius: 16px;
 	--tnq-btn-radius:  10px;
+	--tnq-text:        #1d2327;
+	--tnq-muted:       #646970;
 }
 
-/* ── Wrapper ──────────────────────────────────────────────────── */
+/* ── Outer wrapper: sidebar + main two-column layout ──────────────── */
 
 .tnq-admin-wrap {
+	display: flex;
+	min-height: 80vh;
+	margin: -10px -20px 0;
+	padding: 0;
 	background: var(--tnq-bg);
-	padding: 24px;
-	min-height: 100vh;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 	box-sizing: border-box;
 }
 
-/* ── Page header ──────────────────────────────────────────────── */
+/* ── Sidebar ──────────────────────────────────────────────────────── */
 
-.tnq-page-header {
+.tnq-sidebar {
+	width: 220px;
+	flex-shrink: 0;
+	background: var(--tnq-navy);
+	display: flex;
+	flex-direction: column;
+	padding: 24px 0 20px;
+}
+
+.tnq-sidebar-logo {
 	display: flex;
 	align-items: center;
-	gap: 16px;
-	margin-bottom: 32px;
+	gap: 10px;
+	padding: 0 20px 24px;
+	border-bottom: 1px solid rgba(255,255,255,0.08);
+	margin-bottom: 16px;
 }
 
-.tnq-page-header .tnq-mascot {
-	flex-shrink: 0;
-	width: 64px;
-	height: 64px;
-}
-
-.tnq-page-header h1 {
-	margin: 0 0 4px;
-	font-size: 24px;
+.tnq-sidebar-logo span {
+	font-size: 13px;
 	font-weight: 700;
-	color: #1d2327;
-	line-height: 1.2;
+	color: #ffffff;
+	line-height: 1.3;
+	letter-spacing: 0.01em;
 }
 
-.tnq-page-header p {
+/* ── Sidebar nav ──────────────────────────────────────────────────── */
+
+.tnq-sidebar-nav {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	padding: 0 10px;
+}
+
+.tnq-nav-item {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 10px 12px;
+	border-radius: 8px;
+	color: rgba(255,255,255,0.65);
+	font-size: 13px;
+	font-weight: 500;
+	text-decoration: none;
+	transition: background 0.15s ease, color 0.15s ease;
+}
+
+.tnq-nav-item:hover,
+.tnq-nav-item:focus {
+	background: rgba(255,255,255,0.08);
+	color: #ffffff;
+	text-decoration: none;
+}
+
+.tnq-nav-item.tnq-nav-active {
+	background: var(--tnq-blue);
+	color: #ffffff;
+}
+
+.tnq-nav-item svg {
+	flex-shrink: 0;
+	opacity: 0.8;
+}
+
+.tnq-nav-item.tnq-nav-active svg {
+	opacity: 1;
+}
+
+/* ── Sidebar footer ───────────────────────────────────────────────── */
+
+.tnq-sidebar-footer {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 16px 20px 0;
+	border-top: 1px solid rgba(255,255,255,0.08);
+	margin-top: 16px;
+}
+
+.tnq-school-name {
+	display: block;
+	font-size: 12px;
+	font-weight: 600;
+	color: rgba(255,255,255,0.9);
+}
+
+.tnq-school-city {
+	display: block;
+	font-size: 11px;
+	color: rgba(255,255,255,0.45);
+}
+
+/* ── Main content area ────────────────────────────────────────────── */
+
+.tnq-main-content {
+	flex: 1;
+	padding: 28px 32px 40px;
+	overflow-y: auto;
+	min-width: 0; /* prevent flex blowout */
+}
+
+/* ── Welcome header ───────────────────────────────────────────────── */
+
+.tnq-welcome-header {
+	margin-bottom: 28px;
+}
+
+.tnq-welcome-title {
+	font-size: 22px;
+	font-weight: 700;
+	color: var(--tnq-text);
+	margin: 0 0 4px;
+	line-height: 1.3;
+}
+
+.tnq-page-title {
+	font-size: 15px;
+	font-weight: 600;
+	color: var(--tnq-blue);
+	margin: 0 0 4px;
+	border: none;
+	padding: 0;
+}
+
+.tnq-location {
+	font-size: 13px;
+	color: var(--tnq-muted);
 	margin: 0;
-	color: #646970;
-	font-size: 14px;
 }
 
-/* ── Course card grid ─────────────────────────────────────────── */
+/* ── Skill cards row ──────────────────────────────────────────────── */
 
-.tnq-course-grid {
+.tnq-skill-cards {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
-	gap: 24px;
+	gap: 20px;
+	margin-bottom: 24px;
 }
 
-@media (max-width: 1200px) {
-	.tnq-course-grid {
-		grid-template-columns: repeat(2, 1fr);
-	}
-}
-
-@media (max-width: 782px) {
-	.tnq-course-grid {
+@media (max-width: 1100px) {
+	.tnq-skill-cards {
 		grid-template-columns: 1fr;
 	}
 }
 
-/* ── Course card ──────────────────────────────────────────────── */
-
-.tnq-course-card {
-	background: #ffffff;
+.tnq-skill-card {
+	background: var(--tnq-card-bg);
 	border-radius: var(--tnq-card-radius);
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-	padding: 24px;
+	box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+	padding: 20px;
 	display: flex;
 	flex-direction: column;
-	gap: 0;
+	gap: 16px;
 }
 
-.tnq-course-card h2 {
-	font-size: 17px;
+.tnq-skill-card-top {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+}
+
+.tnq-skill-icon {
+	width: 44px;
+	height: 44px;
+	border-radius: 10px;
+	background: var(--tnq-bg);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+}
+
+.tnq-skill-icon img {
+	width: 28px;
+	height: 28px;
+	object-fit: contain;
+}
+
+.tnq-skill-info {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.tnq-skill-name {
+	font-size: 14px;
+	font-weight: 700;
+	margin: 0;
+	line-height: 1.3;
+	border: none;
+	padding: 0;
+}
+
+.tnq-skill-label {
+	display: inline-block;
+	font-size: 11px;
 	font-weight: 600;
-	margin: 0 0 12px;
-	color: #1d2327;
+	padding: 2px 8px;
+	border-radius: 20px;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.tnq-label-excellent { background: #d4edda; color: #155724; }
+.tnq-label-good      { background: #fff3cd; color: #856404; }
+.tnq-label-fair      { background: #f8d7da; color: #721c24; }
+
+.tnq-skill-stats {
+	display: flex;
+	gap: 16px;
+}
+
+.tnq-skill-stat {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.tnq-stat-value {
+	font-size: 20px;
+	font-weight: 700;
+	color: var(--tnq-text);
+	line-height: 1;
+}
+
+.tnq-stat-label {
+	font-size: 11px;
+	color: var(--tnq-muted);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+/* ── Circular progress ring ───────────────────────────────────────── */
+
+.tnq-ring-wrap {
+	display: flex;
+	justify-content: center;
+}
+
+.tnq-ring {
+	width: 100px;
+	height: 100px;
+}
+
+.tnq-ring-bg {
+	fill: none;
+	stroke: #e9ecef;
+	stroke-width: 8;
+}
+
+.tnq-ring-fill {
+	fill: none;
+	stroke-width: 8;
+	stroke-linecap: round;
+	transition: stroke-dashoffset 0.6s ease;
+}
+
+.tnq-ring-pct {
+	text-anchor: middle;
+	dominant-baseline: middle;
+	font-size: 18px;
+	font-weight: 700;
+	fill: var(--tnq-text);
+}
+
+.tnq-ring-sub {
+	text-anchor: middle;
+	dominant-baseline: middle;
+	font-size: 9px;
+	fill: var(--tnq-muted);
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+}
+
+/* ── Middle row: course cards + donut ─────────────────────────────── */
+
+.tnq-middle-row {
+	display: grid;
+	grid-template-columns: 1fr 280px;
+	gap: 20px;
+	margin-bottom: 24px;
+	align-items: start;
+}
+
+@media (max-width: 1000px) {
+	.tnq-middle-row {
+		grid-template-columns: 1fr;
+	}
+}
+
+/* ── Course section ───────────────────────────────────────────────── */
+
+.tnq-course-section {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+/* ── Course card v2 ───────────────────────────────────────────────── */
+
+.tnq-course-card-v2 {
+	background: var(--tnq-card-bg);
+	border-radius: var(--tnq-card-radius);
+	box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+}
+
+.tnq-course-card-header {
+	border-bottom: 1px solid #e9ecef;
+	padding-bottom: 12px;
+}
+
+.tnq-course-title {
+	font-size: 15px;
+	font-weight: 700;
+	color: var(--tnq-text);
+	margin: 0 0 4px;
+	border: none;
+	padding: 0;
 	line-height: 1.3;
 }
 
-.tnq-course-card hr {
-	border: none;
-	border-top: 1px solid #e2e4e7;
-	margin: 0 0 16px;
+.tnq-course-excerpt {
+	font-size: 12px;
+	color: var(--tnq-muted);
+	margin: 0;
+	line-height: 1.5;
 }
 
-/* ── Stat rows ────────────────────────────────────────────────── */
+.tnq-course-stats {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
 
-.tnq-stat {
-	font-size: 14px;
-	color: #3c434a;
-	margin-bottom: 8px;
+.tnq-progress-row {
+	display: grid;
+	grid-template-columns: auto 1fr auto;
+	grid-template-rows: auto auto;
+	align-items: center;
+	gap: 4px 8px;
+}
+
+.tnq-progress-label {
+	grid-column: 1 / 2;
 	display: flex;
 	align-items: center;
-	gap: 6px;
-	line-height: 1.4;
+	gap: 5px;
+	font-size: 12px;
+	color: var(--tnq-text);
+	font-weight: 500;
+	white-space: nowrap;
 }
 
-.tnq-stat:last-of-type {
-	margin-bottom: 20px;
+.tnq-progress-count {
+	grid-column: 2 / 3;
+	font-size: 12px;
+	color: var(--tnq-muted);
 }
 
-/* ── View Class button ────────────────────────────────────────── */
+.tnq-pct-badge {
+	grid-column: 3 / 4;
+	font-size: 11px;
+	font-weight: 700;
+	color: #ffffff;
+	padding: 1px 6px;
+	border-radius: 20px;
+}
 
-.tnq-btn {
+.tnq-progress-bar-wrap {
+	grid-column: 1 / 4;
+	height: 6px;
+	background: #e9ecef;
+	border-radius: 3px;
+	overflow: hidden;
+}
+
+.tnq-progress-bar {
+	height: 100%;
+	border-radius: 3px;
+	transition: width 0.5s ease;
+}
+
+/* ── Button v2 ────────────────────────────────────────────────────── */
+
+.tnq-btn-v2 {
 	display: inline-block;
 	background: var(--tnq-blue);
 	color: #ffffff;
-	font-size: 14px;
+	font-size: 13px;
 	font-weight: 600;
-	padding: 10px 18px;
+	padding: 9px 16px;
 	border-radius: var(--tnq-btn-radius);
 	text-decoration: none;
 	align-self: flex-start;
-	margin-top: auto;
 	transition: background 0.15s ease;
 }
 
-.tnq-btn:hover,
-.tnq-btn:focus {
+.tnq-btn-v2:hover,
+.tnq-btn-v2:focus {
 	background: #154a8a;
 	color: #ffffff;
 	text-decoration: none;
 }
 
-/* ── Empty state ──────────────────────────────────────────────── */
+/* ── Completion donut card ────────────────────────────────────────── */
+
+.tnq-completion-card {
+	background: var(--tnq-card-bg);
+	border-radius: var(--tnq-card-radius);
+	box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+	padding: 24px 20px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 14px;
+	text-align: center;
+}
+
+.tnq-completion-title {
+	font-size: 14px;
+	font-weight: 700;
+	color: var(--tnq-text);
+	margin: 0;
+	border: none;
+	padding: 0;
+	line-height: 1.3;
+	text-align: center;
+}
+
+.tnq-donut-wrap {
+	display: flex;
+	justify-content: center;
+}
+
+.tnq-donut {
+	width: 140px;
+	height: 140px;
+}
+
+.tnq-donut-bg {
+	fill: none;
+	stroke: #e9ecef;
+	stroke-width: 12;
+}
+
+.tnq-donut-fill {
+	fill: none;
+	stroke: var(--tnq-blue);
+	stroke-width: 12;
+	stroke-linecap: round;
+	transition: stroke-dashoffset 0.6s ease;
+}
+
+.tnq-donut-pct {
+	text-anchor: middle;
+	dominant-baseline: middle;
+	font-size: 22px;
+	font-weight: 800;
+	fill: var(--tnq-text);
+}
+
+.tnq-donut-sub {
+	text-anchor: middle;
+	dominant-baseline: middle;
+	font-size: 9px;
+	fill: var(--tnq-muted);
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+}
+
+.tnq-completion-count {
+	font-size: 13px;
+	color: var(--tnq-text);
+	margin: 0;
+	line-height: 1.6;
+}
+
+.tnq-completion-count small {
+	color: var(--tnq-muted);
+	font-size: 11px;
+}
+
+.tnq-motivation {
+	font-size: 12px;
+	color: var(--tnq-muted);
+	margin: 0;
+	font-style: italic;
+	line-height: 1.5;
+}
+
+/* ── Top students section ─────────────────────────────────────────── */
+
+.tnq-top-students-section {
+	background: var(--tnq-card-bg);
+	border-radius: var(--tnq-card-radius);
+	box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+	padding: 20px;
+}
+
+.tnq-section-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 16px;
+}
+
+.tnq-section-title {
+	font-size: 15px;
+	font-weight: 700;
+	color: var(--tnq-text);
+	margin: 0;
+	border: none;
+	padding: 0;
+}
+
+.tnq-link-more {
+	font-size: 13px;
+	color: var(--tnq-blue);
+	text-decoration: none;
+	font-weight: 500;
+}
+
+.tnq-link-more:hover,
+.tnq-link-more:focus {
+	text-decoration: underline;
+	color: #154a8a;
+}
+
+.tnq-top-students {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 16px;
+}
+
+@media (max-width: 900px) {
+	.tnq-top-students {
+		grid-template-columns: 1fr;
+	}
+}
+
+.tnq-student-card {
+	background: var(--tnq-bg);
+	border-radius: 12px;
+	padding: 16px;
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	position: relative;
+}
+
+.tnq-student-rank {
+	position: absolute;
+	top: -6px;
+	left: 12px;
+	font-size: 10px;
+	font-weight: 800;
+	color: #ffffff;
+	padding: 2px 8px;
+	border-radius: 20px;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+.tnq-student-avatar {
+	width: 52px;
+	height: 52px;
+	border-radius: 50%;
+	background: var(--tnq-card-bg);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+	margin-top: 6px;
+}
+
+.tnq-student-avatar img {
+	width: 36px;
+	height: 36px;
+	object-fit: contain;
+}
+
+.tnq-student-info {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	margin-top: 4px;
+}
+
+.tnq-student-name {
+	font-size: 14px;
+	font-weight: 700;
+	color: var(--tnq-text);
+}
+
+.tnq-student-xp {
+	font-size: 13px;
+	color: var(--tnq-muted);
+}
+
+.tnq-student-perf {
+	font-size: 11px;
+	color: var(--tnq-muted);
+	font-style: italic;
+}
+
+/* ── Empty state ──────────────────────────────────────────────────── */
 
 .tnq-empty-state {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	text-align: center;
-	padding: 64px 24px;
-	gap: 16px;
-}
-
-.tnq-empty-state .tnq-mascot-lg {
-	width: 96px;
-	height: 96px;
-	opacity: 0.6;
+	padding: 48px 24px;
+	gap: 12px;
+	background: var(--tnq-card-bg);
+	border-radius: var(--tnq-card-radius);
+	box-shadow: 0 2px 8px rgba(0,0,0,0.07);
 }
 
 .tnq-empty-state p {
-	font-size: 15px;
-	color: #646970;
-	max-width: 360px;
+	font-size: 14px;
+	color: var(--tnq-muted);
+	max-width: 340px;
 	margin: 0;
 	line-height: 1.6;
 }
