@@ -21,85 +21,11 @@ defined( 'ABSPATH' ) || exit;
 // circumference for r=40 circle inside 100×100 viewBox ≈ 251.33.
 $circ = 251.33;
 
-// Sidebar nav definition.
-$nav_items = [
-	[
-		'label'  => 'Overview',
-		'slug'   => 'tnq-overview',
-		'href'   => admin_url( 'admin.php?page=tnq-overview' ),
-		'active' => true,
-		'icon'   => '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>',
-	],
-	[
-		'label'  => 'Challenges',
-		'href'   => '#',
-		'active' => false,
-		'icon'   => '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
-	],
-	[
-		'label'  => 'Students',
-		'href'   => admin_url( 'admin.php?page=tnq-results' ),
-		'active' => false,
-		'icon'   => '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
-	],
-	[
-		'label'  => 'Reports',
-		'href'   => '#',
-		'active' => false,
-		'icon'   => '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',
-	],
-	[
-		'label'  => 'Badges',
-		'href'   => '#',
-		'active' => false,
-		'icon'   => '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>',
-	],
-	[
-		'label'  => 'Settings',
-		'href'   => admin_url( 'admin.php?page=tnq-settings' ),
-		'active' => false,
-		'icon'   => '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
-	],
-];
-
 // Donut chart constants: r=54 inside 140×140 viewBox.
 $donut_circ = 339.29;
 $donut_offset = $donut_circ * ( 1 - $overall_pct / 100 );
 ?>
 <div class="tnq-admin-wrap">
-
-	<!-- ── Sidebar ──────────────────────────────────────────────────────── -->
-	<aside class="tnq-sidebar">
-
-		<div class="tnq-sidebar-logo">
-			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" fill="none" aria-hidden="true">
-				<polygon points="16,3 19,11 28,11 21,17 24,25 16,20 8,25 11,17 4,11 13,11" fill="#F39C12" stroke="#d68910" stroke-width="1.5" stroke-linejoin="round"/>
-			</svg>
-			<span><?php esc_html_e( 'CT Assessments', 'tangnest-bebras' ); ?></span>
-		</div>
-
-		<nav class="tnq-sidebar-nav" aria-label="<?php esc_attr_e( 'CT Assessments navigation', 'tangnest-bebras' ); ?>">
-			<?php foreach ( $nav_items as $item ) : ?>
-				<a href="<?php echo esc_url( $item['href'] ); ?>"
-				   class="tnq-nav-item<?php echo $item['active'] ? ' tnq-nav-active' : ''; ?>">
-					<?php echo $item['icon']; // phpcs:ignore WordPress.Security.EscapeOutput ?>
-					<?php echo esc_html( $item['label'] ); ?>
-				</a>
-			<?php endforeach; ?>
-		</nav>
-
-		<div class="tnq-sidebar-footer">
-			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-				<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-				<polyline points="9 22 9 12 15 12 15 22"/>
-			</svg>
-			<div>
-				<span class="tnq-school-name"><?php esc_html_e( 'Stem Academy', 'tangnest-bebras' ); ?></span>
-				<span class="tnq-school-city"><?php esc_html_e( 'Kigali', 'tangnest-bebras' ); ?></span>
-			</div>
-		</div>
-
-	</aside>
 
 	<!-- ── Main content ─────────────────────────────────────────────────── -->
 	<main class="tnq-main-content">
