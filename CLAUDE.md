@@ -114,6 +114,24 @@ tangnest-bebras/
 
 ---
 
+## Tutor LMS Integration Notes
+
+- Tutor LMS stores enrollments as `post_type = 'tutor_enrolled'` in `wp_posts`
+  - `post_parent` = course ID
+  - `post_author` = student user ID
+  - `post_status = 'completed'` = active enrollment
+- `wp_tutor_enrolled` table does NOT exist — never query it
+- Course post type is `courses` (plural)
+- Lesson → course link: `_tutor_course_id_for_lesson` meta key on the lesson post
+- Shortcodes in use:
+  - `[tnq_practice age="7-8"]` — Practice quiz
+  - `[tnq_assess type="baseline" age="7-8"]` — Baseline assessment
+  - `[tnq_assess type="endline" age="7-8"]` — Endline assessment
+  - `[tnq_results]` — Student score summary
+  - `[tangnest_quiz type="pre"]` — Legacy pre-assessment (do not modify)
+
+---
+
 ## Design System
 
 | Token | Value |
