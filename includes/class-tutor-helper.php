@@ -21,7 +21,23 @@ class TNQ_Tutor_Helper {
 	 * @return array [ ['course_id' => int, 'title' => string], ... ]
 	 */
 	public static function get_accessible_courses(): array {
+		// ── TEMPORARY DIAGNOSTIC — remove after live investigation ──────────
 		global $wpdb;
+		$shortcodes = [ '[tnq_assess', '[tnq_practice', '[tnq_results', '[tangnest_quiz' ];
+		$conditions = implode( ' OR ', array_map(
+			fn( $sc ) => $wpdb->prepare( 'post_content LIKE %s', '%' . $wpdb->esc_like( $sc ) . '%' ),
+			$shortcodes
+		) );
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		$found = $wpdb->get_results(
+			"SELECT ID, post_title, post_type, post_status FROM {$wpdb->posts} WHERE {$conditions}"
+		);
+		error_log( 'TNQ SCAN: ' . print_r( $found, true ) );
+		foreach ( $found as $p ) {
+			$meta = get_post_meta( $p->ID );
+			error_log( 'TNQ META post ' . $p->ID . ': ' . print_r( $meta, true ) );
+		}
+		// ── END DIAGNOSTIC ───────────────────────────────────────────────────
 
 		/*
 		 * PREVIOUS IMPLEMENTATION (kept for reference):
