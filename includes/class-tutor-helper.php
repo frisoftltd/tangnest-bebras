@@ -12,43 +12,92 @@ class TNQ_Tutor_Helper {
 
 	/**
 	 * Get courses accessible to the current WP user.
-	 * Admin → all published courses.
-	 * Teacher (tutor_instructor role) → only their own courses.
-	 * Returns [] if Tutor LMS is not active.
 	 *
-	 * @since  2.8.0
+	 * Scans all published posts/lessons for any CT Assessment shortcode and
+	 * resolves their parent course via the _tutor_course_id post meta.
+	 * This approach works even when the Tutor LMS API returns no results.
+	 *
+	 * @since  2.8.5
 	 * @return array [ ['course_id' => int, 'title' => string], ... ]
 	 */
 	public static function get_accessible_courses(): array {
-		if ( ! function_exists( 'tutor' ) ) {
+		global $wpdb;
+
+		/*
+		 * PREVIOUS IMPLEMENTATION (kept for reference):
+		 * Relied on function_exists( 'tutor' ) and queried the 'courses' post
+		 * type directly, then filtered by shortcode presence in course content.
+		 * This returned [] whenever the Tutor LMS API was unavailable.
+		 *
+		 * if ( ! function_exists( 'tutor' ) ) { return []; }
+		 * $args = [ 'post_type' => 'courses', 'post_status' => 'publish',
+		 *           'posts_per_page' => -1, 'fields' => 'ids' ];
+		 * if ( ! current_user_can( 'manage_options' ) ) {
+		 *     $args['author'] = get_current_user_id();
+		 * }
+		 * $ids = get_posts( $args );
+		 * $ids = array_filter( $ids, function ( $id ) {
+		 *     $content = get_post_field( 'post_content', $id );
+		 *     return strpos( $content, '[tnq_assess' ) !== false
+		 *         || strpos( $content, '[tnq_practice' ) !== false;
+		 * } );
+		 */
+
+		// All known CT Assessment shortcodes.
+		$shortcodes = [
+			'[tnq_assess',
+			'[tnq_practice',
+			'[tnq_results',
+			'[tangnest_quiz',
+		];
+
+		// Build LIKE conditions for each shortcode.
+		$conditions = implode( ' OR ', array_map(
+			fn( $sc ) => $wpdb->prepare(
+				'post_content LIKE %s',
+				'%' . $wpdb->esc_like( $sc ) . '%'
+			),
+			$shortcodes
+		) );
+
+		// Find all published posts/lessons containing any CT shortcode.
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		$lesson_ids = $wpdb->get_col(
+			"SELECT ID FROM {$wpdb->posts}
+			 WHERE post_status = 'publish'
+			 AND ( {$conditions} )"
+		);
+
+		if ( empty( $lesson_ids ) ) {
 			return [];
 		}
 
-		$args = [
-			'post_type'      => 'courses',
-			'post_status'    => 'publish',
-			'posts_per_page' => -1,
-			'fields'         => 'ids',
-		];
-
-		if ( ! current_user_can( 'manage_options' ) ) {
-			$args['author'] = get_current_user_id();
+		// Resolve parent course for each lesson via _tutor_course_id meta.
+		$course_ids = [];
+		foreach ( $lesson_ids as $lesson_id ) {
+			$course_id = (int) get_post_meta( $lesson_id, '_tutor_course_id', true );
+			if ( $course_id && ! in_array( $course_id, $course_ids, true ) ) {
+				$course_ids[] = $course_id;
+			}
 		}
 
-		$ids = get_posts( $args );
+		if ( empty( $course_ids ) ) {
+			return [];
+		}
 
-		// Only return courses that contain a TNQ shortcode.
-		$ids = array_filter( $ids, function ( $id ) {
-			$content = get_post_field( 'post_content', $id );
-			return strpos( $content, '[tnq_assess' ) !== false
-				|| strpos( $content, '[tnq_practice' ) !== false;
-		} );
+		// Fetch the course post objects and return in expected format.
+		$posts = get_posts( [
+			'post_type'      => 'courses',
+			'post__in'       => $course_ids,
+			'posts_per_page' => -1,
+			'post_status'    => 'publish',
+		] );
 
 		$result = [];
-		foreach ( $ids as $id ) {
+		foreach ( $posts as $post ) {
 			$result[] = [
-				'course_id' => (int) $id,
-				'title'     => get_the_title( $id ),
+				'course_id' => (int) $post->ID,
+				'title'     => $post->post_title,
 			];
 		}
 		return $result;
