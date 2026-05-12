@@ -58,41 +58,45 @@ class TNQ_Admin_Email {
 
 		// ── Build plain-text email body ─────────────────────────────────────────
 		$display_name = $user_data->display_name;
-		$age_band     = $baseline
-			? $baseline->age_band
-			: ( $endline ? $endline->age_band : 'N/A' );
+		$divider      = str_repeat( '-', 44 );
 
-		$divider = str_repeat( '-', 44 ) . "\n";
-
-		$body  = "CT Assessment Report — Tangnest STEM Academy\n";
-		$body .= $divider . "\n";
-		$body .= "Student:  {$display_name}\n";
-		$body .= "Age Band: {$age_band}\n\n";
+		$lines   = [];
+		$lines[] = "CT Assessment Report — Tangnest STEM Academy";
+		$lines[] = $divider;
+		$lines[] = "Student:  {$display_name}";
+		$lines[] = '';
 
 		if ( $baseline ) {
-			$body .= "BASELINE ASSESSMENT\n";
-			$body .= "  Total:         {$baseline->score_total} / 9\n";
-			$body .= "  Algorithmic:   {$baseline->score_algorithmic} / 3\n";
-			$body .= "  Pattern:       {$baseline->score_pattern} / 3\n";
-			$body .= "  Logical:       {$baseline->score_logical} / 3\n\n";
+			$b_date  = date( 'd M Y', strtotime( $baseline->completed_at ) );
+			$lines[] = "Baseline Assessment ({$b_date}):";
+			$lines[] = "  Total:        {$baseline->score_total}/9";
+			$lines[] = "  Algorithmic:  {$baseline->score_algorithmic}/3";
+			$lines[] = "  Pattern:      {$baseline->score_pattern}/3";
+			$lines[] = "  Logical:      {$baseline->score_logical}/3";
+			$lines[] = '';
 		}
 
 		if ( $endline ) {
-			$body .= "ENDLINE ASSESSMENT\n";
-			$body .= "  Total:         {$endline->score_total} / 9\n";
-			$body .= "  Algorithmic:   {$endline->score_algorithmic} / 3\n";
-			$body .= "  Pattern:       {$endline->score_pattern} / 3\n";
-			$body .= "  Logical:       {$endline->score_logical} / 3\n\n";
+			$e_date  = date( 'd M Y', strtotime( $endline->completed_at ) );
+			$lines[] = "Endline Assessment ({$e_date}):";
+			$lines[] = "  Total:        {$endline->score_total}/9";
+			$lines[] = "  Algorithmic:  {$endline->score_algorithmic}/3";
+			$lines[] = "  Pattern:      {$endline->score_pattern}/3";
+			$lines[] = "  Logical:      {$endline->score_logical}/3";
+			$lines[] = '';
 		}
 
 		if ( $baseline && $endline ) {
-			$delta = (int) $endline->score_total - (int) $baseline->score_total;
-			$sign  = $delta >= 0 ? '+' : '';
-			$body .= "GROWTH: {$sign}{$delta} points\n\n";
+			$delta   = (int) $endline->score_total - (int) $baseline->score_total;
+			$sign    = $delta > 0 ? '+' : '';
+			$lines[] = "Growth: {$sign}{$delta} points overall.";
+			$lines[] = '';
 		}
 
-		$body .= $divider;
-		$body .= "For questions, contact Tangnest STEM Academy.\n";
+		$lines[] = $divider;
+		$lines[] = 'For questions, contact Tangnest STEM Academy.';
+
+		$body = implode( "\n", $lines );
 
 		// ── Send ────────────────────────────────────────────────────────────────
 		$to      = $parent['parent_email'];

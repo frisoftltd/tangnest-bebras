@@ -3,10 +3,12 @@
  * Parent / guardian contact card partial.
  *
  * Variables from student.php scope:
- *   $parent        array   — parent_name, parent_email, phone_number
+ *   $parent        array       — parent_name, parent_email, phone_number
  *   $student_id    int
  *   $course_id     int
  *   $display_name  string
+ *   $baseline      object|null — latest baseline result row
+ *   $endline       object|null — latest endline result row
  *
  * @package Tangnest_Bebras
  * @since   2.9.3
@@ -18,12 +20,41 @@ defined( 'ABSPATH' ) || exit;
 $phone_raw   = $parent['phone_number'];
 $phone_clean = TNQ_Admin_Student::normalise_phone( $phone_raw );
 
-$wa_message = sprintf(
-	/* translators: student display name */
-	"Hello, here is %s's CT Assessment result from Tangnest STEM Academy. Please log in to view the full report or contact us for details.",
-	$display_name
-);
-$wa_url = 'https://wa.me/' . $phone_clean . '?text=' . rawurlencode( $wa_message );
+// Build structured WhatsApp message with actual scores.
+$wa_lines   = [];
+$wa_lines[] = "Hello, here is {$display_name}'s CT Assessment result from Tangnest STEM Academy.";
+$wa_lines[] = '';
+
+if ( $baseline ) {
+	$b_date      = wp_date( 'd M Y', strtotime( $baseline->completed_at ) );
+	$wa_lines[]  = "📋 Baseline Assessment ({$b_date}):";
+	$wa_lines[]  = "  Total:        {$baseline->score_total}/9";
+	$wa_lines[]  = "  Algorithmic:  {$baseline->score_algorithmic}/3";
+	$wa_lines[]  = "  Pattern:      {$baseline->score_pattern}/3";
+	$wa_lines[]  = "  Logical:      {$baseline->score_logical}/3";
+	$wa_lines[]  = '';
+}
+
+if ( $endline ) {
+	$e_date      = wp_date( 'd M Y', strtotime( $endline->completed_at ) );
+	$wa_lines[]  = "✅ Endline Assessment ({$e_date}):";
+	$wa_lines[]  = "  Total:        {$endline->score_total}/9";
+	$wa_lines[]  = "  Algorithmic:  {$endline->score_algorithmic}/3";
+	$wa_lines[]  = "  Pattern:      {$endline->score_pattern}/3";
+	$wa_lines[]  = "  Logical:      {$endline->score_logical}/3";
+	$wa_lines[]  = '';
+}
+
+if ( $baseline && $endline ) {
+	$wa_delta    = (int) $endline->score_total - (int) $baseline->score_total;
+	$wa_sign     = $wa_delta > 0 ? '+' : '';
+	$wa_lines[]  = "📈 Growth: {$wa_sign}{$wa_delta} points overall.";
+	$wa_lines[]  = '';
+}
+
+$wa_lines[] = 'For more details, contact Tangnest STEM Academy.';
+$wa_message = implode( "\n", $wa_lines );
+$wa_url     = 'https://wa.me/' . $phone_clean . '?text=' . rawurlencode( $wa_message );
 
 $email_nonce = wp_create_nonce( 'tnq_email_nonce' );
 ?>
