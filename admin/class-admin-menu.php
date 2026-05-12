@@ -76,7 +76,7 @@ class TNQ_Admin_Menu {
 	}
 
 	public function render_results(): void {
-		require TNQ_PLUGIN_DIR . 'admin/views/results.php';
+		( new TNQ_Admin_Results() )->render();
 	}
 
 	public function render_student_detail(): void {

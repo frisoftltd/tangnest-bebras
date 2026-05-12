@@ -149,13 +149,15 @@ class TNQ_Tutor_Helper {
 			}, $students );
 		}
 
-		// Fallback: count distinct students from tnq_results for this course.
-		// Used when wp_tutor_enrolled does not exist on this installation.
+		// Fallback: query the tutor_enrolled CPT (Tutor LMS 4.0+).
+		// wp_tutor_enrolled table does not exist on this installation.
 		$rows = $wpdb->get_results( $wpdb->prepare(
-			"SELECT DISTINCT r.student_id, u.display_name
-			 FROM {$wpdb->prefix}tnq_results r
-			 JOIN {$wpdb->users} u ON u.ID = r.student_id
-			 WHERE r.tutor_course_id = %d",
+			"SELECT p.post_author AS student_id, u.display_name
+			 FROM {$wpdb->posts} p
+			 JOIN {$wpdb->users} u ON u.ID = p.post_author
+			 WHERE p.post_type   = 'tutor_enrolled'
+			   AND p.post_parent = %d
+			   AND p.post_status = 'completed'",
 			$course_id
 		) );
 

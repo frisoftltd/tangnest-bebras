@@ -546,6 +546,225 @@
 	font-style: italic;
 }
 
+/* ── All Results page ─────────────────────────────────────────────── */
+
+.tnq-results-filters {
+	display: flex;
+	gap: 12px;
+	align-items: center;
+	flex-wrap: wrap;
+	margin-bottom: 20px;
+}
+
+.tnq-filter-select {
+	min-width: 200px;
+	padding: 8px 12px;
+	border: 1px solid #ddd;
+	border-radius: var(--tnq-btn-radius);
+	font-size: 13px;
+	background: #fff;
+	color: var(--tnq-text);
+}
+
+.tnq-results-card {
+	background: var(--tnq-card-bg);
+	border-radius: var(--tnq-card-radius);
+	box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+	overflow: hidden;
+}
+
+.tnq-results-meta {
+	padding: 14px 20px;
+	font-size: 13px;
+	color: var(--tnq-muted);
+	border-bottom: 1px solid #e9ecef;
+}
+
+.tnq-table-wrap {
+	overflow-x: auto;
+}
+
+.tnq-results-table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 13px;
+}
+
+.tnq-results-table th {
+	background: var(--tnq-bg);
+	padding: 12px 16px;
+	text-align: left;
+	font-size: 11px;
+	font-weight: 700;
+	color: var(--tnq-muted);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	border-bottom: 1px solid #e9ecef;
+	white-space: nowrap;
+}
+
+.tnq-results-table td {
+	padding: 14px 16px;
+	border-bottom: 1px solid #f0f0f0;
+	vertical-align: top;
+}
+
+.tnq-results-table tbody tr:last-child td {
+	border-bottom: none;
+}
+
+.tnq-results-table tbody tr:hover {
+	background: var(--tnq-bg);
+}
+
+.tnq-col-name {
+	font-weight: 600;
+	color: var(--tnq-text);
+	min-width: 140px;
+}
+
+.tnq-col-age {
+	color: var(--tnq-muted);
+	white-space: nowrap;
+}
+
+.tnq-col-score {
+	min-width: 120px;
+}
+
+.tnq-col-growth {
+	white-space: nowrap;
+	text-align: center;
+}
+
+.tnq-not-taken {
+	color: var(--tnq-muted);
+	font-style: italic;
+	font-size: 12px;
+}
+
+/* ── Score bars (partials/score-bars.php) ─────────────────────────── */
+
+.tnq-score-cell {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.tnq-score-total-val {
+	font-size: 14px;
+	font-weight: 700;
+	color: var(--tnq-text);
+	line-height: 1;
+}
+
+.tnq-sq-rows {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+}
+
+.tnq-sq-row {
+	display: flex;
+	gap: 3px;
+	align-items: center;
+}
+
+.tnq-sq {
+	display: inline-block;
+	width: 12px;
+	height: 12px;
+	border-radius: 2px;
+	flex-shrink: 0;
+}
+
+.tnq-sq-empty { background: #e0e0e0; }
+
+.tnq-sq-algo    .tnq-sq-filled { background: var(--tnq-blue); }
+.tnq-sq-pattern .tnq-sq-filled { background: var(--tnq-amber); }
+.tnq-sq-logical .tnq-sq-filled { background: var(--tnq-green); }
+
+/* ── Growth indicators ────────────────────────────────────────────── */
+
+.tnq-growth {
+	font-size: 13px;
+	font-weight: 700;
+	padding: 3px 8px;
+	border-radius: 20px;
+	display: inline-block;
+}
+
+.tnq-growth-up   { color: var(--tnq-green); background: #d4edda; }
+.tnq-growth-down { color: var(--tnq-red);   background: #f8d7da; }
+.tnq-growth-zero { color: var(--tnq-muted); background: #f0f0f0; }
+
+/* ── Small action button ──────────────────────────────────────────── */
+
+.tnq-btn-sm {
+	display: inline-block;
+	background: var(--tnq-blue);
+	color: #ffffff;
+	font-size: 12px;
+	font-weight: 600;
+	padding: 6px 12px;
+	border-radius: var(--tnq-btn-radius);
+	text-decoration: none;
+	white-space: nowrap;
+	transition: background 0.15s ease;
+}
+
+.tnq-btn-sm:hover,
+.tnq-btn-sm:focus {
+	background: #154a8a;
+	color: #ffffff;
+	text-decoration: none;
+}
+
+/* ── Pagination ───────────────────────────────────────────────────── */
+
+.tnq-pagination {
+	display: flex;
+	gap: 6px;
+	align-items: center;
+	justify-content: center;
+	padding: 16px;
+	border-top: 1px solid #e9ecef;
+	flex-wrap: wrap;
+}
+
+.tnq-page-btn {
+	display: inline-block;
+	min-width: 32px;
+	height: 32px;
+	line-height: 32px;
+	text-align: center;
+	font-size: 13px;
+	font-weight: 500;
+	color: var(--tnq-text);
+	background: var(--tnq-bg);
+	border-radius: 6px;
+	text-decoration: none;
+	padding: 0 8px;
+	transition: background 0.15s ease;
+}
+
+.tnq-page-btn:hover {
+	background: #dde2f0;
+	color: var(--tnq-text);
+	text-decoration: none;
+}
+
+.tnq-page-btn-active {
+	background: var(--tnq-blue);
+	color: #ffffff;
+	font-weight: 700;
+}
+
+.tnq-page-btn-active:hover {
+	background: #154a8a;
+	color: #ffffff;
+}
+
 /* ── Empty state ──────────────────────────────────────────────────── */
 
 .tnq-empty-state {
