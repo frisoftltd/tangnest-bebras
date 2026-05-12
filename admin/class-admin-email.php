@@ -106,6 +106,12 @@ class TNQ_Admin_Email {
 			'Reply-To: ' . get_option( 'admin_email' ),
 		];
 
+		// Capture PHPMailer error detail for diagnostics.
+		$mail_error = '';
+		add_action( 'wp_mail_failed', function ( $error ) use ( &$mail_error ) {
+			$mail_error = $error->get_error_message();
+		} );
+
 		// Force From address to match sending domain (avoids shared-host filtering).
 		add_filter( 'wp_mail_from',      [ __CLASS__, 'mail_from' ] );
 		add_filter( 'wp_mail_from_name', [ __CLASS__, 'mail_from_name' ] );
@@ -116,15 +122,14 @@ class TNQ_Admin_Email {
 		remove_filter( 'wp_mail_from_name', [ __CLASS__, 'mail_from_name' ] );
 
 		if ( $sent ) {
-			wp_send_json_success( [
-				'message' => sprintf(
-					/* translators: %s: parent email address */
-					__( 'Report sent to %s', 'tangnest-bebras' ),
-					$to
-				),
-			] );
+			wp_send_json_success( [ 'message' => 'Report sent to ' . $to ] );
 		} else {
-			wp_send_json_error( [ 'message' => __( 'Could not send email. Please try again.', 'tangnest-bebras' ) ] );
+			wp_send_json_error( [
+				'message' => 'Could not send email.',
+				'debug'   => $mail_error ?: 'wp_mail() returned false — no PHPMailer error captured.',
+				'to'      => $to,
+				'from'    => 'noreply@tangnest.rw',
+			] );
 		}
 	}
 

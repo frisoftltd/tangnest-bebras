@@ -54,7 +54,9 @@
 					btn.parentNode.removeChild( btn );
 				} else {
 					statusEl.className   = 'tnq-email-status tnq-email-status-error';
-					statusEl.textContent = resp.data.message;
+					statusEl.textContent = ( resp.data && resp.data.debug )
+						? 'Error: ' + resp.data.debug
+						: ( resp.data && resp.data.message ) || 'Could not send email.';
 					btn.disabled         = false;
 					btn.textContent      = origLabel;
 				}
