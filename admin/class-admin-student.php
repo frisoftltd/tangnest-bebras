@@ -108,6 +108,22 @@ class TNQ_Admin_Student {
 	}
 
 	/**
+	 * Normalise a phone number to international format for WhatsApp.
+	 * Strips non-digits and prepends Rwanda country code (250) if number
+	 * starts with a leading 0.
+	 */
+	public static function normalise_phone( string $raw ): string {
+		$digits = preg_replace( '/\D/', '', $raw );
+
+		// Leading 0 → strip it and prepend Rwanda country code 250.
+		if ( strlen( $digits ) > 0 && $digits[0] === '0' ) {
+			$digits = '250' . substr( $digits, 1 );
+		}
+
+		return $digits;
+	}
+
+	/**
 	 * Growth banner message for endline − baseline delta.
 	 */
 	public static function growth_message( string $first_name, int $delta ): string {

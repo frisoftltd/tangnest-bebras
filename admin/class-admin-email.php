@@ -97,9 +97,19 @@ class TNQ_Admin_Email {
 		// ── Send ────────────────────────────────────────────────────────────────
 		$to      = $parent['parent_email'];
 		$subject = "{$display_name}'s CT Assessment Report \u{2014} Tangnest STEM Academy";
-		$headers = [ 'Content-Type: text/plain; charset=UTF-8', 'From: ' . get_option( 'admin_email' ) ];
+		$headers = [
+			'Content-Type: text/plain; charset=UTF-8',
+			'Reply-To: ' . get_option( 'admin_email' ),
+		];
+
+		// Force From address to match sending domain (avoids shared-host filtering).
+		add_filter( 'wp_mail_from',      [ __CLASS__, 'mail_from' ] );
+		add_filter( 'wp_mail_from_name', [ __CLASS__, 'mail_from_name' ] );
 
 		$sent = wp_mail( $to, $subject, $body, $headers );
+
+		remove_filter( 'wp_mail_from',      [ __CLASS__, 'mail_from' ] );
+		remove_filter( 'wp_mail_from_name', [ __CLASS__, 'mail_from_name' ] );
 
 		if ( $sent ) {
 			wp_send_json_success( [
@@ -112,5 +122,13 @@ class TNQ_Admin_Email {
 		} else {
 			wp_send_json_error( [ 'message' => __( 'Could not send email. Please try again.', 'tangnest-bebras' ) ] );
 		}
+	}
+
+	public static function mail_from( string $email ): string {
+		return 'noreply@tangnest.rw';
+	}
+
+	public static function mail_from_name( string $name ): string {
+		return 'Tangnest STEM Academy';
 	}
 }

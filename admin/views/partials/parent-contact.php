@@ -14,9 +14,9 @@
 
 defined( 'ABSPATH' ) || exit;
 
-// WhatsApp URL — strip all non-digit characters from phone number.
+// WhatsApp URL — normalise to international format (Rwanda: 250XXXXXXXXX).
 $phone_raw   = $parent['phone_number'];
-$phone_clean = preg_replace( '/[^0-9]/', '', $phone_raw );
+$phone_clean = TNQ_Admin_Student::normalise_phone( $phone_raw );
 
 $wa_message = sprintf(
 	/* translators: student display name */
