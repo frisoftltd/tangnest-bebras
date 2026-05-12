@@ -29,6 +29,7 @@ class TNQ_Plugin {
 		( new TNQ_Legacy_Quiz() )->init();
 		( new TNQ_Assessment_Ajax() )->init();
 		( new TNQ_Admin_Reset_Ajax() )->init();
+		( new TNQ_Admin_Email() )->init();
 		( new TNQ_Shortcodes() )->init();
 		if ( is_admin() ) {
 			( new TNQ_Admin() )->init();

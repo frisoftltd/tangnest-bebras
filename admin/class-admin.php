@@ -41,5 +41,13 @@ class TNQ_Admin {
 			TNQ_VERSION,
 			true
 		);
+
+		wp_enqueue_script(
+			'tnq-admin-dashboard',
+			TNQ_PLUGIN_URL . 'admin/assets/admin-dashboard.js',
+			[],
+			TNQ_VERSION,
+			true
+		);
 	}
 }

@@ -80,7 +80,7 @@ class TNQ_Admin_Menu {
 	}
 
 	public function render_student_detail(): void {
-		require TNQ_PLUGIN_DIR . 'admin/views/student-detail.php';
+		( new TNQ_Admin_Student() )->render();
 	}
 
 	public function render_settings(): void {
