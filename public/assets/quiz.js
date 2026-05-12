@@ -15,7 +15,7 @@
 (function () {
 	'use strict';
 
-	window.TNQ_VERSION = '2.9.5';
+	window.TNQ_VERSION = '2.9.6';
 
 	/** Namespace for interaction modules loaded from interactions/*.js */
 	window.TNQInteractions = window.TNQInteractions || {};

@@ -20,40 +20,44 @@ defined( 'ABSPATH' ) || exit;
 $phone_raw   = $parent['phone_number'];
 $phone_clean = TNQ_Admin_Student::normalise_phone( $phone_raw );
 
-// Build structured WhatsApp message with actual scores.
-$wa_lines   = [];
-$wa_lines[] = "Hello, here is {$display_name}'s CT Assessment result from Tangnest STEM Academy.";
-$wa_lines[] = '';
+// Build WhatsApp-native message: *bold* markers, \n for line breaks.
+// rawurlencode() converts \n → %0A and spaces → %20 (correct for WhatsApp).
+$lines   = [];
+$lines[] = "📊 *CT Assessment Report*";
+$lines[] = "*Student:* {$display_name}";
+$lines[] = "*School:* Tangnest STEM Academy";
+$lines[] = '';
 
 if ( $baseline ) {
-	$b_date      = wp_date( 'd M Y', strtotime( $baseline->completed_at ) );
-	$wa_lines[]  = "📋 Baseline Assessment ({$b_date}):";
-	$wa_lines[]  = "  Total:        {$baseline->score_total}/9";
-	$wa_lines[]  = "  Algorithmic:  {$baseline->score_algorithmic}/3";
-	$wa_lines[]  = "  Pattern:      {$baseline->score_pattern}/3";
-	$wa_lines[]  = "  Logical:      {$baseline->score_logical}/3";
-	$wa_lines[]  = '';
+	$date    = date( 'd M Y', strtotime( $baseline->completed_at ) );
+	$lines[] = "📋 *Baseline Assessment* ({$date})";
+	$lines[] = "  Total:       *{$baseline->score_total}/9*";
+	$lines[] = "  Algorithmic: {$baseline->score_algorithmic}/3";
+	$lines[] = "  Pattern:     {$baseline->score_pattern}/3";
+	$lines[] = "  Logical:     {$baseline->score_logical}/3";
+	$lines[] = '';
 }
 
 if ( $endline ) {
-	$e_date      = wp_date( 'd M Y', strtotime( $endline->completed_at ) );
-	$wa_lines[]  = "✅ Endline Assessment ({$e_date}):";
-	$wa_lines[]  = "  Total:        {$endline->score_total}/9";
-	$wa_lines[]  = "  Algorithmic:  {$endline->score_algorithmic}/3";
-	$wa_lines[]  = "  Pattern:      {$endline->score_pattern}/3";
-	$wa_lines[]  = "  Logical:      {$endline->score_logical}/3";
-	$wa_lines[]  = '';
+	$date    = date( 'd M Y', strtotime( $endline->completed_at ) );
+	$lines[] = "✅ *Endline Assessment* ({$date})";
+	$lines[] = "  Total:       *{$endline->score_total}/9*";
+	$lines[] = "  Algorithmic: {$endline->score_algorithmic}/3";
+	$lines[] = "  Pattern:     {$endline->score_pattern}/3";
+	$lines[] = "  Logical:     {$endline->score_logical}/3";
+	$lines[] = '';
 }
 
 if ( $baseline && $endline ) {
-	$wa_delta    = (int) $endline->score_total - (int) $baseline->score_total;
-	$wa_sign     = $wa_delta > 0 ? '+' : '';
-	$wa_lines[]  = "📈 Growth: {$wa_sign}{$wa_delta} points overall.";
-	$wa_lines[]  = '';
+	$delta   = (int) $endline->score_total - (int) $baseline->score_total;
+	$sign    = $delta > 0 ? '+' : '';
+	$emoji   = $delta > 0 ? '📈' : ( $delta < 0 ? '📉' : '➡️' );
+	$lines[] = "{$emoji} *Growth:* {$sign}{$delta} points overall";
+	$lines[] = '';
 }
 
-$wa_lines[] = 'For more details, contact Tangnest STEM Academy.';
-$wa_message = implode( "\n", $wa_lines );
+$lines[]    = 'For questions, reply to this message or contact the school.';
+$wa_message = implode( "\n", $lines );
 $wa_url     = 'https://wa.me/' . $phone_clean . '?text=' . rawurlencode( $wa_message );
 
 $email_nonce = wp_create_nonce( 'tnq_email_nonce' );
