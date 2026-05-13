@@ -33,15 +33,15 @@ class TNQ_Admin_Overview {
 		);
 
 		$attempts        = (int) $skill_row->attempts;
-		$total_questions = $attempts > 0 ? $attempts * 3 : 1; // avoid /0
+		$total_questions = $attempts > 0 ? $attempts * 3 : 0;
 
 		$algo_correct    = (int) $skill_row->algo_correct;
 		$pattern_correct = (int) $skill_row->pattern_correct;
 		$logical_correct = (int) $skill_row->logical_correct;
 
-		$algo_pct    = (int) round( $algo_correct / $total_questions * 100 );
-		$pattern_pct = (int) round( $pattern_correct / $total_questions * 100 );
-		$logical_pct = (int) round( $logical_correct / $total_questions * 100 );
+		$algo_pct    = $total_questions > 0 ? (int) round( $algo_correct / $total_questions * 100 ) : 0;
+		$pattern_pct = $total_questions > 0 ? (int) round( $pattern_correct / $total_questions * 100 ) : 0;
+		$logical_pct = $total_questions > 0 ? (int) round( $logical_correct / $total_questions * 100 ) : 0;
 
 		$skills = [
 			[

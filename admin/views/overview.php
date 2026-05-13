@@ -48,6 +48,7 @@ $donut_offset = $donut_circ * ( 1 - $overall_pct / 100 );
 		</div>
 
 		<!-- ── Section 1: Skill Cards ──────────────────────────────────────── -->
+		<?php if ( $attempts > 0 ) : ?>
 		<div class="tnq-skill-cards">
 			<?php foreach ( $skills as $skill ) :
 				$offset = $circ * ( 1 - $skill['pct'] / 100 );
@@ -96,6 +97,7 @@ $donut_offset = $donut_circ * ( 1 - $overall_pct / 100 );
 			</div>
 			<?php endforeach; ?>
 		</div>
+		<?php endif; ?>
 
 		<!-- ── Section 2 + 3: Course cards + Completion donut ─────────────── -->
 		<div class="tnq-middle-row">
