@@ -83,34 +83,34 @@
 			};
 
 			var lines = [];
-			lines.push( '👋 Dear ' + d.parent + ',' );
+			lines.push( 'Dear ' + d.parent + ',' );
 			lines.push( '' );
-			lines.push( '🌟 *' + d.name + "'s CT Assessment Results*" );
-			lines.push( '📍 ' + d.school + ', ' + d.location );
+			lines.push( '★ *' + d.name + "'s CT Assessment Results*" );
+			lines.push( '◆ ' + d.school + ', ' + d.location );
 			lines.push( '' );
-			lines.push( '📋 *Baseline Assessment (' + d.baselineDate + '):*' );
+			lines.push( '▣ *Baseline Assessment (' + d.baselineDate + '):*' );
 			lines.push( '• Total: ' + d.baselineTotal + '/9 ' + stars( parseInt( d.baselineTotal, 10 ) ) );
-			lines.push( '🔵 Algorithmic: ' + d.baselineAlgo + '/3' );
-			lines.push( '🟡 Pattern: ' + d.baselinePattern + '/3' );
-			lines.push( '🟢 Logical: ' + d.baselineLogical + '/3' );
+			lines.push( '● Algorithmic: ' + d.baselineAlgo + '/3' );
+			lines.push( '◐ Pattern: ' + d.baselinePattern + '/3' );
+			lines.push( '▲ Logical: ' + d.baselineLogical + '/3' );
 
 			if ( d.endlineTotal ) {
 				var delta    = parseInt( d.endlineTotal, 10 ) - parseInt( d.baselineTotal, 10 );
 				var deltaStr = delta >= 0 ? '+' + delta : '' + delta;
 				lines.push( '' );
-				lines.push( '✅ *Endline Assessment (' + d.endlineDate + '):*' );
+				lines.push( '✓ *Endline Assessment (' + d.endlineDate + '):*' );
 				lines.push( '• Total: ' + d.endlineTotal + '/9 ' + stars( parseInt( d.endlineTotal, 10 ) ) );
-				lines.push( '🔵 Algorithmic: ' + d.endlineAlgo + '/3' );
-				lines.push( '🟡 Pattern: ' + d.endlinePattern + '/3' );
-				lines.push( '🟢 Logical: ' + d.endlineLogical + '/3' );
+				lines.push( '● Algorithmic: ' + d.endlineAlgo + '/3' );
+				lines.push( '◐ Pattern: ' + d.endlinePattern + '/3' );
+				lines.push( '▲ Logical: ' + d.endlineLogical + '/3' );
 				lines.push( '' );
-				lines.push( '📈 *Growth: ' + deltaStr + ' points*' );
+				lines.push( '↑ *Growth: ' + deltaStr + ' points*' );
 			}
 
 			lines.push( '' );
-			lines.push( '💬 ' + d.motivation );
+			lines.push( '» ' + d.motivation );
 			lines.push( '' );
-			lines.push( '🏫 For more details, contact your teacher at ' + d.school + '.' );
+			lines.push( '■ For more details, contact your teacher at ' + d.school + '.' );
 
 			var message = lines.join( '\n' );
 			var url     = 'https://wa.me/' + d.phone + '?text=' + encodeURIComponent( message );
