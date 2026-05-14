@@ -12,7 +12,7 @@
  *   $endline       object|null — latest endline result row
  *
  * @package Tangnest_Bebras
- * @since   2.9.9
+ * @since   2.9.10
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -25,16 +25,16 @@ $parent_name     = $parent['parent_name'] ?: __( 'Parent', 'tangnest-bebras' );
 $phone_raw   = $parent['phone_number'];
 $phone_clean = TNQ_Admin_Student::normalise_phone( $phone_raw );
 
-// ── Build WhatsApp message ──────────────────────────────────────────────────
+// ── Build WhatsApp message (emoji-free for Android compatibility) ───────────
 $make_stars = function( int $score ): string {
-	if ( $score >= 7 ) return '★★★';
-	if ( $score >= 4 ) return '★★☆';
-	return '★☆☆';
+	if ( $score >= 7 ) return '***';
+	if ( $score >= 4 ) return '**';
+	return '*';
 };
 
-$wa_message = "👋 Dear {$parent_name},\n\n"
-	. "🌟 *{$first_name}'s CT Assessment Results*\n"
-	. "📍 {$school_name}, {$school_location}";
+$wa_message = "Dear {$parent_name},\n\n"
+	. "*{$first_name}'s CT Assessment Results*\n"
+	. "{$school_name}, {$school_location}";
 
 if ( $baseline ) {
 	$baseline_total   = (int) $baseline->score_total;
@@ -44,11 +44,11 @@ if ( $baseline ) {
 	$baseline_date    = date( 'd M Y', strtotime( $baseline->completed_at ) );
 	$baseline_stars   = $make_stars( $baseline_total );
 
-	$wa_message .= "\n\n📋 *Baseline Assessment ({$baseline_date}):*"
+	$wa_message .= "\n\n*Baseline Assessment ({$baseline_date}):*"
 		. "\n- Total: {$baseline_total}/9 {$baseline_stars}"
-		. "\n- 🔵 Algorithmic: {$baseline_algo}/3"
-		. "\n- 🟡 Pattern: {$baseline_pattern}/3"
-		. "\n- 🟢 Logical: {$baseline_logical}/3";
+		. "\n- [A] Algorithmic: {$baseline_algo}/3"
+		. "\n- [P] Pattern: {$baseline_pattern}/3"
+		. "\n- [L] Logical: {$baseline_logical}/3";
 }
 
 if ( $endline ) {
@@ -59,33 +59,33 @@ if ( $endline ) {
 	$endline_date    = date( 'd M Y', strtotime( $endline->completed_at ) );
 	$endline_stars   = $make_stars( $endline_total );
 
-	$wa_message .= "\n\n✅ *Endline Assessment ({$endline_date}):*"
+	$wa_message .= "\n\n*Endline Assessment ({$endline_date}):*"
 		. "\n- Total: {$endline_total}/9 {$endline_stars}"
-		. "\n- 🔵 Algorithmic: {$endline_algo}/3"
-		. "\n- 🟡 Pattern: {$endline_pattern}/3"
-		. "\n- 🟢 Logical: {$endline_logical}/3";
+		. "\n- [A] Algorithmic: {$endline_algo}/3"
+		. "\n- [P] Pattern: {$endline_pattern}/3"
+		. "\n- [L] Logical: {$endline_logical}/3";
 
 	if ( $baseline ) {
 		$delta     = $endline_total - $baseline_total;
 		$delta_str = $delta >= 0 ? "+{$delta}" : "{$delta}";
-		$wa_message .= "\n\n📈 *Growth: {$delta_str} points*";
+		$wa_message .= "\n\n*Growth: {$delta_str} points*";
 	}
 }
 
-// Motivational message (based on baseline total, or endline if no baseline).
+// Motivational message — emoji-free for maximum device compatibility.
 $ref_score = isset( $baseline_total ) ? $baseline_total : ( isset( $endline_total ) ? $endline_total : 0 );
 if ( $ref_score >= 8 ) {
-	$motivational_message = "🏆 Outstanding! {$first_name} is a CT superstar!";
+	$motivational_message = "Outstanding! {$first_name} is a CT superstar!";
 } elseif ( $ref_score >= 6 ) {
-	$motivational_message = "🌟 Great work! {$first_name} is making excellent progress!";
+	$motivational_message = "Great work! {$first_name} is making excellent progress!";
 } elseif ( $ref_score >= 4 ) {
-	$motivational_message = "💪 Good effort! {$first_name} is on the right track!";
+	$motivational_message = "Good effort! {$first_name} is on the right track!";
 } else {
-	$motivational_message = "🌱 Keep going! {$first_name} is building strong thinking skills!";
+	$motivational_message = "Keep going! {$first_name} is building strong thinking skills!";
 }
 
-$wa_message .= "\n\n💬 {$motivational_message}"
-	. "\n\n🏫 For more details, contact your teacher at {$school_name}.\n";
+$wa_message .= "\n\n{$motivational_message}"
+	. "\n\nFor more details, contact your teacher at {$school_name}.";
 
 $wa_url = 'https://wa.me/' . $phone_clean . '?text=' . rawurlencode( $wa_message );
 
