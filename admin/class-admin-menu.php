@@ -84,7 +84,7 @@ class TNQ_Admin_Menu {
 	}
 
 	public function render_settings(): void {
-		require TNQ_PLUGIN_DIR . 'admin/views/settings.php';
+		( new TNQ_Admin_Settings() )->render();
 	}
 
 	public function render_export(): void {
