@@ -10,14 +10,7 @@
  *   $total_enrolled int  — total enrolled across all courses
  *   $overall_pct   int  — overall completion percentage
  *   $motivation    string
- *   $per_page      int    — students per page (10/25/50/100)
- *   $page          int    — current page number
- *   $offset        int    — row offset for current page
- *   $students      array  — all ranked students (sorted)
- *   $paginated     array  — students for current page
- *   $total         int    — total ranked students
- *   $total_pages   int    — total pages
- *   $avatar_pool   array  — SVG paths for avatar rotation
+ *   $top_students  array of top student data
  *
  * @package Tangnest_Bebras
  * @since   2.9.0
@@ -217,96 +210,41 @@ $donut_offset = $donut_circ * ( 1 - $overall_pct / 100 );
 
 		</div>
 
-		<!-- ── Section 4: Student Rankings ─────────────────────────────────── -->
-		<div class="tnq-rankings">
-			<div class="tnq-rankings-header">
-				<h2 class="tnq-rankings-title">&#127942; <?php esc_html_e( 'Student Rankings', 'tangnest-bebras' ); ?></h2>
-				<select id="tnq-per-page" class="tnq-per-page-select">
-					<?php foreach ( [ 10, 25, 50, 100 ] as $opt ) : ?>
-					<option value="<?php echo esc_attr( $opt ); ?>" <?php selected( $per_page, $opt ); ?>>
-						<?php
-						/* translators: %d: number of students to show per page */
-						printf( esc_html__( 'Show: %d', 'tangnest-bebras' ), $opt );
-						?>
-					</option>
-					<?php endforeach; ?>
-				</select>
-			</div>
-
-			<?php if ( empty( $paginated ) ) : ?>
-			<div class="tnq-empty-state">
-				<p><?php esc_html_e( 'No enrolled students found.', 'tangnest-bebras' ); ?></p>
-			</div>
-			<?php else : ?>
-
-			<table class="tnq-rankings-table">
-				<thead>
-					<tr>
-						<th><?php esc_html_e( 'Rank', 'tangnest-bebras' ); ?></th>
-						<th><?php esc_html_e( 'Student', 'tangnest-bebras' ); ?></th>
-						<th><?php esc_html_e( 'XP', 'tangnest-bebras' ); ?></th>
-						<th><?php esc_html_e( 'Status', 'tangnest-bebras' ); ?></th>
-					</tr>
-				</thead>
-				<tbody>
-					<?php foreach ( $paginated as $idx => $s ) :
-						$rank       = $offset + $idx + 1;
-						$rank_class = $rank === 1 ? 'gold' : ( $rank === 2 ? 'silver' : ( $rank === 3 ? 'bronze' : 'normal' ) );
-						if ( ! $s['has_taken'] ) {
-							$label = __( 'Not started yet', 'tangnest-bebras' );
-						} elseif ( $s['xp'] >= 800 ) {
-							$label = '&#9733; ' . __( 'Excellent!', 'tangnest-bebras' );
-						} elseif ( $s['xp'] >= 600 ) {
-							$label = '&#9733; ' . __( 'Amazing work!', 'tangnest-bebras' );
-						} else {
-							$label = __( 'Keep it up!', 'tangnest-bebras' );
-						}
-					?>
-					<tr class="tnq-rank-row tnq-rank-<?php echo esc_attr( $rank_class ); ?>">
-						<td>
-							<span class="tnq-rank-badge tnq-rank-badge-<?php echo esc_attr( $rank_class ); ?>">
-								<?php echo esc_html( $rank ); ?>
-							</span>
-						</td>
-						<td class="tnq-rank-student">
-							<img src="<?php echo esc_url( TNQ_PLUGIN_URL . 'public/assets/svg/' . $s['avatar'] ); ?>"
-							     class="tnq-rank-avatar"
-							     alt=""
-							     width="32"
-							     height="32"
-							     aria-hidden="true">
-							<span><?php echo esc_html( $s['name'] ); ?></span>
-						</td>
-						<td class="tnq-xp">
-							<strong><?php echo esc_html( number_format( $s['xp'] ) ); ?></strong> XP
-						</td>
-						<td class="tnq-perf-label">
-							<?php echo wp_kses( $label, [ 'strong' => [] ] ); ?>
-						</td>
-					</tr>
-					<?php endforeach; ?>
-				</tbody>
-			</table>
-
-			<?php if ( $total_pages > 1 ) : ?>
-			<div class="tnq-rankings-pagination">
-				<?php for ( $i = 1; $i <= $total_pages; $i++ ) :
-					$pg_url = esc_url( add_query_arg( [
-						'page'     => 'tnq-overview',
-						'paged'    => $i,
-						'per_page' => $per_page,
-					], admin_url( 'admin.php' ) ) );
-				?>
-				<a href="<?php echo $pg_url; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped — escaped above ?>"
-				   class="tnq-page-btn <?php echo $i === $page ? 'tnq-page-btn-active' : ''; ?>">
-					<?php echo esc_html( $i ); ?>
+		<!-- ── Section 4: Top Performing Students ──────────────────────────── -->
+		<?php if ( ! empty( $top_students ) ) : ?>
+		<div class="tnq-top-students-section">
+			<div class="tnq-section-header">
+				<h3 class="tnq-section-title"><?php esc_html_e( 'Top Performing Students', 'tangnest-bebras' ); ?></h3>
+				<a class="tnq-link-more" href="<?php echo esc_url( admin_url( 'admin.php?page=tnq-student-detail' ) ); ?>">
+					<?php esc_html_e( 'View All Rankings', 'tangnest-bebras' ); ?> &rarr;
 				</a>
-				<?php endfor; ?>
 			</div>
-			<?php endif; ?>
 
-			<?php endif; ?>
-		</div><!-- .tnq-rankings -->
+			<div class="tnq-top-students">
+				<?php foreach ( $top_students as $student ) : ?>
+				<div class="tnq-student-card">
+					<div class="tnq-student-rank" style="background:<?php echo esc_attr( $student['rank_color'] ); ?>">
+						<?php echo esc_html( $student['rank'] ); ?>
+					</div>
+					<div class="tnq-student-avatar">
+						<img src="<?php echo esc_url( TNQ_PLUGIN_URL . 'public/assets/svg/' . $student['avatar'] ); ?>"
+						     alt=""
+						     width="48"
+						     height="48"
+						     aria-hidden="true">
+					</div>
+					<div class="tnq-student-info">
+						<span class="tnq-student-name"><?php echo esc_html( $student['name'] ); ?></span>
+						<span class="tnq-student-xp">
+							<strong style="color:#F39C12"><?php echo esc_html( $student['xp'] ); ?></strong> XP
+						</span>
+						<span class="tnq-student-perf"><?php echo esc_html( $student['perf'] ); ?></span>
+					</div>
+				</div>
+				<?php endforeach; ?>
+			</div>
+		</div>
+		<?php endif; ?>
 
 	</main><!-- .tnq-main-content -->
 

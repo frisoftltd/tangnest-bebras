@@ -44,8 +44,8 @@ class TNQ_Admin_Menu {
 
 		add_submenu_page(
 			'tnq-overview',
-			__( 'Student Detail', 'tangnest-bebras' ),
-			__( 'Student Detail', 'tangnest-bebras' ),
+			__( 'Student Rankings', 'tangnest-bebras' ),
+			__( 'Student Rankings', 'tangnest-bebras' ),
 			'manage_options',
 			'tnq-student-detail',
 			[ $this, 'render_student_detail' ]
@@ -58,15 +58,6 @@ class TNQ_Admin_Menu {
 			'manage_options',
 			'tnq-settings',
 			[ $this, 'render_settings' ]
-		);
-
-		add_submenu_page(
-			'tnq-overview',
-			__( 'Export', 'tangnest-bebras' ),
-			__( 'Export', 'tangnest-bebras' ),
-			'manage_options',
-			'tnq-export',
-			[ $this, 'render_export' ]
 		);
 
 	}
@@ -87,8 +78,5 @@ class TNQ_Admin_Menu {
 		( new TNQ_Admin_Settings() )->render();
 	}
 
-	public function render_export(): void {
-		require TNQ_PLUGIN_DIR . 'admin/views/export.php';
-	}
 
 }

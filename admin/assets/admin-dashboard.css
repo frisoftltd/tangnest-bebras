@@ -1238,10 +1238,10 @@
 	color: #fff;
 }
 
-.tnq-admin-wrap .tnq-rank-badge-gold   { background: #F39C12; }
-.tnq-admin-wrap .tnq-rank-badge-silver { background: #9E9E9E; }
-.tnq-admin-wrap .tnq-rank-badge-bronze { background: #CD7F32; }
-.tnq-admin-wrap .tnq-rank-badge-normal { background: #cdd2e8; color: #555; }
+.tnq-admin-wrap .tnq-rank-badge-gold,   .tnq-admin-wrap .tnq-rank-badge.gold   { background: #F39C12; }
+.tnq-admin-wrap .tnq-rank-badge-silver, .tnq-admin-wrap .tnq-rank-badge.silver { background: #9E9E9E; }
+.tnq-admin-wrap .tnq-rank-badge-bronze, .tnq-admin-wrap .tnq-rank-badge.bronze { background: #CD7F32; }
+.tnq-admin-wrap .tnq-rank-badge-normal, .tnq-admin-wrap .tnq-rank-badge.normal { background: #cdd2e8; color: #555; }
 
 .tnq-admin-wrap .tnq-rank-student {
 	display: flex;
