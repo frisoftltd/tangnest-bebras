@@ -1159,3 +1159,124 @@
 	margin: 0;
 	line-height: 1.6;
 }
+
+/* ── Student Rankings ─────────────────────────────────────────────── */
+
+.tnq-admin-wrap .tnq-rankings {
+	background: var(--tnq-card-bg);
+	border-radius: var(--tnq-card-radius);
+	box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+	padding: 24px;
+	margin-top: 24px;
+}
+
+.tnq-admin-wrap .tnq-rankings-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 16px;
+	gap: 12px;
+}
+
+.tnq-admin-wrap .tnq-rankings-title {
+	font-size: 18px;
+	font-weight: 700;
+	color: var(--tnq-text);
+	margin: 0;
+}
+
+.tnq-admin-wrap .tnq-per-page-select {
+	font-size: 13px;
+	padding: 4px 8px;
+	border: 1px solid #ddd;
+	border-radius: 6px;
+	background: var(--tnq-bg);
+	color: var(--tnq-text);
+	cursor: pointer;
+}
+
+.tnq-admin-wrap .tnq-rankings-table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 14px;
+}
+
+.tnq-admin-wrap .tnq-rankings-table thead th {
+	text-align: left;
+	padding: 8px 12px;
+	font-size: 12px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: var(--tnq-muted);
+	border-bottom: 2px solid #e5e9f5;
+}
+
+.tnq-admin-wrap .tnq-rankings-table tbody td {
+	padding: 10px 12px;
+	border-bottom: 1px solid #f0f2fa;
+	vertical-align: middle;
+}
+
+.tnq-admin-wrap .tnq-rank-row:last-child td {
+	border-bottom: none;
+}
+
+.tnq-admin-wrap .tnq-rank-row:hover td {
+	background: #f8f9ff;
+}
+
+.tnq-admin-wrap .tnq-rank-badge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	font-weight: 700;
+	font-size: 13px;
+	color: #fff;
+}
+
+.tnq-admin-wrap .tnq-rank-badge-gold   { background: #F39C12; }
+.tnq-admin-wrap .tnq-rank-badge-silver { background: #9E9E9E; }
+.tnq-admin-wrap .tnq-rank-badge-bronze { background: #CD7F32; }
+.tnq-admin-wrap .tnq-rank-badge-normal { background: #cdd2e8; color: #555; }
+
+.tnq-admin-wrap .tnq-rank-student {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.tnq-admin-wrap .tnq-rank-avatar {
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	object-fit: contain;
+	background: var(--tnq-bg);
+	flex-shrink: 0;
+}
+
+.tnq-admin-wrap .tnq-xp {
+	font-size: 14px;
+	color: var(--tnq-text);
+	white-space: nowrap;
+}
+
+.tnq-admin-wrap .tnq-xp strong {
+	color: #F39C12;
+}
+
+.tnq-admin-wrap .tnq-perf-label {
+	font-size: 13px;
+	color: var(--tnq-muted);
+}
+
+.tnq-admin-wrap .tnq-rankings-pagination {
+	display: flex;
+	gap: 4px;
+	justify-content: center;
+	padding-top: 16px;
+	flex-wrap: wrap;
+}

@@ -128,64 +128,70 @@ class TNQ_Admin_Overview {
 			$motivation = "You're just getting started! Complete more activities.";
 		}
 
-		// ── Top students ───────────────────────────────────────────────────────
-		// XP = best score × 100 (endline preferred over baseline).
-		$raw_students = $wpdb->get_results(
-			"SELECT student_id,
-				MAX(CASE WHEN assessment_type = 'endline'  THEN score_total ELSE NULL END) AS endline_score,
-				MAX(CASE WHEN assessment_type = 'baseline' THEN score_total ELSE NULL END) AS baseline_score
-			FROM {$wpdb->prefix}tnq_results
-			GROUP BY student_id"
-		);
+		// ── Full rankings with pagination ──────────────────────────────────────
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended
+		$per_page = isset( $_GET['per_page'] ) ? max( 1, min( 100, (int) $_GET['per_page'] ) ) : 25;
+		$page     = isset( $_GET['paged'] )    ? max( 1, (int) $_GET['paged'] )                : 1;
+		// phpcs:enable
+		$offset = ( $page - 1 ) * $per_page;
 
-		$student_xp = [];
-		foreach ( $raw_students as $row ) {
-			$score        = $row->endline_score !== null
-				? (int) $row->endline_score
-				: (int) $row->baseline_score;
-			$student_xp[] = [
-				'student_id' => (int) $row->student_id,
-				'xp'         => $score * 100,
-			];
-		}
-		usort( $student_xp, fn( $a, $b ) => $b['xp'] - $a['xp'] );
-
-		$avatar_pool  = [
+		$avatar_pool = [
 			'objects/orange.svg',
 			'objects/corn.svg',
 			'objects/plant-growing.svg',
 			'patterns/star.svg',
 			'objects/bulb-lit.svg',
 		];
-		$rank_labels  = [ '1st', '2nd', '3rd' ];
-		$rank_colors  = [ '#F39C12', '#9E9E9E', '#CD7F32' ];
 
-		$top_students = [];
-		foreach ( array_slice( $student_xp, 0, 3 ) as $i => $s ) {
-			$user = get_userdata( $s['student_id'] );
-			if ( ! $user ) {
-				continue;
+		// Collect all enrolled student IDs across accessible courses.
+		$all_student_ids = [];
+		foreach ( $courses as $course ) {
+			$enrolled_posts = get_posts( [
+				'post_type'      => 'tutor_enrolled',
+				'post_parent'    => (int) $course['course_id'],
+				'post_status'    => 'completed',
+				'posts_per_page' => -1,
+			] );
+			foreach ( $enrolled_posts as $ep ) {
+				$all_student_ids[ (int) $ep->post_author ] = true;
 			}
-			$first_name = $user->first_name ?: $user->display_name;
-			$xp         = $s['xp'];
+		}
 
-			if ( $xp >= 800 ) {
-				$perf = 'Excellent!';
-			} elseif ( $xp >= 600 ) {
-				$perf = 'Amazing work!';
-			} else {
-				$perf = 'Keep it up!';
-			}
+		$students = [];
+		foreach ( array_keys( $all_student_ids ) as $uid ) {
+			$user = get_userdata( $uid );
+			if ( ! $user ) continue;
 
-			$top_students[] = [
-				'name'       => $first_name,
-				'xp'         => $xp,
-				'perf'       => $perf,
-				'rank'       => $rank_labels[ $i ],
-				'rank_color' => $rank_colors[ $i ],
-				'avatar'     => $avatar_pool[ $s['student_id'] % count( $avatar_pool ) ],
+			$endline = $wpdb->get_var( $wpdb->prepare(
+				"SELECT score_total FROM {$wpdb->prefix}tnq_results
+				 WHERE student_id = %d AND assessment_type = 'endline'
+				 ORDER BY completed_at DESC LIMIT 1",
+				$uid
+			) );
+			$baseline = $wpdb->get_var( $wpdb->prepare(
+				"SELECT score_total FROM {$wpdb->prefix}tnq_results
+				 WHERE student_id = %d AND assessment_type = 'baseline'
+				 ORDER BY completed_at DESC LIMIT 1",
+				$uid
+			) );
+
+			$score     = ! is_null( $endline ) ? (int) $endline : ( ! is_null( $baseline ) ? (int) $baseline : 0 );
+			$has_taken = ! is_null( $endline ) || ! is_null( $baseline );
+
+			$students[] = [
+				'user_id'   => $uid,
+				'name'      => $user->first_name ?: $user->display_name,
+				'xp'        => $score * 100,
+				'has_taken' => $has_taken,
+				'avatar'    => $avatar_pool[ $uid % count( $avatar_pool ) ],
 			];
 		}
+
+		usort( $students, fn( $a, $b ) => $b['xp'] - $a['xp'] );
+
+		$total       = count( $students );
+		$paginated   = array_slice( $students, $offset, $per_page );
+		$total_pages = $total > 0 ? (int) ceil( $total / $per_page ) : 1;
 
 		include __DIR__ . '/views/overview.php';
 	}

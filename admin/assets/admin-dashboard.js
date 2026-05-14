@@ -71,6 +71,18 @@
 		} );
 	}
 
+	// Per-page dropdown on the Overview rankings table.
+	function bindPerPage() {
+		var sel = document.getElementById( 'tnq-per-page' );
+		if ( ! sel ) { return; }
+		sel.addEventListener( 'change', function () {
+			var params = new URLSearchParams( window.location.search );
+			params.set( 'per_page', this.value );
+			params.set( 'paged', '1' );
+			window.location.search = params.toString();
+		} );
+	}
+
 	// WhatsApp button — builds URL in JS so encodeURIComponent preserves %0A line breaks.
 	function bindWhatsAppButton() {
 		var btn = document.getElementById( 'tnq-whatsapp-btn' );
@@ -122,5 +134,6 @@
 		animateBars();
 		bindEmailButton();
 		bindWhatsAppButton();
+		bindPerPage();
 	} );
 }());
