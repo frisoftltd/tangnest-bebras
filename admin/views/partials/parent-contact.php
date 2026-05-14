@@ -12,7 +12,7 @@
  *   $endline       object|null — latest endline result row
  *
  * @package Tangnest_Bebras
- * @since   2.9.10
+ * @since   2.9.12
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -25,17 +25,19 @@ $parent_name     = $parent['parent_name'] ?: __( 'Parent', 'tangnest-bebras' );
 $phone_raw   = $parent['phone_number'];
 $phone_clean = TNQ_Admin_Student::normalise_phone( $phone_raw );
 
-// ── Build WhatsApp message (emoji-free for Android compatibility) ───────────
+// ── Pre-compute score values ────────────────────────────────────────────────
 $make_stars = function( int $score ): string {
-	if ( $score >= 7 ) return '***';
-	if ( $score >= 4 ) return '**';
-	return '*';
+	if ( $score >= 7 ) return '★★★';
+	if ( $score >= 4 ) return '★★☆';
+	return '★☆☆';
 };
 
-$wa_message = "Dear {$parent_name},\n\n"
-	. "*{$first_name}'s CT Assessment Results*\n"
-	. "{$school_name}, {$school_location}";
-
+$baseline_total   = 0;
+$baseline_algo    = 0;
+$baseline_pattern = 0;
+$baseline_logical = 0;
+$baseline_date    = '';
+$baseline_stars   = '';
 if ( $baseline ) {
 	$baseline_total   = (int) $baseline->score_total;
 	$baseline_algo    = (int) $baseline->score_algorithmic;
@@ -43,37 +45,22 @@ if ( $baseline ) {
 	$baseline_logical = (int) $baseline->score_logical;
 	$baseline_date    = date( 'd M Y', strtotime( $baseline->completed_at ) );
 	$baseline_stars   = $make_stars( $baseline_total );
-
-	$wa_message .= "\n\n*Baseline Assessment ({$baseline_date}):*"
-		. "\n- Total: {$baseline_total}/9 {$baseline_stars}"
-		. "\n- [A] Algorithmic: {$baseline_algo}/3"
-		. "\n- [P] Pattern: {$baseline_pattern}/3"
-		. "\n- [L] Logical: {$baseline_logical}/3";
 }
 
+$endline_total   = 0;
+$endline_algo    = 0;
+$endline_pattern = 0;
+$endline_logical = 0;
+$endline_date    = '';
 if ( $endline ) {
 	$endline_total   = (int) $endline->score_total;
 	$endline_algo    = (int) $endline->score_algorithmic;
 	$endline_pattern = (int) $endline->score_pattern;
 	$endline_logical = (int) $endline->score_logical;
 	$endline_date    = date( 'd M Y', strtotime( $endline->completed_at ) );
-	$endline_stars   = $make_stars( $endline_total );
-
-	$wa_message .= "\n\n*Endline Assessment ({$endline_date}):*"
-		. "\n- Total: {$endline_total}/9 {$endline_stars}"
-		. "\n- [A] Algorithmic: {$endline_algo}/3"
-		. "\n- [P] Pattern: {$endline_pattern}/3"
-		. "\n- [L] Logical: {$endline_logical}/3";
-
-	if ( $baseline ) {
-		$delta     = $endline_total - $baseline_total;
-		$delta_str = $delta >= 0 ? "+{$delta}" : "{$delta}";
-		$wa_message .= "\n\n*Growth: {$delta_str} points*";
-	}
 }
 
-// Motivational message — emoji-free for maximum device compatibility.
-$ref_score = isset( $baseline_total ) ? $baseline_total : ( isset( $endline_total ) ? $endline_total : 0 );
+$ref_score = $baseline ? $baseline_total : $endline_total;
 if ( $ref_score >= 8 ) {
 	$motivational_message = "Outstanding! {$first_name} is a CT superstar!";
 } elseif ( $ref_score >= 6 ) {
@@ -84,10 +71,44 @@ if ( $ref_score >= 8 ) {
 	$motivational_message = "Keep going! {$first_name} is building strong thinking skills!";
 }
 
-$wa_message .= "\n\n{$motivational_message}"
-	. "\n\nFor more details, contact your teacher at {$school_name}.";
+// ── Build WhatsApp message — urlencode each line, join with %0a ─────────────
+$lines   = [];
+$lines[] = urlencode( "Dear {$parent_name}," );
+$lines[] = urlencode( '' );
+$lines[] = urlencode( "*{$first_name}'s CT Assessment Results*" );
+$lines[] = urlencode( "{$school_name}, {$school_location}" );
 
-$wa_url = 'https://wa.me/' . $phone_clean . '?text=' . rawurlencode( $wa_message );
+if ( $baseline ) {
+	$lines[] = urlencode( '' );
+	$lines[] = urlencode( "*Baseline Assessment ({$baseline_date}):*" );
+	$lines[] = urlencode( "- Total: {$baseline_total}/9 {$baseline_stars}" );
+	$lines[] = urlencode( "- [A] Algorithmic: {$baseline_algo}/3" );
+	$lines[] = urlencode( "- [P] Pattern: {$baseline_pattern}/3" );
+	$lines[] = urlencode( "- [L] Logical: {$baseline_logical}/3" );
+}
+
+if ( $endline ) {
+	$endline_stars = $make_stars( $endline_total );
+	$delta         = $endline_total - $baseline_total;
+	$delta_str     = $delta >= 0 ? "+{$delta}" : "{$delta}";
+
+	$lines[] = urlencode( '' );
+	$lines[] = urlencode( "*Endline Assessment ({$endline_date}):*" );
+	$lines[] = urlencode( "- Total: {$endline_total}/9 {$endline_stars}" );
+	$lines[] = urlencode( "- [A] Algorithmic: {$endline_algo}/3" );
+	$lines[] = urlencode( "- [P] Pattern: {$endline_pattern}/3" );
+	$lines[] = urlencode( "- [L] Logical: {$endline_logical}/3" );
+	$lines[] = urlencode( '' );
+	$lines[] = urlencode( "*Growth: {$delta_str} points*" );
+}
+
+$lines[] = urlencode( '' );
+$lines[] = urlencode( $motivational_message );
+$lines[] = urlencode( '' );
+$lines[] = urlencode( "For more details, contact your teacher at {$school_name}." );
+
+$encoded = implode( '%0a', $lines );
+$wa_url  = 'https://wa.me/' . $phone_clean . '?text=' . $encoded;
 
 $email_nonce = wp_create_nonce( 'tnq_email_nonce' );
 ?>
