@@ -71,8 +71,56 @@
 		} );
 	}
 
+	// WhatsApp button — builds URL in JS so encodeURIComponent preserves %0A line breaks.
+	function bindWhatsAppButton() {
+		var btn = document.getElementById( 'tnq-whatsapp-btn' );
+		if ( ! btn ) { return; }
+
+		btn.addEventListener( 'click', function () {
+			var d = btn.dataset;
+			var stars = function ( score ) {
+				return score >= 7 ? '★★★' : score >= 4 ? '★★☆' : '★☆☆';
+			};
+
+			var lines = [];
+			lines.push( 'Dear ' + d.parent + ',' );
+			lines.push( '' );
+			lines.push( '*' + d.name + "'s CT Assessment Results*" );
+			lines.push( d.school + ', ' + d.location );
+			lines.push( '' );
+			lines.push( '*Baseline Assessment (' + d.baselineDate + '):*' );
+			lines.push( '- Total: ' + d.baselineTotal + '/9 ' + stars( parseInt( d.baselineTotal, 10 ) ) );
+			lines.push( '- [A] Algorithmic: ' + d.baselineAlgo + '/3' );
+			lines.push( '- [P] Pattern: ' + d.baselinePattern + '/3' );
+			lines.push( '- [L] Logical: ' + d.baselineLogical + '/3' );
+
+			if ( d.endlineTotal ) {
+				var delta    = parseInt( d.endlineTotal, 10 ) - parseInt( d.baselineTotal, 10 );
+				var deltaStr = delta >= 0 ? '+' + delta : '' + delta;
+				lines.push( '' );
+				lines.push( '*Endline Assessment (' + d.endlineDate + '):*' );
+				lines.push( '- Total: ' + d.endlineTotal + '/9 ' + stars( parseInt( d.endlineTotal, 10 ) ) );
+				lines.push( '- [A] Algorithmic: ' + d.endlineAlgo + '/3' );
+				lines.push( '- [P] Pattern: ' + d.endlinePattern + '/3' );
+				lines.push( '- [L] Logical: ' + d.endlineLogical + '/3' );
+				lines.push( '' );
+				lines.push( '*Growth: ' + deltaStr + ' points*' );
+			}
+
+			lines.push( '' );
+			lines.push( d.motivation );
+			lines.push( '' );
+			lines.push( 'For more details, contact your teacher at ' + d.school + '.' );
+
+			var message = lines.join( '\n' );
+			var url     = 'https://wa.me/' + d.phone + '?text=' + encodeURIComponent( message );
+			window.open( url, '_blank' );
+		} );
+	}
+
 	document.addEventListener( 'DOMContentLoaded', function () {
 		animateBars();
 		bindEmailButton();
+		bindWhatsAppButton();
 	} );
 }());

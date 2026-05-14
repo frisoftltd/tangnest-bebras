@@ -12,7 +12,7 @@
  *   $endline       object|null — latest endline result row
  *
  * @package Tangnest_Bebras
- * @since   2.9.12
+ * @since   2.9.13
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -25,26 +25,18 @@ $parent_name     = $parent['parent_name'] ?: __( 'Parent', 'tangnest-bebras' );
 $phone_raw   = $parent['phone_number'];
 $phone_clean = TNQ_Admin_Student::normalise_phone( $phone_raw );
 
-// ── Pre-compute score values ────────────────────────────────────────────────
-$make_stars = function( int $score ): string {
-	if ( $score >= 7 ) return '★★★';
-	if ( $score >= 4 ) return '★★☆';
-	return '★☆☆';
-};
-
+// ── Pre-compute score values for data attributes ────────────────────────────
 $baseline_total   = 0;
 $baseline_algo    = 0;
 $baseline_pattern = 0;
 $baseline_logical = 0;
 $baseline_date    = '';
-$baseline_stars   = '';
 if ( $baseline ) {
 	$baseline_total   = (int) $baseline->score_total;
 	$baseline_algo    = (int) $baseline->score_algorithmic;
 	$baseline_pattern = (int) $baseline->score_pattern;
 	$baseline_logical = (int) $baseline->score_logical;
 	$baseline_date    = date( 'd M Y', strtotime( $baseline->completed_at ) );
-	$baseline_stars   = $make_stars( $baseline_total );
 }
 
 $endline_total   = 0;
@@ -70,45 +62,7 @@ if ( $ref_score >= 8 ) {
 } else {
 	$motivational_message = "Keep going! {$first_name} is building strong thinking skills!";
 }
-
-// ── Build WhatsApp message — urlencode each line, join with %0a ─────────────
-$lines   = [];
-$lines[] = urlencode( "Dear {$parent_name}," );
-$lines[] = urlencode( '' );
-$lines[] = urlencode( "*{$first_name}'s CT Assessment Results*" );
-$lines[] = urlencode( "{$school_name}, {$school_location}" );
-
-if ( $baseline ) {
-	$lines[] = urlencode( '' );
-	$lines[] = urlencode( "*Baseline Assessment ({$baseline_date}):*" );
-	$lines[] = urlencode( "- Total: {$baseline_total}/9 {$baseline_stars}" );
-	$lines[] = urlencode( "- [A] Algorithmic: {$baseline_algo}/3" );
-	$lines[] = urlencode( "- [P] Pattern: {$baseline_pattern}/3" );
-	$lines[] = urlencode( "- [L] Logical: {$baseline_logical}/3" );
-}
-
-if ( $endline ) {
-	$endline_stars = $make_stars( $endline_total );
-	$delta         = $endline_total - $baseline_total;
-	$delta_str     = $delta >= 0 ? "+{$delta}" : "{$delta}";
-
-	$lines[] = urlencode( '' );
-	$lines[] = urlencode( "*Endline Assessment ({$endline_date}):*" );
-	$lines[] = urlencode( "- Total: {$endline_total}/9 {$endline_stars}" );
-	$lines[] = urlencode( "- [A] Algorithmic: {$endline_algo}/3" );
-	$lines[] = urlencode( "- [P] Pattern: {$endline_pattern}/3" );
-	$lines[] = urlencode( "- [L] Logical: {$endline_logical}/3" );
-	$lines[] = urlencode( '' );
-	$lines[] = urlencode( "*Growth: {$delta_str} points*" );
-}
-
-$lines[] = urlencode( '' );
-$lines[] = urlencode( $motivational_message );
-$lines[] = urlencode( '' );
-$lines[] = urlencode( "For more details, contact your teacher at {$school_name}." );
-
-$encoded = implode( '%0a', $lines );
-$wa_url  = 'https://wa.me/' . $phone_clean . '?text=' . $encoded;
+// WhatsApp URL is built in JS (admin-dashboard.js) to bypass esc_url() stripping %0A.
 
 $email_nonce = wp_create_nonce( 'tnq_email_nonce' );
 ?>
@@ -141,12 +95,27 @@ $email_nonce = wp_create_nonce( 'tnq_email_nonce' );
 		<?php endif; ?>
 
 		<?php if ( $phone_clean ) : ?>
-		<a href="<?php echo esc_url( $wa_url ); ?>"
-		   class="tnq-btn-whatsapp"
-		   target="_blank"
-		   rel="noopener noreferrer">
+		<button id="tnq-whatsapp-btn"
+		        class="tnq-btn-whatsapp"
+		        type="button"
+		        data-phone="<?php echo esc_attr( $phone_clean ); ?>"
+		        data-name="<?php echo esc_attr( $first_name ); ?>"
+		        data-parent="<?php echo esc_attr( $parent_name ); ?>"
+		        data-school="<?php echo esc_attr( $school_name ); ?>"
+		        data-location="<?php echo esc_attr( $school_location ); ?>"
+		        data-baseline-total="<?php echo esc_attr( $baseline_total ); ?>"
+		        data-baseline-algo="<?php echo esc_attr( $baseline_algo ); ?>"
+		        data-baseline-pattern="<?php echo esc_attr( $baseline_pattern ); ?>"
+		        data-baseline-logical="<?php echo esc_attr( $baseline_logical ); ?>"
+		        data-baseline-date="<?php echo esc_attr( $baseline_date ); ?>"
+		        data-endline-total="<?php echo $endline ? esc_attr( $endline_total ) : ''; ?>"
+		        data-endline-algo="<?php echo $endline ? esc_attr( $endline_algo ) : ''; ?>"
+		        data-endline-pattern="<?php echo $endline ? esc_attr( $endline_pattern ) : ''; ?>"
+		        data-endline-logical="<?php echo $endline ? esc_attr( $endline_logical ) : ''; ?>"
+		        data-endline-date="<?php echo $endline ? esc_attr( $endline_date ) : ''; ?>"
+		        data-motivation="<?php echo esc_attr( $motivational_message ); ?>">
 			💬 <?php esc_html_e( 'WhatsApp', 'tangnest-bebras' ); ?>
-		</a>
+		</button>
 		<?php endif; ?>
 
 	</div><!-- .tnq-contact-actions -->
